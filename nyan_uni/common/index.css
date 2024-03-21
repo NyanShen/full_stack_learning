@@ -1,0 +1,56 @@
+/**
+ * 每个页面公共样式文件
+ */
+
+.mgb10 {
+	margin-bottom: 10rpx;
+}
+
+.mgb20 {
+	margin-bottom: 20rpx;
+}
+
+.mgb30 {
+	margin-bottom: 30rpx;
+}
+
+.mgb40 {
+	margin-bottom: 40rpx;
+}
+
+.flex-c {
+	display: flex;
+	align-items: center;
+}
+
+.flex-csb {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.flex-csa {
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+}
+
+.flex-cw {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.flex-column {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.flex-row {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+

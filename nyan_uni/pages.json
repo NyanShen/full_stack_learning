@@ -1,0 +1,153 @@
+{
+	"pages": [
+		//pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/tabBar/home/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"app-plus": {
+					"bounce": "vertical",
+					"titleNView": {
+						"buttons": [{
+							"text": "襄阳市",
+							"fontSize": "14",
+							"select": true,
+							"width": "auto"
+						}]
+					}
+				}
+			}
+		},
+		{
+			"path": "pages/tabBar/msg/index",
+			"style": {
+				"navigationBarTitleText": "消息",
+				"app-plus": {
+					"bounce": "vertical",
+					"titleNView": {
+						"buttons": [{
+								"text": "消息",
+								"fontSize": "14",
+								"redDot": true,
+								"color": "#2279ea",
+								"float": "left"
+							},
+							{
+								"text": "关注",
+								"fontSize": "14",
+								"badgeText": "0",
+								"color": "#2279ea"
+							}
+						]
+					}
+				}
+			}
+		},
+		{
+			"path": "pages/tabBar/discover/index",
+			"style": {
+				"navigationBarTitleText": "发现",
+				"app-plus": {
+					"titleNView": {
+						// "type": "transparent", // 导航栏置顶
+						"titleColor": "#fff",
+						"backgroundColor": "#007AFF",
+						"buttons": [{
+								"type": "favorite",
+								"float": "left"
+							},
+							{
+								"fontSrc": "/static/uni.ttf",
+								"text": "\ue537",
+								"width": "40px",
+								"fontSize": "28px",
+								"color": "#fff",
+								"background": "rgba(0,0,0,0)"
+							}
+						],
+						"searchInput": {
+							"backgroundColor": "#fff",
+							"borderRadius": "8px",
+							"placeholder": "请输入地址 如：大钟寺",
+							"disabled": true
+						}
+					}
+				}
+			}
+		},
+		{
+			"path": "pages/tabBar/mine/index",
+			"style": {
+				"navigationBarTitleText": "个人中心",
+				"app-plus": {
+					"bounce": "vertical",
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue534",
+							"fontSrc": "/static/uni.ttf",
+							"fontSize": "22px",
+							"color": "#FFFFFF"
+						}]
+					}
+				}
+			}
+		},
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": ""
+			}
+		},
+		{
+			"path": "pages/login/index",
+			"style": {
+				"navigationBarTitleText": "",
+				"transparentTitle": "always"
+			}
+		},
+		{
+			"path": "pages/home/index",
+			"style": {
+				"titleImage": "https://web-assets.dcloud.net.cn/unidoc/zh/logo1@2x.png"
+			}
+
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "襄阳市中心医院就医服务",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"color": "#7A7E83",
+		"selectedColor": "#007AFF",
+		"borderStyle": "black",
+		"backgroundColor": "#F8F8F8",
+		"list": [{
+				"pagePath": "pages/tabBar/home/index",
+				"iconPath": "static/tabBar/home.png",
+				"selectedIconPath": "static/tabBar/home_hv.png",
+				"text": "首页"
+			},
+			{
+				"pagePath": "pages/tabBar/msg/index",
+				"iconPath": "static/tabBar/msg.png",
+				"selectedIconPath": "static/tabBar/msg_hv.png",
+				"text": "消息"
+			}, {
+				"pagePath": "pages/tabBar/discover/index",
+				"iconPath": "static/tabBar/msg.png",
+				"selectedIconPath": "static/tabBar/msg_hv.png",
+				"text": "发现"
+			}, {
+				"pagePath": "pages/tabBar/mine/index",
+				"iconPath": "static/tabBar/mine.png",
+				"selectedIconPath": "static/tabBar/mine_hv.png",
+				"text": "我的"
+			}
+		]
+	},
+
+	"uniIdRouter": {}
+}

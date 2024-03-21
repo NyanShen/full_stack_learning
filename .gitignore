@@ -1,0 +1,10 @@
+nyan_server/node_modules/
+nyan_nest/node_modules/
+nyan_uni/node_modules/
+nyan_server/dist/
+nyan_nest/dist/
+nyan_uni/dist/
+nyan_uni/unpackage/
+nyan_uni/.hbuilderx
+nyan_uni/.vite
+
