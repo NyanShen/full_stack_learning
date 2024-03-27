@@ -4,13 +4,15 @@
 		<view class="text-area mgb30" @click="toLogin">
 			<text class="title">{{title}}</text>
 		</view>
-		<view class="text-area">
+		<view class="text-area" @click="handleText">
 			<text class="title">我是描述文字测试</text>
 		</view>
 	</view>
 </template>
 
 <script>
+	import $uniApi from "@/common/uni.app.api.js"
+	import $constant from "@/common/constants.js";
 	export default {
 		data() {
 			return {
@@ -23,9 +25,10 @@
 		},
 		methods: {
 			toLogin() {
-				uni.navigateTo({
-					url: "/pages/login/index"
-				})
+				$uniApi.navigateTo("login")
+			},
+			handleText() {
+				$uniApi.alert("hello" + $constant.CONFIG.testUrl)
 			}
 		}
 	}

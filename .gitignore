@@ -7,4 +7,8 @@ nyan_uni/dist/
 nyan_uni/unpackage/
 nyan_uni/.hbuilderx
 nyan_uni/.vite
+nyan_manage/dist/
+nyan_manage/node_modules/
+nyan_manage/.vscode
+nyan_manage/.vite
 

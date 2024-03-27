@@ -36,5 +36,6 @@ db.testConnection = testConnection; //测试
 
 // 角色
 db.role = require("./role.model.js")(sequelize, Sequelize);
+db.image = require("./image.model.js")(sequelize, Sequelize);
 
 module.exports = db;

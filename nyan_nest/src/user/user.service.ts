@@ -1,52 +1,48 @@
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { CreateUserDto } from './dto/create.user.dto';
+import { UpdateUserDto } from './dto/update.user.dto';
 
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/sequelize';
-import { User } from './models/user.model';
-import { CreateUserDto } from './dto/create-user.dto';
+import { User } from './entities/user.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel(User)
-    private userModel: typeof User
-  ) { }
+    @InjectRepository(User) private readonly user: Repository<User>,
+  ) {}
 
-  /**
-   * 创建用户
-   * @returns User
-   */
-  create(createUserDto: CreateUserDto): Promise<User> {
-    return this.userModel.create({
-      userId: createUserDto.userId,
-      username: createUserDto.username,
-      realName: createUserDto.realName,
-      password: createUserDto.password,
+  async create(createUserDto: CreateUserDto) {
+    const data = new User();
+    data.username = createUserDto.username;
+    data.password = createUserDto.password;
+    const res = await this.user.findOne({
+      where: { username: createUserDto.username },
     });
+    if (res) {
+      throw new BadRequestException({
+        message: '用户已存在!', 
+      });
+    }
+    return await this.user.save(data);
   }
 
-  findAll(): Promise<User[]> {
-    return this.userModel.findAll();
-  }
-  /**
-   * 根据id查询用户信息
-   * @param id 
-   * @returns User
-   */
-  findOne(id: string): Promise<User> {
-    return this.userModel.findOne({
-      where: {
-        id,
-      },
-    });
+  async findAll() {
+    const data = await this.user.find();
+
+    return data;
   }
 
-  /**
-   * 根据id删除用户信息
-   * @param id 
-   * @returns void
-   */
-  async remove(id: string): Promise<void> {
-    const user = await this.findOne(id);
-    await user.destroy();
+  findOne(id: number) {
+    return this.user.findOne({ where: { id: id } ,select:['id','username']});
   }
+
+  update(id: number, updateUserDto: UpdateUserDto) {
+    return this.user.update(id, updateUserDto);
+  }
+
+  remove(id: number) {
+    return this.user.delete(id);
+  }
+
 }

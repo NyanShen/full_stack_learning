@@ -1,43 +1,64 @@
-import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  // Req,
+  // BadRequestException,
+} from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './models/user.model';
+import { CreateUserDto } from './dto/create.user.dto';
+import { UpdateUserDto } from './dto/update.user.dto';
 
-@Controller("user")
+// import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+//import { AuthGuard } from '../auth/auth.guard';
+
+// @ApiTags('用户模块')
+// @ApiBearerAuth()
+@Controller('user')
 export class UserController {
-    constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
 
-    /**
-     * 创建用户
-     * @returns httpRes
-     */
-    @Post()
-    createUser(@Body() user: CreateUserDto) {
-        this.userService.create(user)
-        return "新增用户成功"
-    }
-    /**
-     * 获取所有用户信息
-     * @returns httpRes
-     */
-    @Get()
-    findAllUser() {
-        return this.userService.findAll();
-    }
-    /**
-     * 根据用户id获取用户信息
-     * @returns httpRes
-     */
-    @Get(':id')
-    findUserById(@Param('id') id: string): Promise<User> {
-        return this.userService.findOne(id);
-    }
-    /**
-     * 根据用户id删除用户信息
-     * @returns httpRes
-     */
-    @Delete(':id')
-    remove(@Param('id') id: string): Promise<void> {
-        return this.userService.remove(id);
-    }
+  @Post('create')
+  // @ApiOperation({ summary: '新增用户' })
+  createUser(@Body() body: CreateUserDto) {
+    // if (
+    //   req.session.code?.toLocaleLowerCase() === body?.code?.toLocaleLowerCase()
+    // ) {
+    //   return this.userService.create(body)
+    // } else {
+    //   throw new BadRequestException({
+    //     message: '验证码错误',
+    //   });
+    // }
+	return this.userService.create(body)
+  }
+
+  @Get()
+  // @ApiOperation({ summary: '查询用户列表' })
+  findAll() {
+    return this.userService.findAll();
+  }
+
+  @Get(':id')
+  // @ApiOperation({ summary: '根据id查询用户' })
+  findOne(@Param('id') id: number) {
+    return this.userService.findOne(id);
+  }
+
+  @Patch(':id')
+  // @ApiOperation({ summary: '根据id更新用户' })
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(+id, updateUserDto);
+  }
+
+  @Delete(':id')
+  // @ApiOperation({ summary: '根据id删除用户' })
+  remove(@Param('id') id: string) {
+    return this.userService.remove(+id);
+  }
+
 }

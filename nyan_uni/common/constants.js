@@ -1,10 +1,10 @@
 /**
  * 项目中使用的常量
  */
-const CONFIG = {
-	hostUrl: import.meta.env.hostUrl,
-	baseUrl: import.meta.env.baseUrl,
-	testUrl: import.meta.env.testUrl,
+
+let CONFIG = {
+	testUrl: "http://localhost:3000/api",
+	fileUrl: "http://localhost:3000/api",
 }
 
 export default {

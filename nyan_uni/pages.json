@@ -113,6 +113,19 @@
 
 		}
 	],
+	"subPackages": [
+		{
+			"root": "pages/services",
+			"pages": [
+				{
+					"path": "feedback/index",
+					"style": {
+						"navigationBarTitleText": "意见反馈"
+					}
+				}
+			]
+		}
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "襄阳市中心医院就医服务",

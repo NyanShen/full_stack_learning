@@ -17,7 +17,7 @@
 	/* #ifndef APP-PLUS-NVUE */
 	@import './common/uni.css';
 	/* #endif*/
-	@import './common/iconfont.css';
+	@import './common/iconfont/iconfont.css';
 	@import './common/index.css';
 	@import './common/btn.scss';
 </style>
