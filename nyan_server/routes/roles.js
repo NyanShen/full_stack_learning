@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require("../models/index.js")
+const Roles = require("../controllers/roles.controller.js");
 
 /* 
  * @param name
@@ -14,5 +15,19 @@ router.post('/create', async function(req, res, next) {
 		msg: `create role  succeefully`,
 	});
 });
+/**
+ * 创建角色菜单关联
+ * @param name
+ * @param desc
+ * @param menuIds
+ */
+router.post('/createPemission', Roles.create);
+
+/**
+ * 创建角色菜单关联
+ * @param name
+ */
+router.post('/findRole', Roles.findOne);
+
 
 module.exports = router;

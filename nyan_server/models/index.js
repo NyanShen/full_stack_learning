@@ -1,6 +1,7 @@
 const dbConfig = require("../config/db.config.js");
 const {
-	Sequelize
+	Sequelize,
+	Op
 } = require('sequelize');
 
 /**
@@ -30,12 +31,15 @@ const testConnection = async () => {
 
 const db = {};
 
+db.Op = Op; //操作类型
 db.Sequelize = Sequelize; //引入
 db.sequelize = sequelize; //实例
 db.testConnection = testConnection; //测试
 
 // 角色
 db.role = require("./role.model.js")(sequelize, Sequelize);
+db.menu = require("./menu.model.js")(sequelize, Sequelize);
+db.rolemenu = require("./role_menu.model.js")(sequelize, Sequelize);
 db.image = require("./image.model.js")(sequelize, Sequelize);
 
 module.exports = db;

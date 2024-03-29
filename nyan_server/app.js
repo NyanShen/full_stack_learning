@@ -8,6 +8,7 @@ const cors = require("cors"); // 解决跨域
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const rolesRouter = require('./routes/roles');
+const menusRouter = require('./routes/menus');
 const filesRouter = require('./routes/files');
 
 const app = express();
@@ -41,6 +42,7 @@ app.all('/api/*', function(req, res, next) {
 app.use('/api', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/roles', rolesRouter);
+app.use('/api/menus', menusRouter);
 app.use('/api/file', filesRouter);
 
 // catch 404 and forward to error handler
@@ -58,5 +60,9 @@ app.use(function(err, req, res, next) {
 	res.status(err.status || 500);
 	res.render('error');
 });
+
+app.listen("8080", () => {
+	console.log("项目启动成功, 端口:", "8080");
+})
 
 module.exports = app;

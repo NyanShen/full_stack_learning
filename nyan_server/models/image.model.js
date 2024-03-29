@@ -3,7 +3,7 @@ const Image = (sequelize, Sequelize) => {
 		name: Sequelize.STRING,
 		path: Sequelize.STRING
 	}, {
-		tableName: "Images"
+		tableName: "image"
 	})
 }
 module.exports = Image
