@@ -1,32 +1,46 @@
-import router from "./router.js";
-import NProgress from "nprogress";
-import "nprogress/nprogress.css";
-import store from "../store";
-NProgress.configure({
-  ease: "ease",
-  speed: 500,
-});
+import {
+	createRouter,
+	createWebHistory
+} from 'vue-router';
+import Layout from "../layout/index.vue"; // 全局布局
+import Hello from "@views/hello.vue";
+import Login from "@views/login.vue";
 
-const writeNames = ["/login"];
-router.beforeEach((to, from, next) => {
-  NProgress.start();
-  console.log(store.getters);
-  if (sessionStorage.getItem("token")) {
-    if (to.path === "/login") {
-      next("/");
-    }
-    return next();
-  } else {
-    if (writeNames.includes(to.path)) {
-      next();
-    } else {
-      next("/login");
-    }
-  }
-});
+const routes = [
+	// Define your routes here
+	{
+		path: "/login",
+		component: Login
+	},
+	{
+		path: "/hello",
+		component: Hello
+	},
+	{
+		path: "/",
+		component: Layout,
+		name: "container",
+		redirect: "home",
+		meta: {
+			requiresAuth: true, // 有一些页面是否登录才能进去
+			name: "首页",
+		},
+		children: [{
+			path: "/home",
+			name: "home",
+			component: () => import("@views/home.vue"),
+			meta: {
+				requiresAuth: true, //有一些页面是否登录才能进去
+				name: "首页",
+			},
+		}, ],
+	},
 
-router.afterEach((transition) => {
-  NProgress.done();
+];
+
+const router = createRouter({
+	history: createWebHistory(),
+	routes,
 });
 
 export default router;

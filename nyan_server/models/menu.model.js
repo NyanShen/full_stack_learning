@@ -26,7 +26,7 @@ const Menu = (sequelize, Sequelize) => {
 		},
 		lever: {
 			type: Sequelize.INTEGER,
-			comment: '菜单层级',
+			comment: '本菜单所在层级',
 		},
 		authority: {
 			type: Sequelize.STRING,

@@ -61,8 +61,5 @@ app.use(function(err, req, res, next) {
 	res.render('error');
 });
 
-app.listen("8080", () => {
-	console.log("项目启动成功, 端口:", "8080");
-})
 
 module.exports = app;
