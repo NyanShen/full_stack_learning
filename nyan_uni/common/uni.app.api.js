@@ -1,16 +1,26 @@
 /**
  * 对uniapp api 二次封装
  */
+import store from "@/store/index";
 export default {
+	/**
+	 * 加载动画
+	 */
 	showLoading: (title = "努力加载中") => {
 		uni.showLoading({
 			title,
 			mask: true
 		})
 	},
+	/**
+	 * 隐藏加载动画
+	 */
 	hideLoading: () => {
 		uni.hideLoading();
 	},
+	/**
+	 * 跳转
+	 */
 	navigateTo: (pageName, params) => {
 		if (params) {
 			params = JSON.stringify(params)
@@ -19,6 +29,9 @@ export default {
 			url: `/pages/${pageName}/index?urlParams=${params}`
 		})
 	},
+	/**
+	 * 提示需要确认
+	 */
 	alert: (content) => {
 		return uni.showModal({
 			content,
@@ -26,6 +39,9 @@ export default {
 			confirmText: "我知道了"
 		})
 	},
+	/**
+	 * 定时成功提示
+	 */
 	showToastSuccess(title, duration = 2500) {
 		uni.showToast({
 			icon: "success",
@@ -34,6 +50,9 @@ export default {
 			duration
 		})
 	},
+	/**
+	 * 加载动画
+	 */
 	showToastNone(title, duration = 2500) {
 		uni.showToast({
 			icon: "none",
@@ -41,5 +60,17 @@ export default {
 			mask: true,
 			duration
 		})
+	},
+	/**
+	 * 加载系统信息
+	 */
+	loadSystemInfoSync() {
+		let systemInfo = store.state.systemInfo;
+		if (systemInfo) {
+			return systemInfo
+		}
+		let result = uni.getSystemInfoSync();
+		store.commit("setSystemInfo", result);
+		return result;
 	}
 }

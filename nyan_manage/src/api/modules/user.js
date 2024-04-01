@@ -1,5 +1,7 @@
 import $http from "../index";
-
+/**
+ * 获取用户信息
+ */
 export const fetchUsers = () => {
 	return $http({
 		url: "/users",
@@ -8,6 +10,16 @@ export const fetchUsers = () => {
 	})
 }
 
+/**
+ * 创建用户
+ */
+export const createUser = (data) => {
+	return $http({
+		url: "/users/create",
+		method: "POST",
+		data
+	})
+}
 export const fetchMenus = () => {
 	return $http({
 		url: "/menus",
@@ -15,7 +27,19 @@ export const fetchMenus = () => {
 		data: {}
 	})
 }
-
+/**
+ * 获取角色列表
+ */
+export const fetchRoles = () => {
+	return $http({
+		url: "/roles",
+		method: "GET",
+		data: {}
+	})
+}
+/**
+ * 创建角色
+ */
 export const createRole = (data) => {
 	return $http({
 		url: "/roles/create",

@@ -1,8 +1,20 @@
 const express = require('express');
 const router = express.Router();
-const db = require("../models/index.js")
+const db = require("../models/index.js");
 const Roles = require("../controllers/roles.controller.js");
 
+/* 
+ * @param name
+ * @param desc
+ */
+router.get('/', async function(req, res, next) {
+	const roles = await db.role.findAll();
+	res.send({
+		code: 200,
+		data: roles,
+		msg: `操作成功`,
+	});
+});
 /* 
  * @param name
  * @param desc

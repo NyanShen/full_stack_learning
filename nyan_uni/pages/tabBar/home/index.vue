@@ -1,5 +1,13 @@
 <template>
-	<view>
+	<view class="home">
+		<view class="flex-c notify">
+			<img class="img" src="/static/images/alert.png" />
+			<view class="marquee">
+				<text class="text" :style="{left: `${left}px`, fontSize: `${size}px`}">
+					{{ text }}
+				</text>
+			</view>
+		</view>
 		<view class="iconfont iconaddress">测试</view>
 		<button class="btn btn-primary" @click="toHome">意见反馈</button>
 		<view class="form">
@@ -25,11 +33,29 @@
 				form: {
 					name: "",
 					desc: ""
-				}
+				},
+				// 跑马灯变量
+				timer: null,
+				text: "测试环境, 非测试人员请勿操作",
+				left: 0,
+				marqueeSpace: 0.8, // 每次移动长度
+				marqueeInterval: 20, // 文字移动间隔时间
+				textLen: 0, // 轮播文字的长度,
+				size: 14, // 字体大小
 			};
 		},
 		onLoad() {
 			this.testServeice();
+		},
+		onShow() {
+			this.length = this.text.length * this.size;
+			this.scorllingText();
+		},
+		onHide() {
+			clearInterval(this.timer);
+		},
+		onUnload() {
+			clearInterval(this.timer);
 		},
 		methods: {
 			toHome() {
@@ -42,8 +68,25 @@
 				}).then(res => {
 					console.log("testServeice", res)
 				})
-
 			},
+			/**
+			 * 跑马灯文字原理
+			 * 文字绝对定位, 按一定的时间和位移进行移动位置,移完后文字在轮播框的最右边开始移动
+			 */
+			scorllingText() {
+				let self = this;
+				self.timer = setInterval(() => {
+					if (-self.left < self.length) {
+						self.left = self.left - self.marqueeSpace;
+					} else {
+						clearInterval(self.timer);
+						let result = $uniApi.loadSystemInfoSync();
+						self.left = result.windowWidth - 40;
+						self.scorllingText();
+					}
+				}, self.marqueeInterval)
+			},
+			
 			onSubmit() {
 				let self = this;
 				$request.baseRequest({
@@ -61,6 +104,33 @@
 	}
 </script>
 
-<style lang="stylus">
+<style lang="scss" scoped>
+	.notify {
+		width: 690rpx;
+		height: 60rpx;
+		margin: 0 auto 20rpx;
+		background-color: rgba(255, 231, 206, 0.5);
+		border-radius: 30rpx;
 
+		.img {
+			width: 35rpx;
+			height: 36rpx;
+			margin: 0 20rpx 0 30rpx;
+		}
+
+		.marquee {
+			position: relative;
+			flex: 1;
+			height: 60rpx;
+			line-height: 60rpx;
+			overflow: hidden;
+
+			.text {
+				position: absolute;
+				top: 0;
+				white-space: nowrap;
+				color: #EA8B28;
+			}
+		}
+	}
 </style>

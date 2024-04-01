@@ -26,14 +26,42 @@ const routes = [
 			name: "首页",
 		},
 		children: [{
-			path: "/home",
-			name: "home",
-			component: () => import("@views/home.vue"),
-			meta: {
-				requiresAuth: true, //有一些页面是否登录才能进去
-				name: "首页",
+				path: "/home",
+				name: "home",
+				component: () => import("@views/home.vue"),
+				meta: {
+					requiresAuth: true, //有一些页面是否登录才能进去
+					name: "首页",
+				},
 			},
-		}, ],
+			{
+				path: "/role",
+				name: "role",
+				component: () => import("@views/role/index.vue"),
+				meta: {
+					requiresAuth: true, //有一些页面是否登录才能进去
+					name: "角色管理",
+				},
+			},
+			{
+				path: "/user",
+				name: "user",
+				component: () => import("@views/user/index.vue"),
+				meta: {
+					requiresAuth: true, //有一些页面是否登录才能进去
+					name: "用户管理",
+				},
+			},
+			{
+				path: "/menu",
+				name: "menu",
+				component: () => import("@views/menu/index.vue"),
+				meta: {
+					requiresAuth: true, //有一些页面是否登录才能进去
+					name: "菜单管理",
+				},
+			},
+		],
 	},
 
 ];

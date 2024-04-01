@@ -24,9 +24,9 @@ const Menu = (sequelize, Sequelize) => {
 			type: Sequelize.STRING,
 			comment: '菜单图标',
 		},
-		lever: {
+		type: {
 			type: Sequelize.INTEGER,
-			comment: '本菜单所在层级',
+			comment: '菜单类型(1: 目录, 2: 菜单, 3: 按钮)', 
 		},
 		authority: {
 			type: Sequelize.STRING,
