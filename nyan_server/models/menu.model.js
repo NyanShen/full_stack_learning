@@ -11,20 +11,20 @@ const Menu = (sequelize, Sequelize) => {
 		title: {
 			type: Sequelize.STRING,
 			comment: '菜单标题',
-			validate: {
-				isIn: {
-					args: [
-						['en', 'zh']
-					],
-					msg: "必须为英文或中文"
-				}
-			}
+			// validate: {
+			// 	isIn: {
+			// 		args: [
+			// 			['en', 'zh']
+			// 		],
+			// 		msg: "必须为英文或中文"
+			// 	}
+			// }
 		},
 		icon: {
 			type: Sequelize.STRING,
 			comment: '菜单图标',
 		},
-		type: {
+		lever: {
 			type: Sequelize.INTEGER,
 			comment: '菜单类型(1: 目录, 2: 菜单, 3: 按钮)', 
 		},

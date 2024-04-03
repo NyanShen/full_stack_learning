@@ -1,14 +1,27 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from './app.module';
 // sweager模块配置
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { join } from "path";
 
 declare const module : any;
 
 async function bootstrap() {
-	const app = await NestFactory.create(AppModule);
+	const app = await NestFactory.create<NestExpressApplication>(AppModule);
+	// 配置静态资源http://localhost:8888/static/man.png
+	app.useStaticAssets(join(__dirname, '..', 'public'), {
+		prefix: '/static/'
+	});
 	app.setGlobalPrefix('/sym');
-	app.listen(3000);
+	
+	// 模版引擎
+	app.setBaseViewsDir("views");
+	app.setViewEngine("ejs");
+	
+	app.listen(8888);
+	
+	// module hot
 	if (module.hot) {
 		module.hot.accept();
 		module.hot.dispose(() => app.close());
@@ -20,7 +33,7 @@ async function bootstrap() {
 		.setTitle('API')
 		.setDescription("project description")
 		.setVersion(process.env.npm_package_version)
-		.addServer(`http://localhost:3000/swagger`, 'Local environment')
+		.addServer(`http://localhost:8888/swagger`, 'Local environment')
 		.build();
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('swagger', app, document);

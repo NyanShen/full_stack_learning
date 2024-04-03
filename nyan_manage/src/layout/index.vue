@@ -5,20 +5,27 @@
 		</el-aside>
 		<el-container>
 			<el-header>
-				header
+				<div class="app-header-container">
+					app-header-container
+				</div>
+				<div class="flx-row main-tabs">
+					<Tabs />
+				</div>
 			</el-header>
 			<el-main>
-				<div class="flx-row main-tabs">
-					tabs
-				</div>
-
 				<div class="main-box">
 					<router-view></router-view>
 				</div>
 			</el-main>
+			<el-footer>
+				<div class="copyright">NyanShen@2024</div>
+			</el-footer>
 		</el-container>
 	</el-container>
 </template>
+<script setup>
+	import Tabs from "./tabs/index.vue"
+</script>
 <style lang="scss" scoped>
 	.el-container {
 		width: 100%;
@@ -38,12 +45,10 @@
 
 		.main-tabs {
 			width: 100%;
-			margin-bottom: 10px;
 			background-color: #fff;
 			border: 0;
 			box-shadow: none;
 			overflow: hidden;
-			height: 30px;
 		}
 
 		.el-main {
@@ -69,6 +74,11 @@
 					background-color: white;
 				}
 			}
+		}
+
+		.el-footer {
+			text-align: center;
+			font-size: 12px;
 		}
 	}
 

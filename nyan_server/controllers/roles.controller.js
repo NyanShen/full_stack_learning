@@ -69,9 +69,11 @@ exports.create = async (req, res) => {
 		msg: '创建成功'
 	})
 }
-
 /**
  * 
+ */
+/**
+ * 查询角色及下面的菜单
  */
 exports.findOne = (req, res) => {
 	const param = {

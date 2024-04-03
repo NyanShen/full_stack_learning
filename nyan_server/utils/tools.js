@@ -24,7 +24,7 @@ module.exports = {
 	 */
 	deleteNullObj: (keywords) => {
 		if (!keywords) {
-			return keywords
+			return {}
 		}
 		for (let key in keywords) {
 			if (!keywords[key]) {

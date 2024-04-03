@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Render,
   // Req,
   // BadRequestException,
 } from '@nestjs/common';
@@ -22,6 +23,12 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  
+  @Get('renderer')
+  @Render('default/index')
+  renderUser() {
+	  return { title: "hello renderer ejs."}
+  }
   @Post('create')
   @ApiOperation({ summary: '新增用户' })
   createUser(@Body() body: CreateUserDto) {
@@ -37,7 +44,7 @@ export class UserController {
 	return this.userService.create(body)
   }
 
-  @Get()
+  @Get('list')
   @ApiOperation({ summary: '查询用户列表' })
   findAll() {
     return this.userService.findAll();

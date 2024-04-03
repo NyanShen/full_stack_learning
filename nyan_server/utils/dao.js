@@ -78,20 +78,61 @@ module.exports = {
 	 * @param  {Function} cb          回调函数
 	 */
 	create: (model, param, cb) => {
+		if (!model) return cb(resExtra('', 605, '模型不存在'));
 		model
 			.create(param)
 			.then(data => {
 				cb(resExtra(data, 200, '创建成功！'))
 			})
 			.catch(err => {
-				console.log(err)
 				cb(resExtra(err, 605, '创建失败!'))
+			})
+	},
+	/**
+	 * 更新数据
+	 * @param  {Object}   model       模型实例
+	 * @param  {Object}   param       数据集合
+	 * @param  {Object}   key  = { id: req.body.id } 查询条件
+	 * @param  {Function} cb          回调函数
+	 */
+	update: (model, param, key, cb) => {
+		if (!model) return cb(resExtra('', 605, '模型不存在'));
+		model
+			.update(param, {
+				where: key
+			})
+			.then(data => {
+				if (data[0]) {
+					cb(resExtra(data[0], 200, '更新成功！'))
+				} else {
+					cb(resExtra('', 605, 'ID不存在！'))
+				}
+			})
+			.catch(err => {
+				cb(resExtra('', 605, '更新失败!'))
+			})
+	},
+	/**
+	 * 根据查询条件查询
+	 * 模糊查询, 范围查询....
+	 */
+	list: (model, key, cb) => {
+		if (!model) return cb(resExtra('', 605, '模型不存在'));
+		model
+			.findAll({
+				where: key
+			})
+			.then(data => {
+				cb(resExtra(data));
+			})
+			.catch(err => {
+				cb(resExtra('', 605, '更新失败!'))
 			})
 	},
 	/**
 	 * 查询列表数据分页
 	 */
-	list: (model, conditions, cb) => {
+	listByPage: (model, conditions, cb) => {
 		/*查询条件格式
 		conditions = {
 			params: {
@@ -105,25 +146,24 @@ module.exports = {
 			}
 		}*/
 		if (!model) return cb(resExtra('', 605, '模型不存在'));
-		model.findAndCountAll(conditionHandler(conditions, "count"))
+		model
+			.findAndCountAll(conditionHandler(conditions, "count"))
 			.then(countAll => {
-				model.findAll(conditionHandler(conditions))
+				model
+					.findAll(conditionHandler(conditions))
 					.then(data => {
 						cb(resExtra({
-							data,
+							list: data,
 							count: countAll.count,
 							current: conditions.offset || 1,
 							limit: conditions.limit || 10
 						}))
 					})
 					.catch(err => {
-						logger.error(JSON.stringify(err))
 						cb(resExtra(err, 605, '查询失败'))
 					})
 			})
 			.catch(err => {
-				console.log(err)
-				logger.error(JSON.stringify(err))
 				cb(resExtra(err, 605, '查询失败'))
 			})
 
@@ -137,14 +177,37 @@ module.exports = {
 		    }
 		 }*/
 		if (!conditions.params.name) return cb(resExtra('', 605, '查询条件为空！'));
-		model.findOne(conditionHandler(conditions))
+		model
+			.findOne(conditionHandler(conditions))
 			.then(data => {
 				cb(resExtra(data))
 			})
 			.catch(err => {
-				logger.error(JSON.stringify(err))
 				cb(resExtra(err, 605, '查询失败'))
 			})
-	}
+	},
+	/**
+	 * 删除某条数据
+	 * @param  {Object}   model       模型实例
+	 * @param  {Object}   key         删除条件{ id: body.id }
+	 * @param  {Function} cb          回调函数
+	 */
+	delete: (model, key, cb) => {
+		if (!model) return cb(resExtra('', 605, '模型不存在'));
+		model
+			.destroy({
+				where: key
+			})
+			.then(data => {
+				if (data) {
+					cb(resExtra(data, 200, '删除成功！'))
+				} else {
+					cb(resExtra('', 605, 'ID不存在！'))
+				}
+			})
+			.catch(err => {
+				cb(resExtra('', 605, '删除失败!'))
+			})
+	},
 
 }
