@@ -6,6 +6,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 // module业务模块引入
 import { UserModule } from "./user/user.module";
+// 控制器
+import { UploadController } from "./upload/upload.controller";
+
 // middleware中间件
 import { LoggerMiddleware } from "./common/middleware/logger.middleware";
 // 加载配置文件
@@ -16,7 +19,7 @@ import { ConfigModule } from '@nestjs/config';
 		// The code will load and parse a .env file from the default location
 		ConfigModule.forRoot({
 			envFilePath: ".env.development"
-		}), 
+		}),
 		// TypeOrmModule模块, 连接数据库
 		TypeOrmModule.forRoot({
 			type: 'mysql',
@@ -34,7 +37,7 @@ import { ConfigModule } from '@nestjs/config';
 		// 业务模块
 		UserModule
 	],
-	controllers: [AppController],
+	controllers: [AppController, UploadController],
 	providers: [AppService],
 })
 // export class AppModule {}

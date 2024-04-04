@@ -1,9 +1,12 @@
+import { join } from "path";
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from "@nestjs/platform-express";
-import { AppModule } from './app.module';
 // sweager模块配置
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { join } from "path";
+// 配置cookie-parser
+import * as CookieParser from "cookie-parser";
+// app module
+import { AppModule } from './app.module';
 
 declare const module : any;
 
@@ -13,14 +16,15 @@ async function bootstrap() {
 	app.useStaticAssets(join(__dirname, '..', 'public'), {
 		prefix: '/static/'
 	});
+	// api前缀
 	app.setGlobalPrefix('/sym');
-	
 	// 模版引擎
 	app.setBaseViewsDir("views");
 	app.setViewEngine("ejs");
-	
+	// cookie-parser
+	app.use(CookieParser());
+	// app监听端口
 	app.listen(8888);
-	
 	// module hot
 	if (module.hot) {
 		module.hot.accept();
