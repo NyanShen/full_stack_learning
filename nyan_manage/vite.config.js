@@ -24,5 +24,16 @@ export default defineConfig({
 				additionalData: `@import "@styles/variables.scss";` // 这里可以指定全局样式文件
 			}
 		}
+	},
+	server: {
+		// ...其他服务器配置...
+		proxy: {
+			'/sym': {
+				target: 'http://localhost:8888', // 目标服务器地址 => http://localhost:8888/sym
+				changeOrigin: true, // 改变源到目标服务器
+				// 其他可选配置...
+			}
+		}
 	}
+
 })

@@ -33,8 +33,12 @@ export class UserService {
     return data;
   }
 
-  findOne(id: number) {
+  findById( id: number) {
     return this.user.findOne({ where: { id: id } ,select:['id','username']});
+  }
+
+  findOne(username: string) {
+    return this.user.findOne({ where: { username: username }});
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

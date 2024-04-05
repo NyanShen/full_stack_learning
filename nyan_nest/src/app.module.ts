@@ -1,4 +1,6 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+// 加载配置文件
+import { ConfigModule } from '@nestjs/config';
 // 数据模型
 import { TypeOrmModule } from '@nestjs/typeorm';
 // App模块
@@ -10,9 +12,8 @@ import { UserModule } from "./user/user.module";
 import { UploadController } from "./upload/upload.controller";
 
 // middleware中间件
-import { LoggerMiddleware } from "./common/middleware/logger.middleware";
-// 加载配置文件
-import { ConfigModule } from '@nestjs/config';
+import { LoggerMiddleware } from "./common/middlewares/logger.middleware";
+import { AuthModule } from './auth/auth.module';
 
 @Module({
 	imports: [
@@ -35,7 +36,8 @@ import { ConfigModule } from '@nestjs/config';
 			entities: [__dirname + '/**/*.entity{.ts,.js}'], //实体文件
 		}),
 		// 业务模块
-		UserModule
+		UserModule,
+		AuthModule
 	],
 	controllers: [AppController, UploadController],
 	providers: [AppService],
@@ -45,6 +47,6 @@ export class AppModule implements NestModule {
 	configure(consumer : MiddlewareConsumer) {
 		consumer
 			.apply(LoggerMiddleware)
-			.forRoutes('hello');
+			.forRoutes('user');
 	}
 }

@@ -23,9 +23,8 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  
   @Get('renderer')
-  @Render('default/index')
+  @Render('default/user')
   renderUser() {
 	  return { title: "hello renderer ejs."}
   }
@@ -50,10 +49,10 @@ export class UserController {
     return this.userService.findAll();
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: '根据id查询用户' })
-  findOne(@Param('id') id: number) {
-    return this.userService.findOne(id);
+  @Get(':username')
+  @ApiOperation({ summary: '根据用户名查询用户' })
+  findOne(@Param('username') username: string) {
+    return this.userService.findOne(username);
   }
 
   @Patch(':id')

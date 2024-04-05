@@ -1,6 +1,7 @@
 import { Get, Controller, Post, Render, UseInterceptors, UploadedFile, UploadedFiles } from "@nestjs/common";
 import { FileInterceptor, FilesInterceptor } from "@nestjs/platform-express";
 import { ApiBody, ApiConsumes } from "@nestjs/swagger";
+import { Express } from 'express'
 import { UploadFileDto } from "./dto/upload.file.dto";
 import { createWriteStream } from "fs";
 import { join } from "path";
@@ -12,6 +13,9 @@ export class UploadController {
 	index() {
 
 	}
+	/**
+	 * 上传单文件
+	 */
 	@Post()
 	@UseInterceptors(FileInterceptor('file')) // file是传过来的字端名字
 	@ApiConsumes('multipart/form-data')
@@ -19,7 +23,7 @@ export class UploadController {
 		description: "desc",
 		type: UploadFileDto
 	})
-	uploadFile(@UploadedFile() file : any) {
+	uploadFile(@UploadedFile() file : Express.Multer.File) {
 		console.log("upload file>>>>", file)
 		let writeScream = createWriteStream(join(__dirname, '..', 'public/upload', `${Date.now()}_${file.originalname}`))
 		writeScream.write(file.buffer)
@@ -31,7 +35,10 @@ export class UploadController {
 	indexMulti() {
 	
 	}
-	@Post()
+	/**
+	 * 上传多文件
+	 */
+	@Post('multi')
 	@UseInterceptors(FilesInterceptor('files')) // file是传过来的字端名字
 	@ApiConsumes('multipart/form-data')
 	@ApiBody({

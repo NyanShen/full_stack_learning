@@ -4,7 +4,7 @@ import {
 } from 'vue-router';
 import Layout from "../layout/index.vue"; // 全局布局
 import Hello from "@views/hello.vue";
-import Login from "@views/login.vue";
+import Login from "@views/login/index.vue";
 
 const routes = [
 	// Define your routes here

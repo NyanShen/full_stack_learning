@@ -1,4 +1,15 @@
 import $http from "../index";
+
+/**
+ * 登录用户信息
+ */
+export const signin = (data) => {
+	return $http({
+		url: "/auth/signin",
+		method: "POST",
+		data
+	})
+}
 /**
  * 获取用户信息
  */
@@ -9,7 +20,6 @@ export const fetchUsers = () => {
 		data: {}
 	})
 }
-
 /**
  * 创建用户
  */
@@ -20,6 +30,10 @@ export const createUser = (data) => {
 		data
 	})
 }
+/**
+ * 获取菜单
+ * @returns 
+ */
 export const fetchMenus = () => {
 	return $http({
 		url: "/menus",
