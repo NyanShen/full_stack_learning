@@ -28,6 +28,11 @@ export class UserController {
   renderUser() {
 	  return { title: "hello renderer ejs."}
   }
+  /**
+   * 创建新用户
+   * @param body 
+   * @returns 
+   */
   @Post('create')
   @ApiOperation({ summary: '新增用户' })
   createUser(@Body() body: CreateUserDto) {

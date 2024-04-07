@@ -133,7 +133,7 @@
 		}]
 	})
 	const queryForm = ref(null)
-	const initMenu = {
+	const initForm = {
 		pid: 0,
 		title: "",
 		path: "",
@@ -147,7 +147,7 @@
 	// do not use same name with ref
 	const state = reactive({
 		form: {
-			...initMenu
+			...initForm
 		},
 		queryParams: {
 			...initQuery
@@ -175,7 +175,7 @@
 						type: 'success',
 					});
 					state.form = {
-						...initMenu
+						...initForm
 					};
 					loadMenuList();
 					state.dialogVisible = false;
@@ -196,7 +196,7 @@
 	}
 	const handlePlus = (row) => {
 		state.form = {
-			...initMenu
+			...initForm
 		}
 		if (row) {
 			state.form.pid = row.id;

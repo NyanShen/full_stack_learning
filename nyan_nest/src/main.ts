@@ -17,7 +17,7 @@ async function bootstrap() {
 		prefix: '/static/'
 	});
 	// api前缀
-	app.setGlobalPrefix('/sym');
+	app.setGlobalPrefix('/api');
 	// 模版引擎
 	app.setBaseViewsDir("views");
 	app.setViewEngine("ejs");

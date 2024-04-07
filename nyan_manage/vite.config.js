@@ -28,8 +28,8 @@ export default defineConfig({
 	server: {
 		// ...其他服务器配置...
 		proxy: {
-			'/sym': {
-				target: 'http://localhost:8888', // 目标服务器地址 => http://localhost:8888/sym
+			'/api': {
+				target: 'http://localhost:8888', // 目标服务器地址 => http://localhost:8888/api
 				changeOrigin: true, // 改变源到目标服务器
 				// 其他可选配置...
 			}

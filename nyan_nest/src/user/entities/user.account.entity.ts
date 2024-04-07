@@ -1,7 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, BaseEntity, OneToOne, JoinColumn } from 'typeorm';
+
+import { UserProfile } from "./user.profile.entity";
 
 @Entity()
-export class User extends BaseEntity {
+export class UserAccount extends BaseEntity {
 	//自增列
 	@PrimaryGeneratedColumn()
 	id : number;
@@ -19,4 +21,8 @@ export class User extends BaseEntity {
 	@Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
 	update_time : Date;
 
+	// one to one
+	@OneToOne(() => UserProfile,  userProfile => userProfile.userAccount)
+	@JoinColumn()
+	userProfile: UserProfile
 }
