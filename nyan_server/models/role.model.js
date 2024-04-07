@@ -17,7 +17,7 @@ const Role = (sequelize, Sequelize) => {
 			comment: "角色描述"
 		}
 	}, {
-		tableName: "role"
+		tableName: "roles"
 	});
 }
 module.exports = Role;

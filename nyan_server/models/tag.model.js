@@ -1,6 +1,6 @@
 //标签
 module.exports = (sequelize, Sequelize) => {
-	return sequelize.define("Tags", {
+	return sequelize.define("Tag", {
 		id: {
 			type: Sequelize.UUID,
 			notNull: true,
@@ -18,6 +18,6 @@ module.exports = (sequelize, Sequelize) => {
 			comment: '标签描述',
 		},
 	}, {
-		tableName: 'tag'
+		tableName: 'tags'
 	});
 };

@@ -33,7 +33,7 @@ const Menu = (sequelize, Sequelize) => {
 			comment: '操作标识',
 		},
 	}, {
-		tableName: "menu"
+		tableName: "menus"
 	});
 }
 module.exports = Menu;

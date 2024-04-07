@@ -1,8 +1,6 @@
 //模型创建 https://www.sequelize.com.cn/core-concepts/model-basics#%E5%AD%97%E7%AC%A6%E4%B8%B2
-const db = require('./index')
-const tag = db.tags
 module.exports = (sequelize, Sequelize) => {
-    return sequelize.define("Articles", {
+    return sequelize.define("Article", {
         id: {
             type: Sequelize.UUID,
             notNull: true,
@@ -81,6 +79,6 @@ module.exports = (sequelize, Sequelize) => {
             comment: 'md',
         },
     }, {
-		tableName: "article"
+		tableName: "articles"
 	});
 };

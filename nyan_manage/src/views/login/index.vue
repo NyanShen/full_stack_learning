@@ -71,11 +71,12 @@
   </div>
 </template>
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 import { User, Lock, CircleClose, UserFilled } from "@element-plus/icons-vue";
+import Cookies from "js-cookie";
 import { Base64 } from "js-base64";
-import { useRouter } from 'vue-router'
+import { useRouter } from "vue-router";
 import { signin } from "@api/modules/user";
 
 const router = useRouter();
@@ -107,19 +108,20 @@ const login = (formEl) => {
     if (valid) {
       loading.value = true;
       signin(loginForm.value).then((res) => {
-        console.log("signin result>>>>", res);
         ElMessage({
           message: "登录成功",
           type: "success",
         });
-        router.replace('/home');
+        router.replace("/home");
         loading.value = false;
       });
       if (loginForm.value.checked) {
         let password = Base64.encode(loginForm.value.password); // base64加密
-        setCookie(loginForm.value.username, password, 7);
+        Cookies.set("username", loginForm.value.username, { expires: 30 });
+        Cookies.set("password", password, { expires: 30 });
       } else {
-        setCookie("", "", -1);
+        Cookies.remove("username");
+        Cookies.remove("password");
       }
     } else {
       console.log("error submit!");
@@ -128,31 +130,16 @@ const login = (formEl) => {
   });
 };
 
-const setCookie = (userId, password, days) => {
-  let date = new Date(); // 获取时间
-  date.setTime(date.getTime() + 24 * 60 * 60 * 1000 * days); // 保存的天数
-  // 字符串拼接cookie
-  window.document.cookie =
-    "userId" + "=" + userId + ";path=/;expires=" + date.toGMTString();
-  window.document.cookie =
-    "password" + "=" + password + ";path=/;expires=" + date.toGMTString();
-};
-
 // 读取cookie 将用户名和密码回显到input框中
 const getCookie = () => {
-  if (document.cookie.length > 0) {
-    let arr = document.cookie.split("; "); //分割成一个个独立的“key=value”的形式
-    for (let i = 0; i < arr.length; i++) {
-      let arr2 = arr[i].split("="); // 再次切割，arr2[0]为key值，arr2[1]为对应的value
-      if (arr2[0] === "userId") {
-        loginForm.username = arr2[1];
-      } else if (arr2[0] === "password") {
-        loginForm.password = Base64.decode(arr2[1]); // base64解密
-        loginForm.checked = true;
-      }
-    }
-  }
+  let username = Cookies.get('username');
+  let password = Base64.decode(Cookies.get('password'));
+  loginForm.value.username = username;
+  loginForm.value.password = password;
 };
+onMounted(() => {
+  getCookie();
+})
 </script>
 
 <style lang="scss" scoped>

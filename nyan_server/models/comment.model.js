@@ -1,12 +1,11 @@
 //模型创建 https://www.sequelize.com.cn/core-concepts/model-basics#%E5%AD%97%E7%AC%A6%E4%B8%B2
-const db = require('./index')
 /**
  * @author nyan
  * @date 2024/03/31 08:09
  * @dec:评论模型
  */
 module.exports = (sequelize, Sequelize) => {
-	return sequelize.define("Comments", {
+	return sequelize.define("Comment", {
 		id: {
 			type: Sequelize.UUID,
 			notNull: true,
@@ -72,6 +71,6 @@ module.exports = (sequelize, Sequelize) => {
 			comment: '回复评论内容',
 		}
 	}, {
-		tableName: 'comment'
+		tableName: 'comments'
 	});
 };

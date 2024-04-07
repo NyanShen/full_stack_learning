@@ -2,7 +2,7 @@
 
 //标签
 module.exports = (sequelize, Sequelize) => {
-	return sequelize.define("ArticleTags", {
+	return sequelize.define("ArticleTag", {
 		id: {
 			type: Sequelize.UUID,
 			notNull: true,
@@ -21,6 +21,6 @@ module.exports = (sequelize, Sequelize) => {
 			allowNull: false,
 		},
 	}, {
-		tableName: 'article_tag'
+		tableName: 'articles_tags'
 	});
 };

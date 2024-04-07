@@ -1,6 +1,7 @@
 const express = require("express");
 const multer = require("multer"); // 文件上传服务
 const db = require("../models/index.js");
+const imageModel = db.image;
 
 const router = express.Router();
 
@@ -38,7 +39,7 @@ router.post('/upload/image', upload.single('image'), (req, res) => {
 	const imageUrl = req.file.path;
 	const filePath = `http://localhost:3000/images/${req.file.filename}`
 
-	db.image.create({
+	imageModel.create({
 		name: "测试",
 		path: filePath
 	}).then(image => {

@@ -1,5 +1,5 @@
-const Tests = (sequelize, Sequelize) => {
-	return Sequelize.define({
+module.exports = (sequelize, Sequelize) => {
+	return Sequelize.define('Test',{
 		id: {
 			type: Sequelize.INTEGER,
 			autoIncrement: true,
