@@ -1,6 +1,12 @@
 
 const bcrypt = require('bcryptjs');
-
+/**
+ * @name 用户model
+ * @author NyanShen
+ * @param {*} sequelize 
+ * @param {*} Sequelize 
+ * @returns 
+ */
 module.exports = (sequelize, Sequelize) => {
     return sequelize.define("User", {
         id: {
@@ -13,6 +19,7 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING(12),
             notNull: true,
             notEmpty: true,
+            unique: true,
             comment: '账号',
             defaultValue: "",
         },
@@ -26,10 +33,9 @@ module.exports = (sequelize, Sequelize) => {
                 this.setDataValue('password', bcrypt.hashSync(value, 10));
             }
         },
-        identify: {
-            type: Sequelize.STRING,
-            comment: '身份',
-            defaultValue: '',
+        roleId: {
+            type: Sequelize.INTEGER(10),
+            comment: '关联角色ID',
         },
         department: {
             type: Sequelize.STRING,

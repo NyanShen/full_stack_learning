@@ -12,13 +12,16 @@ const userModel = db.user;
 exports.singin = async (req, res) => {
     const loginInfo = req.body;
     const singleUser = await userModel.findOne({ where: { account: loginInfo.account } })
-    console.log("singin>>>", singleUser)
     if (!singleUser?.id) {
         res.sendResult("账户不存在", 605);
         return
     }
+    if(singleUser.state === 0) {
+        res.sendResult("该账户暂未激活, 请联系管理员激活", 403);
+        return
+    }
     if (!bcrypt.compareSync(loginInfo.password, singleUser.password)) {
-        res.sendResult("密码错误, 登录失败", 605);
+        res.sendResult("密码错误, 登录失败");
         return
     }
     let { password, create_time, update_time, ...others } = singleUser;

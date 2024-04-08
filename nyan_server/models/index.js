@@ -39,6 +39,7 @@ db.testConnection = testConnection; //测试
 // 角色菜单
 db.role = require("./role.model.js")(sequelize, Sequelize);
 db.menu = require("./menu.model.js")(sequelize, Sequelize);
+db.rolemenu = require("./role_menu.model.js")(sequelize, Sequelize);
 // 上传图片
 db.image = require("./image.model.js")(sequelize, Sequelize);
 

@@ -5,12 +5,12 @@ const cookieParser = require('cookie-parser'); // cookie
 const logger = require('morgan'); // 日志模块
 const cors = require("cors"); // 解决跨域
 
-// 路由模块
+// 路由模块module.exports
 const indexController = require('./controllers/index.controller');
 const authController = require('./controllers/auth.controller');
 const userController = require('./controllers/user.controller');
-// const rolesController = require('./controllers/role.controller');
-// const menusController = require('./controllers/menu.controller');
+const roleController = require('./controllers/role.controller');
+const menuController = require('./controllers/menu.controller');
 // const filesController = require('./controllers/file.controller');
 
 const app = express();
@@ -37,7 +37,7 @@ app.use(
 		secret: jwtSecretKey,
 		algorithms: ['HS256'], //加密算法
 	}).unless({
-		path: [/^\/gateway\//, /^\/api\//], //不需要token的路径, api开头的不需要token
+		path: [/^\/gateway\//, /^\/uni\//], //不需要token的路径, api开头的不需要token
 	}))
 
 // sequalize同步
@@ -72,8 +72,8 @@ app.use(function (req, res, next) {
 app.use('/gateway', indexController);
 app.use('/gateway', authController);
 app.use('/api/users', userController);
-// app.use('/api/roles', rolesController);
-// app.use('/api/menus', menusController);
+app.use('/api/roles', roleController);
+app.use('/api/menus', menuController);
 // app.use('/api/file', filesController);
 
 // catch 404 and forward to error handler
@@ -83,7 +83,6 @@ app.use(function (req, res, next) {
 
 // joi 官方文档 `https://joi.dev/api/?v=17.12.3`
 const Joi = require('joi');
- 
 // 定义错误处理中间件--对joi数据校验失败(注意:需要放在最后面写, 否则err获取不到)
 app.use(function (err, req, res, next) {
 	if (err instanceof Joi.ValidationError) {

@@ -1,15 +1,22 @@
-
+/**
+ * @name 角色model
+ * @author NyanShen
+ * @param {*} sequelize 
+ * @param {*} Sequelize 
+ * @returns RoleModel
+ */
 const Role = (sequelize, Sequelize) => {
 	return sequelize.define("Role", {
 		id: {
-			type: Sequelize.UUID,
-			allowNull: false,
-			primaryKey: true,
-			defaultValue: Sequelize.UUIDV4 // 或 DataTypes.UUIDV1
+			type: Sequelize.INTEGER(10),
+            autoIncrement: true,
+			notNull: true,
+			primaryKey: true
 		},
 		name: {
 			type: Sequelize.STRING,
-			allowNull: false,
+			notNull: true,
+			unique: true,
 			comment: "角色名称"
 		},
 		desc: {
