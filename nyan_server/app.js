@@ -7,7 +7,8 @@ const cors = require("cors"); // 解决跨域
 
 // 路由模块
 const indexController = require('./controllers/index.controller');
-const usersController = require('./controllers/user.controller');
+const authController = require('./controllers/auth.controller');
+const userController = require('./controllers/user.controller');
 // const rolesController = require('./controllers/role.controller');
 // const menusController = require('./controllers/menu.controller');
 // const filesController = require('./controllers/file.controller');
@@ -31,13 +32,12 @@ app.use(cookieParser());
 // jwt token配置
 const { jwtSecretKey } = require('./config/jwt.config.js');
 const { expressjwt: jwt } = require("express-jwt");
-
 app.use(
 	jwt({
 		secret: jwtSecretKey,
 		algorithms: ['HS256'], //加密算法
 	}).unless({
-		path: [/^\/api\//], //不需要token的路径, api开头的不需要token
+		path: [/^\/gateway\//, /^\/api\//], //不需要token的路径, api开头的不需要token
 	}))
 
 // sequalize同步
@@ -47,7 +47,7 @@ db.sequelize.sync(); // 数据库没有表则创建
 // 解决跨域
 app.use(cors())
 // 设置跨域和相应数据格式
-app.all('/api/*', function (req, res, next) {
+app.all('/*', function (req, res, next) {
 	res.header("Access-Control-Allow-Origin", "*"); // 允许任何源
 	res.header("Access-Control-Allow-Headers",
 		"Origin, X-Requested-With, Content-Type, Accept, Authorization, X-CSRF-Token");
@@ -57,11 +57,11 @@ app.all('/api/*', function (req, res, next) {
 // error handler
 app.use(function (req, res, next) {
 	// status 0 正常, -1错误
-	res.sendError = (err, status = -1) => {
+	res.sendResult = (err, status = -1, data = null) => {
 		res.send({
 			code: status,
 			msg: err instanceof Error ? err.message : err,
-			data: null
+			data
 		})
 	};
 	next()
@@ -69,8 +69,9 @@ app.use(function (req, res, next) {
 
 
 // 路由配置
-app.use('/api', indexController);
-app.use('/api/users', usersController);
+app.use('/gateway', indexController);
+app.use('/gateway', authController);
+app.use('/api/users', userController);
 // app.use('/api/roles', rolesController);
 // app.use('/api/menus', menusController);
 // app.use('/api/file', filesController);
@@ -80,16 +81,22 @@ app.use(function (req, res, next) {
 	next(createError(404));
 });
 
+// joi 官方文档 `https://joi.dev/api/?v=17.12.3`
 const Joi = require('joi');
+ 
 // 定义错误处理中间件--对joi数据校验失败(注意:需要放在最后面写, 否则err获取不到)
 app.use(function (err, req, res, next) {
 	if (err instanceof Joi.ValidationError) {
-		return res.sendError(err)
+		return res.sendResult(err)
+	}
+	if (err.name === 'UnauthorizedError') {
+		next(createError(401));
+		return 
 	}
 	next()
 });
 
 app.listen(8888, function() {
-	console.log("app listen 8888 start");
+	console.log("服务运行http://localhost:8888/api");
 })
 module.exports = app;

@@ -4,7 +4,7 @@ const userService = require("../services/user.service.js");
 
 // 数据校验
 const expressJoi = require('@escook/express-joi');
-const { user_limit } = require('../validations/user');
+const { user_limit } = require('../schema/user.js');
 /**
  * 创建用户
  * @route POST /api/users/create

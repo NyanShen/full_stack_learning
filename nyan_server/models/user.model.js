@@ -38,7 +38,7 @@ module.exports = (sequelize, Sequelize) => {
         },
         name: {
             type: Sequelize.STRING,
-            comment: '身份',
+            comment: '姓名',
             defaultValue: '',
         },
         sex: {
