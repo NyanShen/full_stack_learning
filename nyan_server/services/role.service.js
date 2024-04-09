@@ -1,6 +1,6 @@
 const db = require("../models/index");
 const DAO = require("../utils/dao.js");
-
+const UserModel = db.user;
 const RoleModel = db.role;
 const MenuModel = db.menu;
 const RoleMenuModel = db.rolemenu;
@@ -38,9 +38,21 @@ exports.create = async (req, res) => {
  * @param {*} req 
  * @param {*} res 
  * @returns 0
+ * 删除角色判断角色是否关联用户
+ * 如果已关联用户提示不可删除, 解除关联在删除
  */
 exports.delete = async (req, res) => {
-    let key = { id: req.params.id }
+    let users = await UserModel.findAll({ where: { roleId: req.params.id } })
+    if (users?.length > 0) {
+        res.sendResult("该角色已关联用户, 请解除关联再进行删除");
+        return
+    }
+    let singleRole = await RoleModel.findByPk(req.params.id);
+    if (!singleRole) {
+        res.sendResult("不存在该角色", 605);
+        return;
+    }
+    let key = { id: req.params.id };
     DAO.delete(RoleModel, key, data => res.send(data));
 }
 

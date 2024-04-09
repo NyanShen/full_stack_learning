@@ -24,12 +24,12 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 // 将所需图标加入库中
 library.add(fas)
 
-const app = createApp(App)
 const pinia = createPinia()
+const app = createApp(App)
 
 app.use(pinia)
-app.use(ElementPlus)
 app.use(router)
+app.use(ElementPlus)
 // 注册FontAwesomeIcon组件
 app.component('font-awesome-icon', FontAwesomeIcon)
 

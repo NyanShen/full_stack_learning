@@ -11,6 +11,7 @@ export default defineConfig({
 		alias: {
 			'@': path.resolve(__dirname, './src'), // 将'@'设置为项目src目录的别名
 			'@api': path.resolve(__dirname, './src/api'), // 为组件目录设置别名
+			'@store': path.resolve(__dirname, './src/store'), // 为组件目录设置别名
 			'@common': path.resolve(__dirname, './src/common'), // 为组件目录设置别名
 			'@views': path.resolve(__dirname, './src/views'), // 为组件目录设置别名
 			'@components': path.resolve(__dirname, './src/components'), // 为组件目录设置别名

@@ -11,7 +11,7 @@ const authController = require('./controllers/auth.controller');
 const userController = require('./controllers/user.controller');
 const roleController = require('./controllers/role.controller');
 const menuController = require('./controllers/menu.controller');
-// const filesController = require('./controllers/file.controller');
+const fileController = require('./controllers/file.controller');
 
 const app = express();
 
@@ -37,7 +37,7 @@ app.use(
 		secret: jwtSecretKey,
 		algorithms: ['HS256'], //加密算法
 	}).unless({
-		path: [/^\/gateway\//, /^\/uni\//], //不需要token的路径, api开头的不需要token
+		path: [/^\/api\/auth\//, /^\/api\/uni\//], //不需要token的路径, api开头的不需要token
 	}))
 
 // sequalize同步
@@ -47,7 +47,7 @@ db.sequelize.sync(); // 数据库没有表则创建
 // 解决跨域
 app.use(cors())
 // 设置跨域和相应数据格式
-app.all('/*', function (req, res, next) {
+app.all('/api/*', function (req, res, next) {
 	res.header("Access-Control-Allow-Origin", "*"); // 允许任何源
 	res.header("Access-Control-Allow-Headers",
 		"Origin, X-Requested-With, Content-Type, Accept, Authorization, X-CSRF-Token");
@@ -69,12 +69,12 @@ app.use(function (req, res, next) {
 
 
 // 路由配置
-app.use('/gateway', indexController);
-app.use('/gateway', authController);
+app.use('/api/auth', indexController);
+app.use('/api/auth', authController);
 app.use('/api/users', userController);
 app.use('/api/roles', roleController);
 app.use('/api/menus', menuController);
-// app.use('/api/file', filesController);
+app.use('/api/file', fileController);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

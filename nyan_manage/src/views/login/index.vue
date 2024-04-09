@@ -17,10 +17,10 @@
           :rules="loginFormRules"
           size="large"
         >
-          <el-form-item prop="username">
+          <el-form-item prop="account">
             <el-input
               :prefix-icon="User"
-              v-model="loginForm.username"
+              v-model="loginForm.account"
               placeholder="用户名"
             >
             </el-input>
@@ -78,18 +78,20 @@ import Cookies from "js-cookie";
 import { Base64 } from "js-base64";
 import { useRouter } from "vue-router";
 import { signin } from "@api/modules/user";
+import { useUserStore } from "@store/userStore";
 
 const router = useRouter();
+const userStore = useUserStore();
 
 const loading = ref(false);
 const loginForm = ref({
-  username: "Nyan",
+  account: "Nyan",
   password: "passw0rD",
   checked: true,
 });
 const loginFormRef = ref(null);
 const loginFormRules = ref({
-  username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+  account: [{ required: true, message: "请输入用户名", trigger: "blur" }],
   password: [{ required: true, message: "请输入密码", trigger: "blur" }],
 });
 /**
@@ -108,19 +110,27 @@ const login = (formEl) => {
     if (valid) {
       loading.value = true;
       signin(loginForm.value).then((res) => {
+        loading.value = false;
+        if (res.data.code !== 0) {
+          ElMessage({
+            message: res.data.msg,
+            type: "error",
+          });
+          return;
+        }
         ElMessage({
           message: "登录成功",
           type: "success",
         });
+        localStorage.setItem('token', res.data.data.token);
         router.replace("/home");
-        loading.value = false;
       });
       if (loginForm.value.checked) {
         let password = Base64.encode(loginForm.value.password); // base64加密
-        Cookies.set("username", loginForm.value.username, { expires: 30 });
+        Cookies.set("account", loginForm.value.account, { expires: 30 });
         Cookies.set("password", password, { expires: 30 });
       } else {
-        Cookies.remove("username");
+        Cookies.remove("account");
         Cookies.remove("password");
       }
     } else {
@@ -132,14 +142,14 @@ const login = (formEl) => {
 
 // 读取cookie 将用户名和密码回显到input框中
 const getCookie = () => {
-  let username = Cookies.get('username');
-  let password = Base64.decode(Cookies.get('password'));
-  loginForm.value.username = username;
+  let account = Cookies.get("account");
+  let password = Base64.decode(Cookies.get("password"));
+  loginForm.value.account = account;
   loginForm.value.password = password;
 };
 onMounted(() => {
   getCookie();
-})
+});
 </script>
 
 <style lang="scss" scoped>

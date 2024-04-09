@@ -12,7 +12,7 @@
 			</el-form-item>
 			<el-form-item label="关联角色" prop="roleId">
 				<el-select v-model="form.roleId" placeholder="关联角色">
-					<el-option :label="item.desc" :value="item.id"  v-for="(item, index) in roleList" :key="item.id"/>
+					<el-option :label="item.desc" :value="item.id"  v-for="(item) in roleList" :key="item.id"/>
 				</el-select>
 			</el-form-item>
 			<el-form-item label="状态" prop="state">
