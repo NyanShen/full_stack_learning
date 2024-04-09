@@ -15,6 +15,18 @@ const roleService = require('../services/role.service');
  * @returns {Error}  default - Unexpected error
  */
 router.post('/create', expressJoi(schemaRole.create_limit), roleService.create);
+
+/**
+ * 删除角色信息--考虑用户已关联的角色
+ * @route POST /api/roles/delete
+ * @group 菜单管理 - delete of role
+ * @param {number} id - 请输入角色ID
+ * @returns {object} 0 - menu info
+ * @returns {object} 605 - 请求失败
+ * @returns {Error}  default - Unexpected error
+ */
+router.delete("/delete/:id", roleService.delete);
+
 /**
  * 更新角色
  * @route POST /api/roles/update
@@ -25,5 +37,17 @@ router.post('/create', expressJoi(schemaRole.create_limit), roleService.create);
  * @returns {Error}  default - Unexpected error
  */
 router.patch('/update', expressJoi(schemaRole.update_limit), roleService.update);
+
+
+/**
+ * 查询用户
+ * @route GET /api/roles
+ * @group 用户管理 - list of roles
+ * @param {string} name
+ * @returns {object} 200 - An array of role info
+ * @returns {object} 605 - 请求失败
+ * @returns {Error}  default - Unexpected error
+ */
+router.get('/', roleService.search);
 
 module.exports = router

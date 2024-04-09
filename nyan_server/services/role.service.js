@@ -23,7 +23,6 @@ exports.create = async (req, res) => {
         res.sendResult("角色已存在", 605);
         return;
     }
-
     const createdRole = await RoleModel.create({ name: req.body.name, desc: req.body.desc });
     // 查询所有的菜单
     let menuIds = req.body.menuIds?.split(',');
@@ -31,9 +30,18 @@ exports.create = async (req, res) => {
         const menus = await MenuModel.findAll({ where: { id: menuIds } });
         createdRole.setMenus(menus);
     }
-
-
     res.sendResult("创建成功", 0);
+}
+/**
+ * @name 删除角色-考虑角色已被关联不能删?
+ * @author NyanShen
+ * @param {*} req 
+ * @param {*} res 
+ * @returns 0
+ */
+exports.delete = async (req, res) => {
+    let key = { id: req.params.id }
+    DAO.delete(RoleModel, key, data => res.send(data));
 }
 
 /**
@@ -52,8 +60,29 @@ exports.update = async (req, res) => {
     // 查询所有的菜单
     let menuIds = req.body.menuIds?.split(',');
     const menus = await MenuModel.findAll({ where: { id: menuIds } });
-    console.log("menuids>>>>", menuIds, menus)
     singleRole.update(req.body)
     singleRole.setMenus(menus);
     res.sendResult("修改成功", 0);
+}
+
+
+/**
+ * @name 搜索角色
+ * @author NyanShen
+ * @param {*} req 
+ * @param {*} res 
+ * @returns Role Array
+ */
+exports.search = async (req, res) => {
+    let conditions = {
+        params: {
+            name: {
+                [db.Op.like]: `%${req.query.name || ''}%`
+            }
+        },
+        attributes: {
+            exclude: ['updatedAt', 'createdAt']
+        }
+    }
+    DAO.list(RoleModel, conditions, data => res.send(data));
 }

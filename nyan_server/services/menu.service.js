@@ -3,26 +3,7 @@ const DAO = require("../utils/dao.js");
 const MenuModel = db.menu;
 
 /**
- * @name 搜索菜单
- * @author NyanShen
- * @param {*} req 
- * @param {*} res 
- * @returns Menu Array
- */
-exports.search = async (req, res) => {
-    let key = {
-		name: {
-			[db.Op.like]: `%${req.query.name}%`
-		},
-		desc: {
-			[db.Op.like]: `%${req.query.desc}%`
-		}
-	}
-    DAO.list(MenuModel, key, data => res.send(data));
-}
-
-/**
- * @name 创建菜单
+ * @name 新增菜单
  * @author NyanShen
  * @param {*} req 
  * @param {*} res 
@@ -35,4 +16,54 @@ exports.create = async (req, res) => {
         return;
     }
     DAO.create(MenuModel, req.body, data => res.send(data));
+}
+
+/**
+ * @name 删除菜单
+ * @author NyanShen
+ * @param {*} req 
+ * @param {*} res 
+ * @returns
+ */
+exports.delete = async (req, res) => {
+    let key = { id: req.params.id }
+    DAO.delete(MenuModel, key, data => res.send(data));
+}
+
+/**
+ * @name 更新菜单
+ * @author NyanShen
+ * @param {*} req 
+ * @param {*} res 
+ * @returns 
+ */
+exports.update = async (req, res) => {
+    let singleMenu = await MenuModel.findByPk(res.body.id);
+    if (!singleMenu) {
+        res.sendResult("不存在该菜单", 605);
+        return;
+    }
+    let key = { id: res.body.id };
+    DAO.update(MenuModel, req.body, key, data => res.send(data));
+}
+
+/**
+ * @name 搜索菜单
+ * @author NyanShen
+ * @param {*} req 
+ * @param {*} res 
+ * @returns Menu Array
+ */
+exports.search = async (req, res) => {
+    let conditions = {
+        params: {
+            name: {
+                [db.Op.like]: `%${req.query.name}%`
+            },
+            desc: {
+                [db.Op.like]: `%${req.query.desc}%`
+            }
+        }
+    }
+    DAO.list(MenuModel, conditions, data => res.send(data));
 }

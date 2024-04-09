@@ -2,7 +2,7 @@ const utilsTools = require("./tools");
 /**
  * 统一返回数据格式
  */
-function resExtra(data, code = 200, msg = "操作成功!") {
+function resExtra(data, code = 0, msg = "操作成功!") {
 	return {
 		data,
 		code,
@@ -82,7 +82,7 @@ module.exports = {
 		model
 			.create(param)
 			.then(data => {
-				cb(resExtra(data, 200, '创建成功！'))
+				cb(resExtra(data, 0, '创建成功！'))
 			})
 			.catch(err => {
 				cb(resExtra(err, 605, '创建失败!'))
@@ -103,7 +103,7 @@ module.exports = {
 			})
 			.then(data => {
 				if (data[0]) {
-					cb(resExtra(data[0], 200, '更新成功！'))
+					cb(resExtra(data[0], 0, '更新成功！'))
 				} else {
 					cb(resExtra('', 605, 'ID不存在！'))
 				}
@@ -116,17 +116,20 @@ module.exports = {
 	 * 根据查询条件查询
 	 * 模糊查询, 范围查询....
 	 */
-	list: (model, key, cb) => {
+	list: (model, conditions, cb) => {
 		if (!model) return cb(resExtra('', 605, '模型不存在'));
+		let { params, ...others } = conditions;
+		let key = {
+			where: utilsTools.deleteNullObj(params),
+			...others
+		}
 		model
-			.findAll({
-				where: key
-			})
+			.findAll(key)
 			.then(data => {
 				cb(resExtra(data));
 			})
 			.catch(err => {
-				cb(resExtra('', 605, '更新失败!'))
+				cb(resExtra('', 605, '查询失败!'))
 			})
 	},
 	/**
@@ -172,9 +175,9 @@ module.exports = {
 		if (!model) return cb(resExtra('', 605, '模型不存在'));
 		/* 根据主键查询一条数据 参数
 		conditions:{
-		    params:{
-		    id:'123'
-		    }
+			params:{
+			id:'123'
+			}
 		 }*/
 		if (!conditions.params.name) return cb(resExtra('', 605, '查询条件为空！'));
 		model
@@ -200,7 +203,7 @@ module.exports = {
 			})
 			.then(data => {
 				if (data) {
-					cb(resExtra(data, 200, '删除成功！'))
+					cb(resExtra(data, 0, '删除成功！'))
 				} else {
 					cb(resExtra('', 605, 'ID不存在！'))
 				}
