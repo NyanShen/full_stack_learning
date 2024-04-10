@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { getToken, removeToken } from '../common/cookies';
+
 
 const http = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL, // 使用环境变量配置API URL
@@ -9,9 +11,8 @@ const http = axios.create({
 http.interceptors.request.use(
   function (config) {
     // 在发送请求之前做些什么
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = token;
+    if (getToken()) {
+      config.headers.Authorization = `Bearer ${getToken()}`;
     }
     return config;
   },
@@ -31,7 +32,7 @@ http.interceptors.response.use(
     // 超出 2xx 范围的状态码都会触发该函数。
     // 对响应错误做点什么
     if (error.response.status === 401) {
-      localStorage.removeItem('token');
+      removeToken();
       window.location.href = '/login';
     }
     return Promise.reject(error);

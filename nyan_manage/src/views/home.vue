@@ -6,10 +6,7 @@
 </template>
 
 <script setup>
-import { useUserStore } from "@store/userStore";
-import { fetchRoles } from "@api/modules/user";
+import { getLoginInfo } from "../common/cookies";
 
-const userStore = useUserStore();
-console.log("userStore>>>", userStore.userInfo)
-fetchRoles()
+console.log("getLoginInfo>>>", getLoginInfo())
 </script>

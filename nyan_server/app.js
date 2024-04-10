@@ -30,15 +30,8 @@ app.use(express.urlencoded({
 app.use(cookieParser());
 
 // jwt token配置
-const { jwtSecretKey } = require('./config/jwt.config.js');
-const { expressjwt: jwt } = require("express-jwt");
-app.use(
-	jwt({
-		secret: jwtSecretKey,
-		algorithms: ['HS256'], //加密算法
-	}).unless({
-		path: [/^\/api\/auth\//, /^\/api\/uni\//], //不需要token的路径, api开头的不需要token
-	}))
+const { jwtMiddleware } = require('./middlewares/jwt');
+app.use(jwtMiddleware)
 
 // sequalize同步
 const db = require("./models/index.js");
@@ -67,7 +60,6 @@ app.use(function (req, res, next) {
 	next()
 });
 
-
 // 路由配置
 app.use('/api/auth', indexController);
 app.use('/api/auth', authController);
@@ -90,12 +82,12 @@ app.use(function (err, req, res, next) {
 	}
 	if (err.name === 'UnauthorizedError') {
 		next(createError(401));
-		return 
+		return
 	}
 	next()
 });
 
-app.listen(8888, function() {
+app.listen(8888, function () {
 	console.log("服务运行http://localhost:8888/api");
 })
 module.exports = app;

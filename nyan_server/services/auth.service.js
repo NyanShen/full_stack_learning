@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken'); // 生产token
 const bcrypt = require('bcryptjs');
 const db = require('../models/index');
-const { jwtSecretKey } = require('../config/jwt.config');
+const { signToken } = require('../middlewares/jwt');
 
 const userModel = db.user;
 /**
@@ -16,7 +16,7 @@ exports.singin = async (req, res) => {
         res.sendResult("账户不存在", 605);
         return
     }
-    if(singleUser.state === 0) {
+    if (singleUser.state === 0) {
         res.sendResult("该账户暂未激活, 请联系管理员激活", 403);
         return
     }
@@ -24,14 +24,12 @@ exports.singin = async (req, res) => {
         res.sendResult("密码错误, 登录失败");
         return
     }
-    let { password, create_time, update_time, ...others } = singleUser;
-    // 保存others信息、令牌jwtSecretKey, 24小时有效
-    let token = jwt.sign(others, jwtSecretKey, { expiresIn: '24h'});
-    // 生成token返回前端, 携带显示的用户信息, 角色等
-    let loginData = {
-        username: singleUser.name,
-        account: singleUser.account,
-        token: `Bearer ${token}`
+    let tokenData = {
+        id: singleUser.id,
+        name: singleUser.name,
+        roleId: singleUser.roleId,
+        avatar: singleUser.avatar,
     }
-    res.sendResult("登录成功", 0, loginData)
+    // 生成token返回前端, 携带显示的用户信息, 角色等
+    res.sendResult("登录成功", 0, { token: signToken(tokenData) })
 }

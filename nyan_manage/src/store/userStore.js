@@ -1,18 +1,52 @@
 import { defineStore } from "pinia"
+import { fetchUser } from "@api/modules/user";
+import { removeToken } from "../common/cookies";
+import defaultAvatar from "@/assets/default_avatar.png"
+
 
 export const useUserStore = defineStore('user', {
     state: () => ({
-        userInfo: null, // 用户信息，如token等
-        isLoggedIn: false, // 登录状态
+        id: "", // 用户ID
+        name: "", // 用户名称
+        avatar: "", // 用户头像
+        roles: [], // 关联角色
     }),
+    getters: {
+        rolesStr: (state) => state.roles.join(','),
+        userAvatar: (state) => state.avatar || defaultAvatar
+    },
     actions: {
-        setLogin({ userInfo }) { // 登录操作，将用户信息保存到store中
-            this.userInfo = userInfo; // 保存token等信息到userInfo中
-            this.isLoggedIn = true; // 设置登录状态为true
+        setId(id) {
+            this.id = id;
         },
-        setLogout() { // 登出操作，清除用户信息并设置登录状态为false
-            this.userInfo = null;
-            this.isLoggedIn = false;
+        setName(name) {
+            this.name = name;
         },
+        setAvatar(avatar) {
+            this.avatar = avatar;
+        },
+        setRoles(roles) {
+            this.roles = roles;
+        },
+        async loadUser() {
+            try {
+                let res = await fetchUser();
+                if (res.data.code !== 0) {
+                    return Promise.reject(new Error(res.data.msg))
+                }
+                let { id, name, avatar, roleId } = res.data.data;
+                this.setId(id);
+                this.setName(name);
+                this.setAvatar(avatar);
+                this.setRoles(roleId ? [roleId] : []);
+                return res.data.data;
+            } catch (error) {
+                return Promise.reject(error)
+            }
+        },
+        logout: () => {
+            this.setRoles([]);
+            removeToken();
+        }
     },
 })

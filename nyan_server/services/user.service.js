@@ -83,3 +83,17 @@ exports.search = async (req, res) => {
 	}
 	DAO.list(UserModel, conditions, data => res.send(data));
 }
+
+/**
+ * @name 通过获取登录用户信息
+ * @author NyanShen
+ * @param {*} req 
+ * @param {*} res 
+ * @returns User Object
+ * 解析token, 获取token所存用户信息
+ */
+const { unsignToken } = require('../middlewares/jwt');
+exports.getUser = async (req, res) => {
+	let token = req.headers.authorization.replace('Bearer ', '');
+	res.sendResult("操作成功", 0, unsignToken(token));
+}

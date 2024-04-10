@@ -38,7 +38,7 @@
           <div class="flx-row">
             <el-checkbox
               style="flex: 1"
-              v-model="loginForm.checked"
+              v-model="loginForm.rememberMe"
               label="记住我"
               size="large"
             />
@@ -62,7 +62,7 @@
             type="primary"
             :loading="loading"
           >
-            登录
+            {{ loading ? "登 录 中..." : "登 录" }}
           </el-button>
         </div>
         <el-divider>其他方式登录 </el-divider>
@@ -72,22 +72,24 @@
 </template>
 <script setup>
 import { ref, onMounted } from "vue";
-import { ElMessage } from "element-plus";
+import $message from "@common/message";
 import { User, Lock, CircleClose, UserFilled } from "@element-plus/icons-vue";
-import Cookies from "js-cookie";
-import { Base64 } from "js-base64";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { signin } from "@api/modules/user";
-import { useUserStore } from "@store/userStore";
+import { setToken } from "@common/cookies";
+import {
+  getLoginInfo,
+  removeLoginInfo,
+  setLoginInfo,
+} from "../../common/cookies";
 
+const route = useRoute();
 const router = useRouter();
-const userStore = useUserStore();
-
 const loading = ref(false);
 const loginForm = ref({
-  account: "Nyan",
-  password: "passw0rD",
-  checked: true,
+  account: "",
+  password: "",
+  rememberMe: false,
 });
 const loginFormRef = ref(null);
 const loginFormRules = ref({
@@ -112,27 +114,18 @@ const login = (formEl) => {
       signin(loginForm.value).then((res) => {
         loading.value = false;
         if (res.data.code !== 0) {
-          ElMessage({
-            message: res.data.msg,
-            type: "error",
-          });
+          $message.error(res.data.msg);
           return;
         }
-        ElMessage({
-          message: "登录成功",
-          type: "success",
-        });
-        localStorage.setItem('token', res.data.data.token);
-        router.replace("/home");
+        $message.success("登录成功");
+        setToken(res.data.data.token);
+        if (loginForm.value.rememberMe) {
+          setLoginInfo(loginForm.value);
+        } else {
+          removeLoginInfo();
+        }
+        router.push({ path: route.query.redirect || "/" });
       });
-      if (loginForm.value.checked) {
-        let password = Base64.encode(loginForm.value.password); // base64加密
-        Cookies.set("account", loginForm.value.account, { expires: 30 });
-        Cookies.set("password", password, { expires: 30 });
-      } else {
-        Cookies.remove("account");
-        Cookies.remove("password");
-      }
     } else {
       console.log("error submit!");
       return false;
@@ -142,10 +135,9 @@ const login = (formEl) => {
 
 // 读取cookie 将用户名和密码回显到input框中
 const getCookie = () => {
-  let account = Cookies.get("account");
-  let password = Base64.decode(Cookies.get("password"));
-  loginForm.value.account = account;
-  loginForm.value.password = password;
+  loginForm.value.account = getLoginInfo().account;
+  loginForm.value.password = getLoginInfo().password;
+  loginForm.value.rememberMe = getLoginInfo().rememberMe;
 };
 onMounted(() => {
   getCookie();
