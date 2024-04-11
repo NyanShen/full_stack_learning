@@ -71,7 +71,7 @@ const handleClose = (key, keyPath) => {
 <style lang="scss" scoped>
 .app-sidebar-header {
   height: $app-header-height;
-  background-color: $primary-color;
+  background-color: $primary-dark-color;
   color: $white-color;
   .app-header-logo {
     font-size: $fs-lg;

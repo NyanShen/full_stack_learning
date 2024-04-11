@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const createError = require('http-errors');
 const cookieParser = require('cookie-parser'); // cookie
+const session = require('express-session');
 const logger = require('morgan'); // 日志模块
 const cors = require("cors"); // 解决跨域
 
@@ -28,6 +29,13 @@ app.use(express.urlencoded({
 }));
 // cookie中间件
 app.use(cookieParser());
+// session中间件
+const { sessionSecryptKey } = require('./config/session.config')
+app.use(session({
+	secret: sessionSecryptKey,
+	resave: false,
+	saveUninitialized: true,
+}));
 
 // jwt token配置
 const { jwtMiddleware } = require('./middlewares/jwt');

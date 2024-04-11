@@ -2,6 +2,14 @@
   Reset style sheet
 */
 
+body {
+  height: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+}
+
 html,
 body,
 p,
@@ -12,7 +20,6 @@ ul {
   font-size: 100%;
   font: inherit;
   vertical-align: baseline;
-  color: #676a6c;
 }
 
 /* HTML5 display-role reset for older browsers */
@@ -51,6 +58,10 @@ q:after {
 table {
   border-collapse: collapse;
   border-spacing: 0;
+}
+
+a {
+  text-decoration: none;
 }
 
 html,

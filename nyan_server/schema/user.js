@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const { login_limit } = require('./login');
+const { login_base_limit } = require('./login');
 /**
  * 
  * 用户基本数据校验
@@ -21,7 +21,7 @@ const base_limit = {
 exports.create_limit = {
     // req.body数据验证
     body: {
-        ...login_limit.body,
+        ...login_base_limit,
         ...base_limit
     }
 }

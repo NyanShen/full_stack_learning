@@ -35,14 +35,27 @@
             >
             </el-input>
           </el-form-item>
-          <div class="flx-row">
+          <el-form-item prop="code">
+            <el-input
+              v-model="loginForm.code"
+              auto-complete="off"
+              placeholder="验证码"
+              style="width: 65%"
+              @keyup.enter.native="signin"
+            >
+            </el-input>
+            <div class="login-code">
+              <img :src="codeUrl" @click="loadCaptcha" class="login-code-img" />
+            </div>
+          </el-form-item>
+          <div class="flex-sbc">
             <el-checkbox
               style="flex: 1"
               v-model="loginForm.rememberMe"
               label="记住我"
               size="large"
             />
-            <span>忘记密码？</span>
+            <!-- <span>忘记密码？</span> -->
           </div>
         </el-form>
         <div class="login-btn">
@@ -75,7 +88,7 @@ import { ref, onMounted } from "vue";
 import $message from "@common/message";
 import { User, Lock, CircleClose, UserFilled } from "@element-plus/icons-vue";
 import { useRouter, useRoute } from "vue-router";
-import { signin } from "@api/modules/user";
+import { getCaptcha, signin } from "@api/modules/user";
 import { setToken } from "@common/cookies";
 import {
   getLoginInfo,
@@ -89,13 +102,28 @@ const loading = ref(false);
 const loginForm = ref({
   account: "",
   password: "",
+  code: "",
   rememberMe: false,
 });
 const loginFormRef = ref(null);
 const loginFormRules = ref({
   account: [{ required: true, message: "请输入用户名", trigger: "blur" }],
   password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+  code: [{ required: true, message: "请输入图形验证码", trigger: "blur" }],
 });
+const codeUrl = ref("");
+/**
+ * 获取图形验证码
+ */
+const loadCaptcha = () => {
+  getCaptcha().then((res) => {
+    if (res.data.code !== 0) {
+      $message.error(res.data.msg);
+      return;
+    }
+    codeUrl.value = res.data.data;
+  });
+};
 /**
  * 重置表单
  */
@@ -115,6 +143,7 @@ const login = (formEl) => {
         loading.value = false;
         if (res.data.code !== 0) {
           $message.error(res.data.msg);
+          loadCaptcha();
           return;
         }
         $message.success("登录成功");
@@ -134,16 +163,29 @@ const login = (formEl) => {
 };
 
 // 读取cookie 将用户名和密码回显到input框中
-const getCookie = () => {
+const loadCookie = () => {
   loginForm.value.account = getLoginInfo().account;
   loginForm.value.password = getLoginInfo().password;
   loginForm.value.rememberMe = getLoginInfo().rememberMe;
 };
 onMounted(() => {
-  getCookie();
+  loadCookie();
+  loadCaptcha();
 });
 </script>
 
 <style lang="scss" scoped>
 @import "./index.scss";
+.login-code {
+  flex: 1;
+  height: 38px;
+  margin-left: 15px;
+  .login-code-img {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    vertical-align: baseline;
+    background-color: #e9edf9;
+  }
+}
 </style>

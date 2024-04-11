@@ -1,13 +1,13 @@
 <template>
   <div class="app-header-body flex-sbc">
     <el-icon @click="sidebarStore.toggleIsCollapse()">
-      <font-awesome-icon size="md" icon="fa-solid fa-bars" />
+      <font-awesome-icon size="sm" icon="fa-solid fa-bars" />
     </el-icon>
     <div class="flex-cc">
       <div class="app-header-right flex-cc">
         <img class="user-avatar" :src="userStore.userAvatar" alt="" />
         <div class="user-name">{{ userStore.name }}</div>
-        <ul class="dropdown-menu show">
+        <ul class="dropdown-menu">
           <li>
             <font-awesome-icon size="sm" icon="fa-solid fa-user" />
             个人中心
@@ -16,7 +16,7 @@
             <font-awesome-icon size="sm" icon="fa-solid fa-key" />
             修改密码
           </li>
-          <li class="divider">
+          <li class="divider" @click="logout">
             <font-awesome-icon size="sm" icon="fa-solid fa-sign-out" />
             退出登录
           </li>
@@ -26,10 +26,25 @@
   </div>
 </template>
 <script setup>
+import { useRouter } from "vue-router";
 import { useSidebarStore } from "@store/siderbarStore";
 import { useUserStore } from "@store/userStore";
+import $message from "@common/message";
+const router = useRouter();
 const sidebarStore = useSidebarStore();
 const userStore = useUserStore();
+/**
+ * 登录记录日志后退出登录
+ */
+const logout = () => {
+  $message
+    .warnConfirm("确定注销并退出系统吗？")
+    .then(() => {
+      userStore.logout();
+      location.href = "/";
+    })
+    .catch(() => {});
+};
 </script>
 <style lang="scss" scoped>
 .app-header-body {
@@ -38,7 +53,15 @@ const userStore = useUserStore();
 }
 .app-header-right {
   position: relative;
-  padding: 0 15px;
+  height: $app-header-height;
+  font-size: $fs-md;
+  padding: 0 10px;
+  &:hover {
+    background-color: $primary-dark-color;
+    .dropdown-menu {
+      visibility: visible;
+    }
+  }
   .user-avatar {
     width: 45px;
     height: 45px;
@@ -50,6 +73,7 @@ const userStore = useUserStore();
     cursor: pointer;
   }
   .dropdown-menu {
+    visibility: hidden;
     position: absolute;
     top: $app-header-height;
     right: 0;
@@ -58,7 +82,7 @@ const userStore = useUserStore();
     color: #676a6c;
     z-index: 9999;
     li {
-      padding: 10px 30px;
+      padding: 15px 30px;
       cursor: pointer;
       &:hover {
         background-color: #f2f2f2;

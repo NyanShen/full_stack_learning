@@ -12,7 +12,7 @@
 						搜索
 					</el-button>
 					<el-button :icon="Refresh" @click="resetQuery">重置</el-button>
-					<el-button :icon="Plus" type="success" @click="handlePlus">
+					<el-button :icon="Plus" class="yellow-btn" @click="handlePlus">
 						新增
 					</el-button>
 				</el-form-item>

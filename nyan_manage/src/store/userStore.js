@@ -44,7 +44,7 @@ export const useUserStore = defineStore('user', {
                 return Promise.reject(error)
             }
         },
-        logout: () => {
+        logout() {
             this.setRoles([]);
             removeToken();
         }

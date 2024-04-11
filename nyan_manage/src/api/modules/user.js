@@ -1,6 +1,16 @@
 import $http from "../index";
 
 /**
+ * 获取图形验证码
+ */
+export const getCaptcha = () => {
+	return $http({
+		url: "/auth/captcha",
+		method: "GET",
+		data: {}
+	})
+}
+/**
  * 登录用户信息
  */
 export const signin = (data) => {
