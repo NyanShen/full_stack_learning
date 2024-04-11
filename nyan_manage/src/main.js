@@ -54,4 +54,4 @@ import '@styles/reset.css'
 // element plus css
 import 'element-plus/dist/index.css'
 // common css
-import '@styles/common.scss'
+import '@styles/index.scss'

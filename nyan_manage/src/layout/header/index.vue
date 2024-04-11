@@ -4,7 +4,11 @@
       <font-awesome-icon size="sm" icon="fa-solid fa-bars" />
     </el-icon>
     <div class="flex-cc">
-      <div class="app-header-right flex-cc">
+      <div class="app-header-right-item flex-cc" @click="fullscreenStore.toggle">
+        <font-awesome-icon size="sm" icon="fa-solid fa-expand-arrows-alt" />
+        <span>全屏</span>
+      </div>
+      <div class="app-header-right-item flex-cc">
         <img class="user-avatar" :src="userStore.userAvatar" alt="" />
         <div class="user-name">{{ userStore.name }}</div>
         <ul class="dropdown-menu">
@@ -26,13 +30,16 @@
   </div>
 </template>
 <script setup>
+import { onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { useSidebarStore } from "@store/siderbarStore";
 import { useUserStore } from "@store/userStore";
+import { useFullscreenStore } from "@store/fullscreenStore";
 import $message from "@common/message";
 const router = useRouter();
 const sidebarStore = useSidebarStore();
 const userStore = useUserStore();
+const fullscreenStore = useFullscreenStore();
 /**
  * 登录记录日志后退出登录
  */
@@ -45,17 +52,25 @@ const logout = () => {
     })
     .catch(() => {});
 };
+onMounted(() => {
+  fullscreenStore.init();
+})
+onUnmounted(() => {
+  fullscreenStore.destroy();
+})
 </script>
 <style lang="scss" scoped>
 .app-header-body {
   height: 100%;
   padding-left: 15px;
 }
-.app-header-right {
+.app-header-right-item {
   position: relative;
   height: $app-header-height;
   font-size: $fs-md;
-  padding: 0 10px;
+  padding: 0 15px;
+  cursor: pointer;
+ 
   &:hover {
     background-color: $primary-dark-color;
     .dropdown-menu {
@@ -70,7 +85,7 @@ const logout = () => {
     overflow: hidden;
   }
   .user-name {
-    cursor: pointer;
+    font-weight: 500;
   }
   .dropdown-menu {
     visibility: hidden;

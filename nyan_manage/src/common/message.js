@@ -7,6 +7,9 @@ export default {
     error(msg) {
         ElMessage({ message: msg, type: "error" });
     },
+    warning(msg) {
+        ElMessage({ message: msg, type: "warning" });
+    },
     warnConfirm(msg, confirmButtonText = '确认', cancelButtonText = '取消') {
         return ElMessageBox.confirm(msg, '温馨提示', {
             confirmButtonText,

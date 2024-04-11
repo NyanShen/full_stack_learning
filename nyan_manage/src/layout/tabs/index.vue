@@ -4,11 +4,26 @@
       <ul class="menu-tabs-content">
         <li
           class="flex-cc menu-tabs-item"
+          :class="{ actived: homeOpend.fullPath === current.fullPath }"
+          @click="changeMenu(homeOpend)"
+        >
+          <router-link :to="homeOpend.fullPath">
+            {{ homeOpend.meta.title }}
+          </router-link>
+        </li>
+        <li
+          class="flex-cc menu-tabs-item"
+          :class="{ actived: item.fullPath === current.fullPath }"
           v-for="item in opened"
           :key="item.fullPath"
+          @click="changeMenu(item)"
         >
-          <router-link to="/home">{{ item.meta.title }}</router-link>
-          <font-awesome-icon class="font-icon" size="sm" icon="fa-solid fa-times-circle" />
+          <router-link :to="item.fullPath">{{ item.meta.title }}</router-link>
+          <font-awesome-icon
+            class="font-icon"
+            size="sm"
+            icon="fa-solid fa-times-circle"
+          />
         </li>
       </ul>
     </div>
@@ -17,26 +32,31 @@
 
 <script setup>
 import { ref } from "vue";
+const homeOpend = {
+  fullPath: "/home",
+  meta: {
+    title: "首页",
+  },
+};
+const current = ref(homeOpend);
 
-const current = ref(0);
 const opened = [
   {
-    fullPath: "/user",
+    fullPath: "/system/user",
     meta: {
       title: "用户管理",
     },
   },
   {
-    fullPath: "/menu",
+    fullPath: "/system/menu",
     meta: {
       title: "菜单管理",
     },
   },
 ];
-const handleClick = (e) => {};
-const handleTabRemove = (e) => {};
-const handleContextmenu = (e) => {};
-const isTabClosable = (page) => {};
+const changeMenu = (item) => {
+  current.value = item;
+};
 </script>
 
 <style lang="scss" scoped>
@@ -47,19 +67,39 @@ const isTabClosable = (page) => {};
     float: left;
     .menu-tabs-item {
       float: left;
+      font-size: $fs-sm;
+      font-weight: 500;
       line-height: 39px;
       padding: 0 15px;
       border-right: solid 1px $border-base-color;
       color: $text-desc-color;
       cursor: pointer;
+
+      &:hover {
+        background: $bg-color;
+      }
+      &.actived {
+        background: $bg-active-color;
+        a {
+          color: $text-nav-active-color;
+        }
+        .font-icon {
+          color: $text-desc-color;
+          &:hover {
+            color: $text-nav-active-color;
+          }
+        }
+      }
       a {
-		margin-right: 8px;
         display: block;
         color: $text-desc-color;
       }
-	  .font-icon:hover {
-		color: $pink;
-	  }
+      .font-icon {
+        margin-left: 8px;
+        &:hover {
+          color: $pink;
+        }
+      }
     }
   }
 }

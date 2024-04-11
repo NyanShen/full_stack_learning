@@ -129,6 +129,7 @@ module.exports = {
 				cb(resExtra(data));
 			})
 			.catch(err => {
+				console.log(">>>>",err)
 				cb(resExtra('', 605, '查询失败!'))
 			})
 	},

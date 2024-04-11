@@ -38,12 +38,12 @@ exports.delete = async (req, res) => {
  * @returns 
  */
 exports.update = async (req, res) => {
-    let singleMenu = await MenuModel.findByPk(res.body.id);
+    let singleMenu = await MenuModel.findByPk(req.body.id);
     if (!singleMenu) {
         res.sendResult("不存在该菜单", 605);
         return;
     }
-    let key = { id: res.body.id };
+    let key = { id: req.body.id };
     DAO.update(MenuModel, req.body, key, data => res.send(data));
 }
 
@@ -58,10 +58,7 @@ exports.search = async (req, res) => {
     let conditions = {
         params: {
             name: {
-                [db.Op.like]: `%${req.query.name}%`
-            },
-            desc: {
-                [db.Op.like]: `%${req.query.desc}%`
+                [db.Op.like]: `%${req.query.name || ''}%`
             }
         }
     }

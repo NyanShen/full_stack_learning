@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import { getLoginInfo } from "../common/cookies";
+import { getLoginInfo } from "../../common/cookies";
 
 console.log("getLoginInfo>>>", getLoginInfo())
 </script>

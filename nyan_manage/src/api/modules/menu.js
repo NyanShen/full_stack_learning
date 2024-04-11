@@ -27,7 +27,7 @@ export const createMenu = (data ) => {
  */
 export const updateMenu = (data ) => {
 	return $http({
-		method: 'POST',
+		method: 'PATCH',
 		url: '/menus/update',
 		data,
 	})

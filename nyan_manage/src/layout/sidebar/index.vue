@@ -2,9 +2,12 @@
   <div class="app-sidebar">
     <div
       class="app-sidebar-header flex-column-cc"
-      v-if="!sidebarStore.isCollapse"
+     
     >
-      <p class="app-header-title">NyanShen</p>
+      <p class="app-header-title">
+        <font-awesome-icon size="xl" icon="fa-solid fa-registered" />
+        <span class="title" v-if="!sidebarStore.isCollapse">NyanShen live</span>
+      </p>
     </div>
     <el-menu
       default-active="2"
@@ -76,6 +79,11 @@ const handleClose = (key, keyPath) => {
   .app-header-logo {
     font-size: $fs-lg;
     font-weight: bold;
+  }
+  .app-header-title {
+    .title {
+      margin-left: 10px;
+    }
   }
 }
 </style>

@@ -4,18 +4,17 @@ import {
 	createWebHashHistory,
 } from 'vue-router';
 import Layout from "../layout/index.vue"; // 全局布局
-import Hello from "@views/hello.vue";
-import Login from "@views/login/index.vue";
 
 const routes = [
 	// Define your routes here
 	{
 		path: "/login",
-		component: Login
+		component: () => import('@/views/login/index.vue'),
 	},
 	{
-		path: "/hello",
-		component: Hello
+		path: '/401',
+		component: () => import('@/views/error/401.vue'),
+		hidden: true
 	},
 	{
 		path: "/",
@@ -29,40 +28,45 @@ const routes = [
 		children: [{
 			path: "/home",
 			name: "home",
-			component: () => import("@views/home.vue"),
+			component: () => import("@views/home/index.vue"),
 			meta: {
 				requiresAuth: true, //有一些页面是否登录才能进去
 				name: "首页",
 			},
 		},
 		{
-			path: "/role",
+			path: "/system/role",
 			name: "role",
-			component: () => import("@views/role/index.vue"),
+			component: () => import("@views/system/role/index.vue"),
 			meta: {
 				requiresAuth: true, //有一些页面是否登录才能进去
 				name: "角色管理",
 			},
 		},
 		{
-			path: "/user",
+			path: "/system/user",
 			name: "user",
-			component: () => import("@views/user/index.vue"),
+			component: () => import("@views/system/user/index.vue"),
 			meta: {
 				requiresAuth: true, //有一些页面是否登录才能进去
 				name: "用户管理",
 			},
 		},
 		{
-			path: "/menu",
+			path: "/system/menu",
 			name: "menu",
-			component: () => import("@views/menu/index.vue"),
+			component: () => import("@views/system/menu/index.vue"),
 			meta: {
 				requiresAuth: true, //有一些页面是否登录才能进去
 				name: "菜单管理",
 			},
 		},
 		],
+	},
+	{
+		path: '/:pathMatch(.*)*',
+		component: () => import('@/views/error/404.vue'),
+		hidden: true
 	},
 
 ];
@@ -100,6 +104,7 @@ router.beforeEach(async (to, from, next) => {
 		if (userStore.roles.length === 0) {
 			// 获取用户信息
 			await userStore.loadUser();
+			// 获取用户角色下的菜单
 			next();
 		}
 		// 有缓存直接进入
