@@ -9,6 +9,8 @@ let base_limit = {
         'string.max': '角色名称不能大于 {#limit} 个字符',
     }),
     desc: Joi.string().label('角色描述'),
+    status: Joi.number().empty([null, undefined]).default(1),
+    permissionIds: Joi.string().empty(["", null])
 }
 /**
  * 角色新增数据校验
@@ -16,8 +18,7 @@ let base_limit = {
 exports.create_limit = {
     // req.body数据验证
     body: {
-        ...base_limit,
-        menuIds: Joi.string()
+        ...base_limit
     }
 }
 /**
@@ -28,9 +29,6 @@ exports.update_limit = {
         ...base_limit,
         id: Joi.number().required().messages({
             'string.empty': '角色ID不能为空'
-        }),
-        menuIds: Joi.string().required().messages({
-            'string.empty': '角色关联菜单不能为空'
         }),
     }
 }

@@ -3,9 +3,9 @@ const router = express.Router();
 
 // 数据校验
 const expressJoi = require('@escook/express-joi');
-const schemaMenu = require('../schema/menu');
+// const schemaMenu = require('../../schema/system/menu');
 // 菜单服务
-const menuService = require('../services/menu.service');
+const menuService = require('../../services/system/menu.service');
 
 /* 
  * 新增菜单对象
@@ -16,7 +16,7 @@ const menuService = require('../services/menu.service');
  * @returns {object} 605 | -1 - 请求失败
  * @returns {Error}  default - Unexpected error
  */
-router.post('/create', expressJoi(schemaMenu.create_limit), menuService.create);
+// router.post('/create', expressJoi(schemaMenu.create_limit), menuService.create);
 
 /**
  * 删除菜单信息
@@ -38,7 +38,7 @@ router.delete("/delete/:id", menuService.delete);
  * @returns {object} 605 - 请求失败
  * @returns {Error}  default - Unexpected error
  */
-router.patch('/update', expressJoi(schemaMenu.update_limit), menuService.update);
+// router.patch('/update', expressJoi(schemaMenu.update_limit), menuService.update);
 
 /**
  * 查询菜单

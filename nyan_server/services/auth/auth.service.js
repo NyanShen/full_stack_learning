@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken'); // 生产token
 const bcrypt = require('bcryptjs');
-const db = require('../models/index');
-const { signToken } = require('../middlewares/jwt');
+const db = require('../../models/index');
+const { signToken } = require('../../middlewares/jwt');
 
 const userModel = db.user;
 /**

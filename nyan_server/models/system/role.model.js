@@ -5,7 +5,7 @@
  * @param {*} Sequelize 
  * @returns RoleModel
  */
-const Role = (sequelize, Sequelize) => {
+module.exports = (sequelize, Sequelize) => {
 	return sequelize.define("Role", {
 		id: {
 			type: Sequelize.INTEGER(10),
@@ -22,9 +22,13 @@ const Role = (sequelize, Sequelize) => {
 		desc: {
 			type: Sequelize.STRING,
 			comment: "角色描述"
+		},
+		status: {
+			type: Sequelize.INTEGER(1),
+			default: 1,
+			comment: "是否有效(是否被删除)0无效,1有效"
 		}
 	}, {
 		tableName: "roles"
 	});
 }
-module.exports = Role;

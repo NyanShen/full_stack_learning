@@ -1,11 +1,11 @@
-const db = require("../models/index");
-const DAO = require("../utils/dao");
+const db = require("../../models/index");
+const DAO = require("../../utils/dao");
 
 const UserModel = db.user;
 const RoleModel = db.role;
 
-UserModel.belongsTo(RoleModel, { foreignKey: "roleId" });
-RoleModel.hasMany(UserModel, { foreignKey: "roleId" });
+// UserModel.belongsTo(RoleModel, { foreignKey: "roleId" });
+// RoleModel.hasMany(UserModel, { foreignKey: "roleId" });
 
 /**
  * @name 注册、新增用户
@@ -15,12 +15,12 @@ RoleModel.hasMany(UserModel, { foreignKey: "roleId" });
  * @returns User Object
  */
 exports.create = async (req, res) => {
-	const singleUser = await UserModel.findOne({ where: { account: req.body.account } });
-	if (singleUser?.id) {
-		res.sendResult("用户已经存在", 605);
-		return
-	}
-	DAO.create(UserModel, req.body, data => res.send(data));
+	// const singleUser = await UserModel.findOne({ where: { account: req.body.account } });
+	// if (singleUser?.id) {
+	// 	res.sendResult("用户已经存在", 605);
+	// 	return
+	// }
+	// DAO.create(UserModel, req.body, data => res.send(data));
 }
 
 /**
@@ -31,8 +31,8 @@ exports.create = async (req, res) => {
  * @returns 0
  */
 exports.delete = async (req, res) => {
-	let key = { id: req.params.id }
-	DAO.delete(UserModel, key, data => res.send(data));
+	// let key = { id: req.params.id }
+	// DAO.delete(UserModel, key, data => res.send(data));
 }
 
 /**
@@ -46,16 +46,16 @@ exports.delete = async (req, res) => {
  * 注意: 没有传的不会修改数据库现有的值
  */
 exports.update = async (req, res) => {
-	let singleUser = await UserModel.findByPk(req.body.id);
-	if (!singleUser) {
-		res.sendResult("不存在该用户", 605);
-		return;
-	}
-	singleUser.update(req.body);
-	if (req.body.roleId) {
-		let singleRole = await RoleModel.findByPk(req.body.roleId);
-		singleUser.setRole(singleRole);
-	}
+	// let singleUser = await UserModel.findByPk(req.body.id);
+	// if (!singleUser) {
+	// 	res.sendResult("不存在该用户", 605);
+	// 	return;
+	// }
+	// singleUser.update(req.body);
+	// if (req.body.roleId) {
+	// 	let singleRole = await RoleModel.findByPk(req.body.roleId);
+	// 	singleUser.setRole(singleRole);
+	// }
 	res.sendResult("更新成功", 0);
 }
 
@@ -92,7 +92,7 @@ exports.search = async (req, res) => {
  * @returns User Object
  * 解析token, 获取token所存用户信息
  */
-const { unsignToken } = require('../middlewares/jwt');
+const { unsignToken } = require('../../middlewares/jwt');
 exports.getUser = async (req, res) => {
 	let token = req.headers.authorization.replace('Bearer ', '');
 	res.sendResult("操作成功", 0, unsignToken(token));

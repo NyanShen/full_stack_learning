@@ -1,4 +1,13 @@
-const Menu = (sequelize, Sequelize) => {
+/**
+ * permission--menu (N--M)
+ * user--role--permission--menu
+ * @name 菜单model
+ * @author NyanShen
+ * @param {*} sequelize 
+ * @param {*} Sequelize 
+ * @returns MenuModel
+ */
+module.exports = (sequelize, Sequelize) => {
 	return sequelize.define("Menu", {
 		id: {
 			type: Sequelize.INTEGER(10),
@@ -30,12 +39,16 @@ const Menu = (sequelize, Sequelize) => {
 			comment: '菜单类型(1: 目录, 2: 菜单, 3: 按钮)', 
 			defaultValue: 2
 		},
-		authority: {
+		outpara1: {
 			type: Sequelize.STRING,
-			comment: '操作标识',
+			comment: '扩展字符',
 		},
+		status: {
+			type: Sequelize.INTEGER(1),
+			default: 1,
+			comment: "是否有效(是否被删除)0无效,1有效"
+		}
 	}, {
 		tableName: "menus"
 	});
 }
-module.exports = Menu;

@@ -1,8 +1,9 @@
 const Joi = require('joi');
-const { login_base_limit } = require('./login');
+const { login_base_limit } = require('../auth/login');
 /**
  * 
  * 用户基本数据校验
+ * 保存用户时, 可指定部门, 添加角色
  */
 const base_limit = {
     name: Joi.string(),
@@ -10,10 +11,13 @@ const base_limit = {
     state: Joi.number(),
     roleId: Joi.number(),
     avatar: Joi.string(),
-    department: Joi.string(),
     email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'cn'] } }).messages({
         'string.email': '邮箱格式错误',
-    })
+    }),
+    status: Joi.number().empty([null, undefined]).default(1),
+    
+    departmentId: Joi.number().empty([null, undefined]),
+    roleIds: Joi.string.empty([null, '']).default('')
 }
 /***
  * 用户新增数据校验

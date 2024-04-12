@@ -1,12 +1,15 @@
 /**
- * @name 角色菜单多对多联结model
+ * permission--role (N--M)
+ * user--role--permission--menu
+ * @name 权限菜单model
  * @author NyanShen
  * @param {*} sequelize 
  * @param {*} Sequelize 
- * @returns RolesMenusModel
+ * @returns PermissionMenuModel
  */
-const RolesMenus = (sequelize, Sequelize) => {
-	return sequelize.define("RolesMenus", {
+
+module.exports = (sequelize, Sequelize) => {
+	return sequelize.define("PermissionsRoles", {
 		id: {
             type: Sequelize.UUID,
             notNull: true,
@@ -18,13 +21,17 @@ const RolesMenus = (sequelize, Sequelize) => {
 			notNull: true,
 			comment: "角色关联ID"
 		},
-		menuId: {
+		permissionId: {
 			type: Sequelize.INTEGER(10),
 			notNull: true,
-			comment: "角色关联ID"
+			comment: "权限关联ID"
+		},
+		status: {
+			type: Sequelize.INTEGER(1),
+			default: 1,
+			comment: "是否有效(是否被删除)0无效,1有效"
 		}
 	}, {
-		tableName: "rolesmenus"
+		tableName: "permissionsroles"
 	});
 }
-module.exports = RolesMenus;

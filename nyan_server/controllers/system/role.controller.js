@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 // 数据校验
 const expressJoi = require('@escook/express-joi');
-const schemaRole = require('../schema/role');
+// const schemaRole = require('../../schema/system/role');
 // 角色服务
-const roleService = require('../services/role.service');
+const roleService = require('../../services/system/role.service');
 /**
  * 创建角色
  * @route POST /api/roles/create
@@ -14,7 +14,7 @@ const roleService = require('../services/role.service');
  * @returns {object} 605 - 请求失败
  * @returns {Error}  default - Unexpected error
  */
-router.post('/create', expressJoi(schemaRole.create_limit), roleService.create);
+// router.post('/create', expressJoi(schemaRole.create_limit), roleService.create);
 
 /**
  * 删除角色信息--考虑用户已关联的角色
@@ -36,7 +36,7 @@ router.delete("/delete/:id", roleService.delete);
  * @returns {object} 605 - 请求失败
  * @returns {Error}  default - Unexpected error
  */
-router.patch('/update', expressJoi(schemaRole.update_limit), roleService.update);
+// router.patch('/update', expressJoi(schemaRole.update_limit), roleService.update);
 
 
 /**

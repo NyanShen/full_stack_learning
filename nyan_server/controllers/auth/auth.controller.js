@@ -3,9 +3,9 @@ const express = require('express');
 const router = express.Router();
 // 数据校验
 const expressJoi = require('@escook/express-joi');
-const { login_limit } = require('../schema/login');
+const { login_limit } = require('../../schema/auth/login');
 // 授权服务
-const authService = require('../services/auth.service');
+const authService = require('../../services/auth/auth.service');
 /**
  * @name 登录
  * @route POST /api/auth/signin

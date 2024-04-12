@@ -16,7 +16,8 @@ const base_limit = {
     path: Joi.string(),
     icon: Joi.string(),
     level: Joi.number(),
-    authority: Joi.any(),
+    // status: Joi.number().empty([null, undefined]).default(1),
+    // outpara1: Joi.string().empty([null, undefined, ""]).default(""),
 }
 /**
  * 菜单新增数据校验

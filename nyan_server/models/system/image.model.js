@@ -1,4 +1,4 @@
-const Image = (sequelize, Sequelize) => {
+module.exports = (sequelize, Sequelize) => {
 	return sequelize.define("Image",{
 		name: Sequelize.STRING,
 		path: Sequelize.STRING
@@ -6,4 +6,3 @@ const Image = (sequelize, Sequelize) => {
 		tableName: "images"
 	})
 }
-module.exports = Image

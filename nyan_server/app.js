@@ -8,11 +8,13 @@ const cors = require("cors"); // 解决跨域
 
 // 路由模块module.exports
 const indexController = require('./controllers/index.controller');
-const authController = require('./controllers/auth.controller');
-const userController = require('./controllers/user.controller');
-const roleController = require('./controllers/role.controller');
-const menuController = require('./controllers/menu.controller');
-const fileController = require('./controllers/file.controller');
+const authController = require('./controllers/auth/auth.controller');
+const userController = require('./controllers/system/user.controller');
+const roleController = require('./controllers/system/role.controller');
+const menuController = require('./controllers/system/menu.controller');
+const departmentController = require('./controllers/system/department.controller');
+const permissionController = require('./controllers/system/permission.controller');
+const fileController = require('./controllers/system/file.controller');
 
 const app = express();
 
@@ -74,6 +76,8 @@ app.use('/api/auth', authController);
 app.use('/api/users', userController);
 app.use('/api/roles', roleController);
 app.use('/api/menus', menuController);
+app.use('/api/departments', departmentController);
+app.use('/api/permissions', permissionController);
 app.use('/api/file', fileController);
 
 // catch 404 and forward to error handler

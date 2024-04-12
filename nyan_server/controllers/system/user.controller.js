@@ -3,9 +3,9 @@ const router = express.Router();
 
 // 数据校验
 const expressJoi = require('@escook/express-joi');
-const schemaUser = require('../schema/user');
+// const schemaUser = require('../../schema/system/user');
 // 服务
-const userService = require('../services/user.service');
+const userService = require('../../services/system/user.service');
 
 /**
  * 新增注册用户
@@ -16,7 +16,7 @@ const userService = require('../services/user.service');
  * @returns {object} 605 - 请求失败
  * @returns {Error}  default - Unexpected error
  */
-router.post('/create', expressJoi(schemaUser.create_limit), userService.create);
+// router.post('/create', expressJoi(schemaUser.create_limit), userService.create);
 
 /**
  * 删除用户信息
@@ -38,7 +38,7 @@ router.delete("/delete/:id", userService.delete);
  * @returns {object} 605 - 请求失败
  * @returns {Error}  default - Unexpected error
  */
-router.patch('/update', expressJoi(schemaUser.update_limit), userService.update);
+// router.patch('/update', expressJoi(schemaUser.update_limit), userService.update);
 
 /**
  * 查询用户

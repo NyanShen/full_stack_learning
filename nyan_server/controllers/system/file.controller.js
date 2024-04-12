@@ -1,6 +1,6 @@
 const express = require("express");
 const multer = require("multer"); // 文件上传服务
-const db = require("../models/index.js");
+const db = require("../../models/index.js");
 const imageModel = db.image;
 
 const router = express.Router();
