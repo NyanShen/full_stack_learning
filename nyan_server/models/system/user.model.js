@@ -33,10 +33,6 @@ module.exports = (sequelize, Sequelize) => {
                 this.setDataValue('password', bcrypt.hashSync(value, 10));
             }
         },
-        departmentId: {
-            type: Sequelize.INTEGER(10),
-            comment: '关联用户组ID',
-        },
         name: {
             type: Sequelize.STRING,
             comment: '姓名',
@@ -59,9 +55,13 @@ module.exports = (sequelize, Sequelize) => {
         },
         status: {
 			type: Sequelize.INTEGER(1),
-			default: 1,
-			comment: "是否有效(是否被删除)0无效,1有效"
-		}
+			comment: "是否有效(是否被删除)0无效,1有效",
+			defaultValue: 1,
+		},
+        departmentId: {
+            type: Sequelize.INTEGER(10),
+            comment: '关联用户组ID',
+        },
     }, {
         tableName: "users"
     });

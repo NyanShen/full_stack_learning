@@ -28,9 +28,9 @@ module.exports= (sequelize, Sequelize) => {
 		},
 		status: {
 			type: Sequelize.INTEGER(1),
-			default: 1,
-			comment: "是否有效(是否被删除)0无效,1有效"
-		}
+			comment: "是否有效(是否被删除)0无效,1有效",
+			defaultValue: 1,
+		},
 	}, {
 		tableName: "permissionsmenus"
 	});

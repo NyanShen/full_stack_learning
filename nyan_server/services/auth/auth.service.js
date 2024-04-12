@@ -51,5 +51,6 @@ exports.captcha = async (req, res) => {
     const base64String = `data:image/svg+xml;base64,${Buffer.from(captcha.data).toString('base64')}`;
     // 缓存captcha在服务端, 登录时跟前端进行校验
     req.session.captcha = captcha.text;
+    console.log('captcha>>>', captcha.text);
     res.sendResult("操作完成", 0, base64String);
 }

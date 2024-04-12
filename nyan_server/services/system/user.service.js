@@ -8,6 +8,25 @@ const RoleModel = db.role;
 // RoleModel.hasMany(UserModel, { foreignKey: "roleId" });
 
 /**
+ * @name 注册用户
+ * @author NyanShen
+ * @param {*} req 
+ * @param {*} res 
+ * @returns User Object
+ */
+exports.register = async (req, res) => {
+	if (req.body.password !== req.body.confirmPassword) {
+		res.sendResult("密码和确认密码不一致,请重新输入", 605);
+		return
+	}
+	const singleUser = await UserModel.findOne({ where: { account: req.body.account } });
+	if (singleUser?.id) {
+		res.sendResult("用户已经存在, 请直接登录", 605);
+		return
+	}
+	DAO.create(UserModel, req.body, data => res.send(data));
+}
+/**
  * @name 注册、新增用户
  * @author NyanShen
  * @param {*} req 

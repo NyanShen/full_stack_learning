@@ -3,7 +3,7 @@ const router = express.Router();
 
 // 数据校验
 const expressJoi = require('@escook/express-joi');
-// const schemaUser = require('../../schema/system/user');
+const schemaUser = require('../../schema/system/user');
 // 服务
 const userService = require('../../services/system/user.service');
 
