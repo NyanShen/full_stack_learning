@@ -42,6 +42,7 @@ db.role = require("./system/role.model.js")(sequelize, Sequelize);
 db.menu = require("./system/menu.model.js")(sequelize, Sequelize);
 db.department = require("./system/department.model.js")(sequelize, Sequelize);
 db.permission = require("./system/permission.model.js")(sequelize, Sequelize);
+db.permissionsmenus = require("./system/permission_menu.model.js")(sequelize, Sequelize);
 // 上传图片
 db.image = require("./system/image.model.js")(sequelize, Sequelize);
 

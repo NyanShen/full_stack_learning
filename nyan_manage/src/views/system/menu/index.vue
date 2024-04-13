@@ -43,7 +43,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="icon" label="菜单图标" />
-        <el-table-column prop="authority" label="操作标识" />
+        <el-table-column prop="outpara1" label="操作标识" />
         <el-table-column label="操作" width="260">
           <template #default="scope">
             <el-button
@@ -118,8 +118,8 @@
         <el-form-item label="菜单图标" prop="icon">
           <el-input v-model="state.form.icon" />
         </el-form-item>
-        <el-form-item label="操作标识" prop="authority">
-          <el-input v-model="state.form.authority" />
+        <el-form-item label="操作标识" prop="outpara1">
+          <el-input v-model="state.form.outpara1" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -170,7 +170,7 @@ const initForm = {
   path: "",
   level: "",
   icon: "",
-  authority: "",
+  outpara1: "",
 };
 const initQuery = {
   name: "",

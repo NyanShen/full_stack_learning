@@ -31,7 +31,6 @@ exports.singin = async (req, res) => {
     let tokenData = {
         id: singleUser.id,
         name: singleUser.name,
-        roleId: singleUser.roleId,
         avatar: singleUser.avatar,
     }
     // 生成token返回前端, 携带显示的用户信息, 角色等
