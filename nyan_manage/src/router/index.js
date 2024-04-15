@@ -35,12 +35,21 @@ const routes = [
 			},
 		},
 		{
-			path: "/system/role",
-			name: "role",
-			component: () => import("@views/system/role/index.vue"),
+			path: "/system/permission",
+			name: "permission",
+			component: () => import("@views/system/permission/index.vue"),
 			meta: {
-				requiresAuth: true, //有一些页面是否登录才能进去
-				name: "角色管理",
+				requiresAuth: true,
+				name: "权限管理",
+			},
+		},
+		{
+			path: "/system/department",
+			name: "department",
+			component: () => import("@views/system/department/index.vue"),
+			meta: {
+				requiresAuth: true,
+				name: "部门管理",
 			},
 		},
 		{
@@ -48,8 +57,17 @@ const routes = [
 			name: "user",
 			component: () => import("@views/system/user/index.vue"),
 			meta: {
-				requiresAuth: true, //有一些页面是否登录才能进去
+				requiresAuth: true,
 				name: "用户管理",
+			},
+		},
+		{
+			path: "/system/role",
+			name: "role",
+			component: () => import("@views/system/role/index.vue"),
+			meta: {
+				requiresAuth: true,
+				name: "角色管理",
 			},
 		},
 		{
@@ -59,6 +77,16 @@ const routes = [
 			meta: {
 				requiresAuth: true, //有一些页面是否登录才能进去
 				name: "菜单管理",
+			},
+		},
+
+		{
+			path: "/system/operation",
+			name: "operation",
+			component: () => import("@views/system/operation/index.vue"),
+			meta: {
+				requiresAuth: true,
+				name: "操作管理",
 			},
 		},
 		],
@@ -85,7 +113,6 @@ import { useUserStore } from "@store/userStore";
 NProgress.configure({ showSpinner: false });
 const whiteList = ['/login', '/register'];
 router.beforeEach(async (to, from, next) => {
-	console.log("to path", to.path)
 	// 如果有token
 	if (getToken()) {
 		if (to.path === '/login') {

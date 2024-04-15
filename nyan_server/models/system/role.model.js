@@ -13,6 +13,12 @@ module.exports = (sequelize, Sequelize) => {
 			notNull: true,
 			primaryKey: true
 		},
+		code: {
+			type: Sequelize.STRING,
+			notNull: true,
+			unique: true,
+			comment: "角色编码"
+		},
 		name: {
 			type: Sequelize.STRING,
 			notNull: true,

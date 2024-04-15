@@ -3,14 +3,19 @@ const Joi = require('joi');
  * 角色数据校验
  */
 let base_limit = {
-    name: Joi.string().min(4).max(10).required().messages({
+    code: Joi.string().min(2).max(50).required().messages({
+        'any.required': '角色编码不能为空',
+        'string.min': '角色编码长度不能小于 {#limit} 个字符',
+        'string.max': '角色编码长度不能大于 {#limit} 个字符',
+    }),
+    name: Joi.string().min(2).max(10).required().messages({
         'string.empty': '角色名称不能为空',
         'string.min': '角色名称长度不能小于 {#limit} 个字符',
         'string.max': '角色名称不能大于 {#limit} 个字符',
     }),
     desc: Joi.string().label('角色描述'),
-    status: Joi.number().empty([null, undefined]).default(1),
-    permissionIds: Joi.string().empty(["", null])
+    status: Joi.number().empty(null).default(1),
+    permissionIds: Joi.string().empty(["", null]).default("")
 }
 /**
  * 角色新增数据校验

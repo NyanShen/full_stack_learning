@@ -89,7 +89,6 @@ const loadRoles = () => {
 const onSubmit = async (formRef) => {
   await formRef?.validate((valid, fields) => {
     if (valid) {
-      console.log("form>>>", form);
       createUser(form).then((res) => {
         if (res.data.code != 200) {
           alert(res.data.msg);

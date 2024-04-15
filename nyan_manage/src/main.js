@@ -40,7 +40,11 @@ app.component('font-awesome-icon', FontAwesomeIcon)
  */
 import { plugins } from './plugins/index'
 app.use(plugins)
-
+/**
+ * 引入全局组件
+ */
+import DictTag from "@components/DictTag.vue";
+app.component('dict-tag', DictTag);
 /**
  * 挂载app
  */
@@ -53,5 +57,7 @@ app.mount('#app')
 import '@styles/reset.css'
 // element plus css
 import 'element-plus/dist/index.css'
+// reset element css
+import '@styles/resetElement.css'
 // common css
 import '@styles/index.scss'

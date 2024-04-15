@@ -59,10 +59,10 @@ import {
 import { useSidebarStore } from "@store/siderbarStore";
 const sidebarStore = useSidebarStore();
 const handleOpen = (key, keyPath) => {
-  console.log(key, keyPath);
+  console.log('handleOpen>>>', key, keyPath);
 };
 const handleClose = (key, keyPath) => {
-  console.log(key, keyPath);
+  console.log('handleOpen>>>', key, keyPath);
 };
 </script>
 <style>

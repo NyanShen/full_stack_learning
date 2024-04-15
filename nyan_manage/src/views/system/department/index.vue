@@ -16,7 +16,7 @@
             搜索
           </el-button>
           <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
-          <el-button :icon="Plus" type="success" @click="handlePlus">
+          <el-button :icon="Plus" class="yellow-btn" @click="handlePlus">
             新增
           </el-button>
         </el-form-item>
@@ -35,7 +35,11 @@
         <el-table-column prop="path" label="菜单路径" />
         <el-table-column prop="level" label="菜单类型">
           <template #default="scope">
-            <dict-tag dictType="menu" :dictKey="scope.row.level"></dict-tag>
+            <el-tag
+              :type="menuLevel[scope.row.level].type"
+              disable-transitions
+              >{{ menuLevel[scope.row.level].label }}</el-tag
+            >
           </template>
         </el-table-column>
         <el-table-column prop="icon" label="菜单图标" />
@@ -106,9 +110,9 @@
         </el-form-item>
         <el-form-item label="菜单类型" prop="level">
           <el-radio-group v-model="state.form.level">
-            <el-radio :value="1">目录</el-radio>
-            <el-radio :value="2">菜单</el-radio>
-            <el-radio :value="3">按钮</el-radio>
+            <el-radio value="1">目录</el-radio>
+            <el-radio value="2">菜单</el-radio>
+            <el-radio value="3">按钮</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="菜单图标" prop="icon">
@@ -141,6 +145,7 @@ import {
   deleteMenu,
 } from "@api/modules/menu";
 import { formatTree } from "@common/utils.js";
+import { menuLevel } from "@common/tags.js";
 let pmenu = {
   id: 0,
   name: "主目录",

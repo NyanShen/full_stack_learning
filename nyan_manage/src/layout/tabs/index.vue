@@ -41,6 +41,18 @@ const homeOpend = {
 const current = ref(homeOpend);
 
 const opened = [
+{
+    fullPath: "/system/permission",
+    meta: {
+      title: "权限管理",
+    },
+  },
+  {
+    fullPath: "/system/department",
+    meta: {
+      title: "部门管理",
+    },
+  },
   {
     fullPath: "/system/user",
     meta: {
@@ -48,9 +60,21 @@ const opened = [
     },
   },
   {
+    fullPath: "/system/role",
+    meta: {
+      title: "角色管理",
+    },
+  },
+  {
     fullPath: "/system/menu",
     meta: {
       title: "菜单管理",
+    },
+  },
+  {
+    fullPath: "/system/operation",
+    meta: {
+      title: "操作管理",
     },
   },
 ];

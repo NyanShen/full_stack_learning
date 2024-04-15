@@ -13,10 +13,10 @@ const base_limit = {
         'string.min': '菜单名称长度不能小于 {#limit} 个字符',
         'string.max': '菜单名称长度不能大于 {#limit} 个字符',
     }),
-    path: Joi.string(),
-    icon: Joi.string(),
-    level: Joi.number(),
-    status: Joi.number().empty(null).default(1),
+    path: Joi.string().empty([null, ""]).default(""),
+    icon: Joi.string().empty([null, ""]).default(""),
+    level: Joi.number().empty([null, ""]).default(""),
+    status: Joi.number().empty([null, 0]).default(1),
     outpara1: Joi.string().empty([null, ""]).default(""),
 }
 /**

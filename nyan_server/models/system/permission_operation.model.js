@@ -1,15 +1,14 @@
 /**
- * permission--role (N--M)
- * user--role--permission--menu
- * @name 权限菜单model
+ * permission--operation (N--M)
+ * @name 权限操作model
  * @author NyanShen
  * @param {*} sequelize 
  * @param {*} Sequelize 
- * @returns PermissionMenuModel
+ * @returns PermissionOperationModel
  */
 
 module.exports = (sequelize, Sequelize) => {
-	return sequelize.define("PermissionsRoles", {
+	return sequelize.define("PermissionsOperations", {
 		id: {
             type: Sequelize.UUID,
             notNull: true,
@@ -22,6 +21,6 @@ module.exports = (sequelize, Sequelize) => {
 			defaultValue: 1,
 		},
 	}, {
-		tableName: "permissionsroles"
+		tableName: "permissionsoperations"
 	});
 }

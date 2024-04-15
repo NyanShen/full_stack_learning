@@ -5,7 +5,7 @@ import $http from "../index";
 export const fetchRoleList = (params) => {
 	return $http({
 		method: 'GET',
-		url: '/roles/list',
+		url: '/roles',
 		params,
 	})
 }
@@ -13,7 +13,7 @@ export const fetchRoleList = (params) => {
 /**
  * 创建菜单
  */
-export const createRole = (data ) => {
+export const createRole = (data) => {
 	return $http({
 		method: 'POST',
 		url: '/roles/create',
@@ -24,9 +24,9 @@ export const createRole = (data ) => {
 /**
  * 更新菜单
  */
-export const updateRole = (data ) => {
+export const updateRole = (data) => {
 	return $http({
-		method: 'PATCH',
+		method: 'PUT',
 		url: '/roles/update',
 		data,
 	})
@@ -35,7 +35,7 @@ export const updateRole = (data ) => {
 /**
  * 删除菜单
  */
-export const removeRole = (data ) => {
+export const removeRole = (data) => {
 	return $http({
 		method: 'DELETE',
 		url: '/roles/remove/' + data.id,

@@ -31,9 +31,14 @@
         border
         default-expand-all
       >
+        <el-table-column prop="code" label="角色编码" />
         <el-table-column prop="name" label="角色名称" />
         <el-table-column prop="desc" label="角色描述" />
-
+        <el-table-column prop="status" label="状态">
+          <template #default="scope">
+            <dict-tag dictType="status" :dictKey="scope.row.status" />
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="260">
           <template #default="scope">
             <el-button
@@ -70,14 +75,20 @@
         ref="formRef"
         :rules="formRules"
       >
+        <el-form-item label="角色编码" prop="code">
+          <el-input v-model="state.form.code" />
+        </el-form-item>
         <el-form-item label="角色名称" prop="name">
           <el-input v-model="state.form.name" />
         </el-form-item>
         <el-form-item label="角色描述" prop="desc">
           <el-input v-model="state.form.desc" type="textarea" />
         </el-form-item>
-        <el-form-item label="是否激活" prop="isActive">
-          <el-switch v-model="state.form.isActive" />
+        <el-form-item label="是否激活" prop="status">
+          <el-radio-group v-model="state.form.status">
+            <el-radio :value="1">启用</el-radio>
+            <el-radio :value="0">禁用</el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit(formRef)">提交</el-button>
@@ -96,6 +107,13 @@ import { fetchRoleList, createRole, updateRole, removeRole } from "@api/modules/
 const tableData = ref([]);
 const formRef = ref(null);
 const formRules = ref({
+  code: [
+    {
+      required: true,
+      message: "Please input role code",
+      trigger: "blur",
+    },
+  ],
   name: [
     {
       required: true,
@@ -106,9 +124,10 @@ const formRules = ref({
 });
 const queryForm = ref(null);
 const initForm = {
+  code: "",
   name: "",
   desc: "",
-  isActive: true,
+  status: 1,
 };
 const initQuery = {
   name: "",
@@ -131,6 +150,9 @@ const loadList = () => {
     tableData.value = res.data.data;
   });
 };
+/**
+ * 提交新增几编辑数据
+ */
 const onSubmit = async (formRef) => {
   await formRef?.validate((valid, fields) => {
     if (valid) {
@@ -151,27 +173,45 @@ const onSubmit = async (formRef) => {
     }
   });
 };
+/**
+ * 查询
+ */
 const handleQuery = () => {
   tableData.value = [];
   loadList();
 };
+/**
+ * 重置查询
+ */
 const resetQuery = () => {
   state.queryParams = {
     ...initQuery,
   };
 };
+/**
+ * 新增
+ * @param {*} row
+ */
 const handlePlus = () => {
   state.form = {
     ...initForm,
   };
   state.dialogVisible = true;
 };
+/**
+ * 编辑
+ * @param {*} row
+ */
 const handleEdit = (row) => {
   state.form = {
     ...row,
   };
   state.dialogVisible = true;
 };
+/**
+ * 删除
+ * @param {*} row
+ */
 const handleDelete = (row) => {
   ElMessageBox.confirm("确定删除该条角色信息吗？", "系统提示", {
     confirmButtonText: "确定",
