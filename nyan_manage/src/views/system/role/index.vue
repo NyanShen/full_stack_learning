@@ -33,12 +33,13 @@
       >
         <el-table-column prop="code" label="角色编码" />
         <el-table-column prop="name" label="角色名称" />
-        <el-table-column prop="desc" label="角色描述" />
+        <el-table-column prop="remark" label="角色描述" />
         <el-table-column prop="status" label="状态">
           <template #default="scope">
             <dict-tag dictType="status" :dictKey="scope.row.status" />
           </template>
         </el-table-column>
+        <el-table-column prop="createdAt" label="创建时间" />
         <el-table-column label="操作" width="260">
           <template #default="scope">
             <el-button
@@ -88,10 +89,10 @@
             <el-radio :value="0">禁用</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="角色描述" prop="desc">
-          <el-input v-model="state.form.desc" type="textarea" />
+        <el-form-item label="角色描述" prop="remark">
+          <el-input v-model="state.form.remark" type="textarea" />
         </el-form-item>
-        <el-form-item label="角色权限" prop="permissionIds">
+        <el-form-item label="角色权限" prop="permissionIds" v-if="state.permissions.length > 0">
           <el-checkbox
             v-model="state.checkAll"
             :indeterminate="state.isIndeterminate"
@@ -109,10 +110,10 @@
               :label="item.name"
               :value="item.id"
             >
-              {{ item.name
-              }}<span style="font-size: 12px; color: #999999"
-                >({{ item.desc }})</span
-              >
+              {{ item.name }}
+              <span style="font-size: 12px; color: #999999">
+                ( {{ item.remark }})
+              </span>
             </el-checkbox>
           </el-checkbox-group>
         </el-form-item>
@@ -163,7 +164,7 @@ const queryForm = ref(null);
 const initForm = {
   code: "",
   name: "",
-  desc: "",
+  remark: "",
   status: 1,
   permissionIds: "",
 };

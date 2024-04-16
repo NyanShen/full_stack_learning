@@ -44,7 +44,7 @@ router.patch('/update', expressJoi(operationSchema.update_limit), operationServi
  * 查询操作
  * @route GET /api/operations
  * @group 操作管理 - list of operations
- * @param {string} - title - desc
+ * @param {string} - title - remark
  * @returns {object} 200 - operation list
  * @returns {object} 605 - 请求失败
  * @returns {Error}  default - Unexpected error

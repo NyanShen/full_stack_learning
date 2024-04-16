@@ -46,6 +46,7 @@
             <dict-tag dictType="status" :dictKey="scope.row.status" />
           </template>
         </el-table-column>
+        <el-table-column prop="createdAt" label="创建时间" />
         <el-table-column label="操作" width="260">
           <template #default="scope">
             <el-button
@@ -76,11 +77,12 @@
       draggable
     >
       <el-form
+        :inline="true"
         :model="state.form"
-        label-width="200"
-        style="max-width: 600px"
+        label-width="110"
         ref="formRef"
         :rules="formRules"
+        class="dialog-form-inline"
       >
         <el-form-item label="登录账户" prop="code">
           <el-input v-model="state.form.account" />
@@ -106,7 +108,10 @@
             <el-radio :value="0">禁用</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="用户角色" prop="roleIds">
+        <el-form-item label="用户描述" prop="remark">
+          <el-input v-model="state.form.remark" type="textarea" />
+        </el-form-item>
+        <el-form-item label="用户角色" prop="roleIds" v-if="state.roles.length > 0">
           <el-checkbox
             v-model="state.checkAll"
             :indeterminate="state.isIndeterminate"
@@ -124,10 +129,10 @@
               :label="item.name"
               :value="item.id"
             >
-              {{ item.name
-              }}<span style="font-size: 12px; color: #999999"
-                >({{ item.desc }})</span
-              >
+              {{ item.name }}
+              <span style="font-size: 12px; color: #999999">
+                ({{ item.remark }})
+              </span>
             </el-checkbox>
           </el-checkbox-group>
         </el-form-item>
@@ -178,7 +183,7 @@ const queryForm = ref(null);
 const initForm = {
   code: "",
   name: "",
-  desc: "",
+  remark: "",
   status: 1,
   roleIds: "",
 };
@@ -257,7 +262,7 @@ const handlePlus = () => {
   };
   state.isIndeterminate = false;
   state.dialogVisible = true;
-  loadPermissionList();
+  loadRoleList();
 };
 /**
  * 编辑
@@ -269,7 +274,7 @@ const handleEdit = (row) => {
   };
   state.isIndeterminate = false;
   state.dialogVisible = true;
-  loadPermissionList();
+  loadRoleList();
 };
 /**
  * 删除
@@ -296,8 +301,8 @@ const handleDelete = (row) => {
 /**
  * 关联角色-获取角色列表
  */
-const loadPermissionList = () => {
-  fetchPermissionList()
+const loadRoleList = () => {
+  fetchRoleList()
     .then((res) => {
       state.roles = res.data.data || [];
       loadUserRoles();

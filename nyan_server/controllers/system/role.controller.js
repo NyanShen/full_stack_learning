@@ -9,7 +9,7 @@ const roleService = require('../../services/system/role.service');
  * 创建角色
  * @route POST /api/roles/create
  * @group 角色管理 - list of roles
- * @body {name: string, desc: string } 
+ * @body {name: string, remark: string } 
  * @returns {object} 200 - An array of role
  * @returns {object} 605 - 请求失败
  * @returns {Error}  default - Unexpected error
@@ -31,7 +31,7 @@ router.delete("/delete/:id", roleService.delete);
  * 更新角色
  * @route POST /api/roles/update
  * @group 角色管理 - list of roles
- * @body {name: string, desc: string } 
+ * @body {name: string, remark: string } 
  * @returns {object} 200 - An array of role
  * @returns {object} 605 - 请求失败
  * @returns {Error}  default - Unexpected error

@@ -3,7 +3,7 @@ const Joi = require('joi');
  * 基本数据校验
  */
 const base_limit = {
-    desc: Joi.string().empty(null).default(''),
+    remark: Joi.string().empty(null).default(''),
     status: Joi.number().empty([null, 0]).default(0),
     // 关联权限
     menuIds: Joi.string().empty([null, '']).default(''),

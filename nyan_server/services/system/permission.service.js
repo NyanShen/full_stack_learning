@@ -127,7 +127,7 @@ exports.search = async (req, res) => {
             }
         },
         attributes: {
-            exclude: ['updatedAt', 'createdAt']
+            exclude: ['updatedAt']
         }
     }
     DAO.list(PermissionModel, conditions, data => res.send(data));

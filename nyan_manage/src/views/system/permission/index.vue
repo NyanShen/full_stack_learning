@@ -33,12 +33,13 @@
       >
         <el-table-column prop="code" label="权限编码" />
         <el-table-column prop="name" label="权限名称" />
-        <el-table-column prop="desc" label="权限描述" />
+        <el-table-column prop="remark" label="权限描述" />
         <el-table-column prop="status" label="状态">
           <template #default="scope">
             <dict-tag dictType="status" :dictKey="scope.row.status" />
           </template>
         </el-table-column>
+        <el-table-column prop="createdAt" label="创建时间" />
         <el-table-column label="操作" width="280">
           <template #default="scope">
             <el-button
@@ -111,7 +112,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="权限描述" prop="path">
-          <el-input v-model="state.form.desc" :rows="2" type="textarea" />
+          <el-input v-model="state.form.remark" :rows="2" type="textarea" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -204,7 +205,7 @@ const queryForm = ref(null); // 查询条件
 const initForm = {
   code: "",
   name: "",
-  desc: "",
+  remark: "",
   status: 1,
   menuIds: "",
 }; // 新增编辑初始化

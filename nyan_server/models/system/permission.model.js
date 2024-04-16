@@ -1,4 +1,5 @@
 
+const { DataTypes } = require("sequelize");
 /**
  * 用户--角色--权限--菜单(多对多关系)
  * user--role-- permission
@@ -10,35 +11,53 @@
  * @param {*} Sequelize 
  * @returns PermissionModel
  */
-module.exports = (sequelize, Sequelize) => {
+module.exports = (sequelize) => {
     return sequelize.define('Permission', {
         id: {
-            type: Sequelize.INTEGER(10),
+            type: DataTypes.INTEGER(10),
             autoIncrement: true,
             allowNull: false,
             primaryKey: true
         },
         code: {
-            type: Sequelize.STRING,
+            type: DataTypes.STRING(20),
             allowNull: false,
             unique: true,
             comment: "权限编码"
         },
         name: {
-            type: Sequelize.STRING,
+            type: DataTypes.STRING(50),
             allowNull: false,
             unique: true,
             comment: "权限名字"
         },
-        desc: {
-            type: Sequelize.STRING,
+        remark: {
+            type: DataTypes.STRING(100),
             comment: "权限说明"
         },
         status: {
-			type: Sequelize.INTEGER(1),
-			comment: "是否有效(是否被删除)0无效,1有效",
+			type: DataTypes.INTEGER(1),
+			comment: "0禁用 1启用 3删除",
 			defaultValue: 1,
 		},
+        createdAt: {
+            type: DataTypes.DATE, 
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+            get() {
+                let value = this.getDataValue('createdAt');
+                return value.Format('yyyy-MM-dd hh:mm:ss')
+            }
+        },
+        updatedAt: {
+            type: DataTypes.DATE, 
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+            get() {
+                let value = this.getDataValue('createdAt');
+                return value.Format('yyyy-MM-dd hh:mm:ss')
+            }
+        },
     }, {
         tableName: "permissions"
     })

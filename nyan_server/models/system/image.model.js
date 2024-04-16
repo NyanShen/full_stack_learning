@@ -1,7 +1,9 @@
-module.exports = (sequelize, Sequelize) => {
+const { DataTypes } = require("sequelize");
+
+module.exports = (sequelize) => {
 	return sequelize.define("Image",{
-		name: Sequelize.STRING,
-		path: Sequelize.STRING
+		name: DataTypes.STRING,
+		path: DataTypes.STRING
 	}, {
 		tableName: "images"
 	})

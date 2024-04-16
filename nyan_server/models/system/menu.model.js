@@ -1,3 +1,4 @@
+const { DataTypes } = require("sequelize");
 /**
  * permission--menu (N--M)
  * user--role--permission--menu
@@ -7,45 +8,82 @@
  * @param {*} Sequelize 
  * @returns MenuModel
  */
-module.exports = (sequelize, Sequelize) => {
+module.exports = (sequelize) => {
 	return sequelize.define("Menu", {
 		id: {
-			type: Sequelize.INTEGER(10),
+			type: DataTypes.INTEGER(10),
 			allowNull: false,
             autoIncrement: true,
 			primaryKey: true
 		},
 		pid: {
-			type: Sequelize.INTEGER(10),
+			type: DataTypes.INTEGER(10),
 			comment: '父级ID',
 		},
 		name: {
-			type: Sequelize.STRING,
+			type: DataTypes.STRING(50),
 			unique: true,
-			comment: '菜单标题',
+			comment: '名称或标题',
 		},
 		path: {
-			type: Sequelize.STRING(50),
-			comment: '菜单路径',
+			type: DataTypes.STRING(50),
+			comment: '访问路径',
+		},
+		params: {
+			type: DataTypes.STRING(100),
+			comment: '访问路径携带参数',
+		},
+		component: {
+			type: DataTypes.STRING(100),
+			comment: '页面组件路径',
 		},
 		icon: {
-			type: Sequelize.STRING,
-			comment: '菜单图标',
+			type: DataTypes.STRING(100),
+			comment: '图标',
 		},
 		level: {
-			type: Sequelize.INTEGER(1),
-			comment: '菜单类型(1: 目录, 2: 菜单, 3: 按钮)', 
+			type: DataTypes.INTEGER(1),
+			comment: '类型(1: 目录, 2: 菜单, 3: 详情, 4:按钮)', 
 			defaultValue: 2
 		},
-		outpara1: {
-			type: Sequelize.STRING,
-			comment: '扩展字符',
+		sort: {
+			type: DataTypes.INTEGER(3),
+			comment: '显示排序',
+			defaultValue: 1
+		},
+		outlink: {
+			type: DataTypes.STRING,
+			comment: '是否外链',
+			defaultValue: 'tag'
+		},
+		noCache: {
+			type: DataTypes.BOOLEAN,
+			comment: '是否使用缓存',
+			defaultValue: false
 		},
 		status: {
-			type: Sequelize.INTEGER(1),
-			comment: "是否有效(是否被删除)0无效,1有效",
+			type: DataTypes.INTEGER(1),
+			comment: "0禁用 1启用 3删除",
 			defaultValue: 1,
 		},
+        createdAt: {
+            type: DataTypes.DATE, 
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+            get() {
+                let value = this.getDataValue('createdAt');
+                return value.Format('yyyy-MM-dd hh:mm:ss')
+            }
+        },
+        updatedAt: {
+            type: DataTypes.DATE, 
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+            get() {
+                let value = this.getDataValue('createdAt');
+                return value.Format('yyyy-MM-dd hh:mm:ss')
+            }
+        },
 	}, {
 		tableName: "menus"
 	});

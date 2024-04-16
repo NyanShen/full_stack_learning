@@ -146,7 +146,7 @@ module.exports = {
 			offset: 0,
 			sort: {
 				prop:'createdAt',
-				order:'desc / asc：升序',
+				order:'remark / asc：升序',
 			}
 		}*/
 		if (!model) return cb(resExtra('', 605, '模型不存在'));

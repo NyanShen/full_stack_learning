@@ -16,8 +16,12 @@ const base_limit = {
     path: Joi.string().empty([null, ""]).default(""),
     icon: Joi.string().empty([null, ""]).default(""),
     level: Joi.number().empty([null, ""]).default(""),
+    component: Joi.string().empty([null, ""]).default(""),
+    params: Joi.string().empty([null, ""]).default(""),
+    outlink: Joi.string().empty([null, ""]).default("tag"),
     status: Joi.number().empty([null, 0]).default(1),
-    outpara1: Joi.string().empty([null, ""]).default(""),
+    noCache: Joi.boolean().empty(null).default(false),
+    sort: Joi.number().empty([null, 0]).default(1),
 }
 /**
  * 菜单新增数据校验

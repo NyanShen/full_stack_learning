@@ -1,3 +1,4 @@
+const { DataTypes } = require("sequelize");
 /**
  * permission--operation (N--M)
  * @name 权限操作model
@@ -7,17 +8,17 @@
  * @returns PermissionOperationModel
  */
 
-module.exports = (sequelize, Sequelize) => {
+module.exports = (sequelize) => {
 	return sequelize.define("PermissionsOperations", {
 		id: {
-            type: Sequelize.UUID,
+            type: DataTypes.UUID,
             allowNull: false,
             primaryKey: true,
-            defaultValue: Sequelize.UUIDV4 // 或 DataTypes.UUIDV1
+            defaultValue: DataTypes.UUIDV4 // 或 DataTypes.UUIDV1
         },
 		status: {
-			type: Sequelize.INTEGER(1),
-			comment: "是否有效(是否被删除)0无效,1有效",
+			type: DataTypes.INTEGER(1),
+			comment: "0禁用 1启用 3删除",
 			defaultValue: 1,
 		},
 	}, {

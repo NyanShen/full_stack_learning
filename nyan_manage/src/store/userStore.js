@@ -34,9 +34,9 @@ export const useUserStore = defineStore('user', {
                 if (res.data.code !== 0) {
                     return Promise.reject(new Error(res.data.msg))
                 }
-                let { id, name, avatar, roleId } = res.data.data;
+                let { id, name, avatar, roleId, account } = res.data.data;
                 this.setId(id);
-                this.setName(name);
+                this.setName(name || account);
                 this.setAvatar(avatar);
                 this.setRoles(roleId ? [roleId] : []);
                 return res.data.data;

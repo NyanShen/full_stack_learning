@@ -1,3 +1,4 @@
+const { DataTypes } = require("sequelize");
 /**
  * department--role (N--M)
  * department--role--permission
@@ -7,42 +8,60 @@
  * @param {*} Sequelize 
  * @returns DeparmetnModel
  */
-module.exports = (sequelize, Sequelize) => {
+module.exports = (sequelize) => {
     return sequelize.define('Department', {
         id: {
-            type: Sequelize.INTEGER(10),
+            type: DataTypes.INTEGER(10),
             autoIncrement: true,
             allowNull: false,
             primaryKey: true
         },
         pid: {
-            type: Sequelize.INTEGER(10),
+            type: DataTypes.INTEGER(10),
             allowNull: false,
             comment: '用户组父级ID',
         },
         name: {
-            type: Sequelize.STRING,
+            type: DataTypes.STRING(50),
             allowNull: false,
             unique: true,
             comment: '用户组名称',
         },
         leader: {
-            type: Sequelize.STRING,
+            type: DataTypes.STRING(50),
             comment: '负责人姓名',
         },
         email: {
-            type: Sequelize.STRING,
+            type: DataTypes.STRING(50),
             comment: '负责人邮箱',
         },
         phone: {
-            type: Sequelize.STRING,
+            type: DataTypes.STRING(20),
             comment: '负责联系电话',
         },
         status: {
-			type: Sequelize.INTEGER(1),
-			comment: "是否有效(是否被删除)0无效,1有效",
+			type: DataTypes.INTEGER(1),
+			comment: "0禁用 1启用 3删除",
 			defaultValue: 1,
 		},
+        createdAt: {
+            type: DataTypes.DATE, 
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+            get() {
+                let value = this.getDataValue('createdAt');
+                return value.Format('yyyy-MM-dd hh:mm:ss')
+            }
+        },
+        updatedAt: {
+            type: DataTypes.DATE, 
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+            get() {
+                let value = this.getDataValue('createdAt');
+                return value.Format('yyyy-MM-dd hh:mm:ss')
+            }
+        },
     }, {
         tableName: 'departments'
     })

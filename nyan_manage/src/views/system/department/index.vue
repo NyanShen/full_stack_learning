@@ -35,11 +35,7 @@
         <el-table-column prop="path" label="菜单路径" />
         <el-table-column prop="level" label="菜单类型">
           <template #default="scope">
-            <el-tag
-              :type="menuLevel[scope.row.level].type"
-              disable-transitions
-              >{{ menuLevel[scope.row.level].label }}</el-tag
-            >
+            <dict-tag dictType="menu" :dictKey="scope.row.level"/>
           </template>
         </el-table-column>
         <el-table-column prop="icon" label="菜单图标" />
@@ -145,7 +141,6 @@ import {
   deleteMenu,
 } from "@api/modules/menu";
 import { formatTree } from "@common/utils.js";
-import { menuLevel } from "@common/tags.js";
 let pmenu = {
   id: 0,
   name: "主目录",

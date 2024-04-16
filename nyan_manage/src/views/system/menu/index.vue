@@ -31,15 +31,16 @@
         border
         default-expand-all
       >
-        <el-table-column prop="name" label="菜单名称" />
-        <el-table-column prop="path" label="菜单路径" />
-        <el-table-column prop="level" label="菜单类型">
+        <el-table-column prop="name" label="名称" />
+        <el-table-column prop="path" label="访问路径" />
+        <el-table-column prop="level" label="类型">
           <template #default="scope">
             <dict-tag dictType="menu" :dictKey="scope.row.level"></dict-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="icon" label="菜单图标" />
-        <el-table-column prop="outpara1" label="操作标识" />
+        <el-table-column prop="icon" label="图标" />
+        <el-table-column prop="sort" label="排序" />
+        <el-table-column prop="createdAt" label="创建时间" />
         <el-table-column label="操作" width="260">
           <template #default="scope">
             <el-button
@@ -80,10 +81,11 @@
     >
       <el-form
         :model="state.form"
-        label-width="200"
-        style="max-width: 650px"
+        label-width="160"
+        style="max-width: 680px"
         ref="formRef"
         :rules="formRules"
+        class="dialog-form"
       >
         <el-form-item label="上级菜单" prop="pid">
           <el-tree-select
@@ -98,25 +100,64 @@
             placeholder="请选择上级菜单"
           />
         </el-form-item>
-        <el-form-item label="菜单名称" prop="name">
+        <el-form-item label="名称" prop="name">
           <el-input v-model="state.form.name" />
         </el-form-item>
-        <el-form-item label="菜单路径" prop="path">
-          <el-input v-model="state.form.path" />
-        </el-form-item>
-        <el-form-item label="菜单类型" prop="level">
-          <el-radio-group v-model="state.form.level">
+        <el-form-item label="类型" prop="level">
+          <el-radio-group
+            v-model="state.form.level"
+            class="el-radio-group_whole"
+          >
             <el-radio :value="1">目录</el-radio>
             <el-radio :value="2">菜单</el-radio>
-            <el-radio :value="3">按钮</el-radio>
+            <el-radio :value="3">详情</el-radio>
+            <el-radio :value="4">按钮</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="菜单图标" prop="icon">
+        <template v-if="state.form.level === 2 || state.form.level === 3">
+          <el-form-item label="访问路径" prop="path">
+            <el-input
+              v-model="state.form.path"
+              placeholder="格式:/system/user"
+            />
+          </el-form-item>
+          <el-form-item label="路径参数" prop="params">
+            <el-input v-model="state.form.params" placeholder="格式:?id=xxx" />
+          </el-form-item>
+          <el-form-item label="页面路径" prop="component">
+            <el-input
+              v-model="state.form.component"
+              placeholder="格式:/system/user/index"
+            />
+          </el-form-item>
+         <div class="flex-c">
+          <el-form-item label="打开方式" prop="outlink">
+            <el-radio-group v-model="state.form.outlink">
+              <el-radio value="tag">标签</el-radio>
+              <el-radio value="_blank">新窗口</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="使用缓存" prop="noCache">
+            <el-radio-group v-model="state.form.noCache">
+              <el-radio :value="true">使用</el-radio>
+              <el-radio :value="false">不使用</el-radio>
+            </el-radio-group>
+          </el-form-item>
+         </div>
+        </template>
+
+        <el-form-item label="图标" prop="icon">
           <el-input v-model="state.form.icon" />
         </el-form-item>
-        <el-form-item label="操作标识" prop="outpara1">
-          <el-input v-model="state.form.outpara1" />
+        <el-form-item label="排序" prop="sort">
+          <el-input v-model="state.form.sort" type="number" />
         </el-form-item>
+          <el-form-item label="状态" prop="status">
+            <el-radio-group v-model="state.form.status">
+              <el-radio :value="1">启用</el-radio>
+              <el-radio :value="0">禁用</el-radio>
+            </el-radio-group>
+          </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -150,6 +191,13 @@ const menuList = ref([]);
 const tableData = ref([]);
 const formRef = ref(null);
 const formRules = ref({
+  pid: [
+    {
+      required: true,
+      message: "Please input menu pid",
+      trigger: "blur",
+    },
+  ],
   name: [
     {
       required: true,
@@ -157,15 +205,34 @@ const formRules = ref({
       trigger: "blur",
     },
   ],
+  level: [
+    {
+      required: true,
+      message: "Please input menu type",
+      trigger: "blur",
+    },
+  ],
+  sort: [
+    {
+      required: true,
+      message: "Please input menu sort",
+      trigger: "blur",
+    },
+  ],
 });
 const queryForm = ref(null);
 const initForm = {
   pid: 0,
+  code: "",
   name: "",
   path: "",
   level: "",
   icon: "",
-  outpara1: "",
+  params: "",
+  component: "",
+  outlink: "tag",
+  noCache: false,
+  status: 1
 };
 const initQuery = {
   name: "",
@@ -193,57 +260,76 @@ const loadMenuList = () => {
     tableData.value = menuTree;
   });
 };
+/**
+ * 新增修改数据
+ */
 const onSubmit = async (formRef) => {
   await formRef?.validate((valid, fields) => {
     if (valid) {
       const reqPromise = state.form.id ? updateMenu : createMenu;
       reqPromise(state.form)
-	  .then((res) => {
-        if (res.data.code !== 0) {
-          ElMessage.error(res.data.msg);
-          return;
-        }
-        ElMessage.success("保存成功.");
-        state.form = {
-          ...initForm,
-        };
-        loadMenuList();
-        state.dialogVisible = false;
-      })
-	  .catch(err => {
-		
-	  });
+        .then((res) => {
+          if (res.data.code !== 0) {
+            ElMessage.error(res.data.msg);
+            return;
+          }
+          ElMessage.success("保存成功.");
+          state.form = {
+            ...initForm,
+          };
+          loadMenuList();
+          state.dialogVisible = false;
+        })
+        .catch((err) => {});
     } else {
       console.log("error submit!", fields);
     }
   });
 };
+/**
+ * 查询
+ */
 const handleQuery = () => {
   tableData.value = [];
   loadMenuList();
 };
+/**
+ * 重置查询条件
+ */
 const resetQuery = () => {
   state.queryParams = {
     ...initQuery,
   };
 };
+/**
+ * 新增
+ * @param {*} row
+ */
 const handlePlus = (row) => {
   state.form = {
     ...initForm,
   };
-  if (row) {
+  if (row?.id) {
     state.form.pid = row.id;
   }
   state.dialogVisible = true;
 };
+/**
+ * 编辑
+ * @param {*} row
+ */
 const handleEdit = (row) => {
   state.form = {
     ...row,
   };
   state.dialogVisible = true;
 };
+/**
+ * 删除
+ * @param {*} row
+ */
 const handleDelete = (row) => {
-  ElMessageBox.confirm("确定删除该条菜单信息吗？", "系统提示", {
+  ElMessageBox.confirm(`确定删除[${row.name}]菜单信息吗？`, "系统提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",

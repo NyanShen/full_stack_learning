@@ -32,6 +32,7 @@ exports.singin = async (req, res) => {
         id: singleUser.id,
         name: singleUser.name,
         avatar: singleUser.avatar,
+        account: singleUser.account,
     }
     // 生成token返回前端, 携带显示的用户信息, 角色等
     res.sendResult("登录成功", 0, { token: signToken(tokenData) })

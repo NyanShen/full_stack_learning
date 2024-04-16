@@ -13,7 +13,7 @@ let base_limit = {
         'string.min': '角色名称长度不能小于 {#limit} 个字符',
         'string.max': '角色名称不能大于 {#limit} 个字符',
     }),
-    desc: Joi.string().label('角色描述'),
+    remark: Joi.string().label('角色描述'),
     status: Joi.number().empty(null).default(1),
     permissionIds: Joi.string().empty(["", null]).default("")
 }

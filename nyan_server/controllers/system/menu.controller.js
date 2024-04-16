@@ -44,7 +44,7 @@ router.patch('/update', expressJoi(menuSchema.update_limit), menuService.update)
  * 查询菜单
  * @route GET /api/menus
  * @group 菜单管理 - list of menus
- * @param {string} - title - desc
+ * @param {string} - title - remark
  * @returns {object} 200 - menu list
  * @returns {object} 605 - 请求失败
  * @returns {Error}  default - Unexpected error

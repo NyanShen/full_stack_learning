@@ -10,17 +10,18 @@ const base_limit = {
         'string.min': '父级部门长度不能小于 {#limit} 个字符',
         'string.max': '父级部门长度不能大于 {#limit} 个字符',
     }),
-    name: Joi.string().min(2).max(10).required().messages({
+    name: Joi.string().min(2).max(50).required().messages({
         'string.empty': '部门名称不能为空',
         'string.min': '部门名称长度不能小于 {#limit} 个字符',
         'string.max': '部门名称长度不能大于 {#limit} 个字符',
     }),
-    leader: Joi.string(),
-    phone: Joi.string(),
+    leader: Joi.string().empty([null, '']),
+    phone: Joi.string().empty([null, '']),
+    remark: Joi.string().empty([null, '']),
     email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'cn'] } }).messages({
         'string.email': '邮箱格式错误',
     }),
-    status: Joi.number().empty([null, undefined]).default(1)
+    status: Joi.number().empty([null, 0]).default(1)
 }
 /**
  * 新增校验

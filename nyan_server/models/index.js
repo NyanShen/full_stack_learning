@@ -32,27 +32,23 @@ const testConnection = async () => {
 const db = {};
 
 db.Op = Op; //操作类型
-db.Sequelize = Sequelize; //引入
 db.sequelize = sequelize; //实例
-db.testConnection = testConnection; //测试
+db.testConnection = testConnection; //测试数据库连接
 
-// 角色菜单
-db.user = require("./system/user.model.js")(sequelize, Sequelize);
-db.role = require("./system/role.model.js")(sequelize, Sequelize);
-db.menu = require("./system/menu.model.js")(sequelize, Sequelize);
-db.department = require("./system/department.model.js")(sequelize, Sequelize);
-db.operation = require("./system/operation.model.js")(sequelize, Sequelize);
-db.permission = require("./system/permission.model.js")(sequelize, Sequelize);
-db.permissionsroles = require("./system/permission_role.model.js")(sequelize, Sequelize);
-db.permissionsmenus = require("./system/permission_menu.model.js")(sequelize, Sequelize);
-db.permissionsoperations = require("./system/permission_operation.model.js")(sequelize, Sequelize);
+// 系统管理
+db.user = require("./system/user.model.js")(sequelize); // 用户
+db.role = require("./system/role.model.js")(sequelize); // 角色
+db.menu = require("./system/menu.model.js")(sequelize); // 菜单
+db.operation = require("./system/operation.model.js")(sequelize); // 操作
+db.department = require("./system/department.model.js")(sequelize); // 部门
+db.permission = require("./system/permission.model.js")(sequelize); // 权限
+db.permissionsroles = require("./system/permission_role.model.js")(sequelize); // 权限-角色
+db.permissionsmenus = require("./system/permission_menu.model.js")(sequelize); // 权限-菜单
+db.permissionsoperations = require("./system/permission_operation.model.js")(sequelize); // 权限-操作
+
 // 上传图片
-db.image = require("./system/image.model.js")(sequelize, Sequelize);
+db.image = require("./system/image.model.js")(sequelize);
 
-// 用户-文章-标签(文章)-评论
-db.tag = require("./tag.model.js")(sequelize, Sequelize);
-db.article = require("./article.model.js")(sequelize, Sequelize);
-db.articleTag = require("./article_tag.model.js")(sequelize, Sequelize);
-db.comment = require("./comment.model.js")(sequelize, Sequelize);
+// blog 文章-标签-评论-浏览
 
 module.exports = db;

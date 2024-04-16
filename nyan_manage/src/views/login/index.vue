@@ -41,7 +41,7 @@
               auto-complete="off"
               placeholder="验证码"
               style="width: 65%"
-              @keyup.enter.native="signin"
+              @keyup.enter.native="login(loginFormRef)"
             >
             </el-input>
             <div class="login-code">
@@ -89,12 +89,12 @@ import $message from "@common/message";
 import { User, Lock, CircleClose, UserFilled } from "@element-plus/icons-vue";
 import { useRouter, useRoute } from "vue-router";
 import { getCaptcha, signin } from "@api/modules/user";
-import { setToken } from "@common/cookies";
 import {
+  setToken,
   getLoginInfo,
   removeLoginInfo,
   setLoginInfo,
-} from "../../common/cookies";
+} from "@common/cookies";
 
 const route = useRoute();
 const router = useRouter();

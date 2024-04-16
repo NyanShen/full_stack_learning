@@ -13,6 +13,7 @@ const base_limit = {
     email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'cn'] } }).messages({
         'string.email': '邮箱格式错误',
     }),
+    remark: Joi.string().empty([null, '']),
     status: Joi.number().empty(null).default(1),
     departmentId: Joi.number().empty(null)
 }

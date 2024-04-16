@@ -13,7 +13,7 @@ const base_limit = {
         'string.min': '操作名称长度不能小于 {#limit} 个字符',
         'string.max': '操作名称长度不能大于 {#limit} 个字符',
     }),
-    desc: Joi.string().empty(null).default(''),
+    remark: Joi.string().empty(null).default(''),
     status: Joi.number().empty(null).default(1),
 }
 /**

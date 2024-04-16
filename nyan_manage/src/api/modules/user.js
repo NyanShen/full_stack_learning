@@ -51,6 +51,28 @@ export const createUser = (data) => {
 	})
 }
 /**
+ * 更新用户
+ */
+export const updateUser = (data) => {
+	return $http({
+		url: "/users/update",
+		method: "PUT",
+		data
+	})
+}
+
+/**
+ * 创建用户
+ */
+export const removeUser = (data) => {
+	return $http({
+		url: "/users/delete/" + data.id,
+		method: "DELETE",
+		data: {}
+	})
+}
+
+/**
  * 获取用户角色
  */
 export const fetchUserRoleList = () => {
