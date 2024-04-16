@@ -12,20 +12,19 @@ module.exports = (sequelize, Sequelize) => {
         id: {
             type: Sequelize.INTEGER(10),
             autoIncrement: true,
-            notNull: true,
+            allowNull: false,
             primaryKey: true,
         },
         account: {
             type: Sequelize.STRING(12),
-            notNull: true,
-            notEmpty: true,
+            allowNull: false,
             unique: true,
             comment: '账号',
             defaultValue: "",
         },
         password: {
             type: Sequelize.STRING,
-            notEmpty: true,
+            allowNull: false,
             comment: '密码',
             defaultValue: '',
             set(value) {
@@ -43,14 +42,18 @@ module.exports = (sequelize, Sequelize) => {
             comment: '性别',
             defaultValue: 1,
         },
-        email: {
-            type: Sequelize.STRING,
-            comment: '邮箱',
-            defaultValue: '',
-        },
         avatar: {
             type: Sequelize.STRING,
             comment: '头像',
+            defaultValue: '',
+        },
+        phone: {
+            type: Sequelize.INTEGER(11),
+            comment: '手机号码',
+        },
+        email: {
+            type: Sequelize.STRING,
+            comment: '邮箱',
             defaultValue: '',
         },
         status: {

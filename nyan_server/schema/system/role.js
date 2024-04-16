@@ -37,3 +37,15 @@ exports.update_limit = {
         }),
     }
 }
+
+/**
+ * 查找角色 权限
+ */
+exports.search_limit = {
+    // req.query数据验证
+    query: {
+        id: Joi.number().required().messages({
+            'any.required': '角色ID不能为空',
+        }),
+    }
+}

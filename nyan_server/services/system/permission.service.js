@@ -38,7 +38,6 @@ exports.create = async (req, res) => {
         return
     }
     const createdPermission = await PermissionModel.create(req.body);
-    console.log('createdPermission>>>', createdPermission)
     // 查询所有的权限
     if (req.body.menuIds) {
         const menuIds = req.body.menuIds?.split(',');

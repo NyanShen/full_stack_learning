@@ -22,6 +22,10 @@ const dicts = {
     2: { type: "success", name: "菜单"},
     3: { type: "warning", name: "按钮"}
   },
+  sex: {
+    1: { type: "primary", name: "男"},
+    2: { type: "danger", name: "女"}
+  }
 }
 
 const dictMap = dicts[props.dictType] || { [props.dictKey]: { type: "info", name: props.dictKey }}

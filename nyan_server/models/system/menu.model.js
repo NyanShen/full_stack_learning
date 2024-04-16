@@ -11,18 +11,16 @@ module.exports = (sequelize, Sequelize) => {
 	return sequelize.define("Menu", {
 		id: {
 			type: Sequelize.INTEGER(10),
+			allowNull: false,
             autoIncrement: true,
-			notNull: true,
 			primaryKey: true
 		},
 		pid: {
 			type: Sequelize.INTEGER(10),
-			notNull: true,
 			comment: '父级ID',
 		},
 		name: {
 			type: Sequelize.STRING,
-			notNull: true,
 			unique: true,
 			comment: '菜单标题',
 		},

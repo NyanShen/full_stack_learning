@@ -9,19 +9,19 @@ module.exports = (sequelize, Sequelize) => {
 	return sequelize.define("Role", {
 		id: {
 			type: Sequelize.INTEGER(10),
+			allowNull: false,
             autoIncrement: true,
-			notNull: true,
 			primaryKey: true
 		},
 		code: {
 			type: Sequelize.STRING,
-			notNull: true,
+			allowNull: false,
 			unique: true,
 			comment: "角色编码"
 		},
 		name: {
 			type: Sequelize.STRING,
-			notNull: true,
+			allowNull: false,
 			unique: true,
 			comment: "角色名称"
 		},

@@ -91,11 +91,12 @@
       draggable
     >
       <el-form
+        :inline="true"
         :model="state.form"
-        label-width="200"
-        style="max-width: 650px"
+        label-width="110"
         ref="formRef"
         :rules="formRules"
+        class="dialog-form-inline"
       >
         <el-form-item label="权限编码" prop="name">
           <el-input v-model="state.form.code" />
@@ -103,14 +104,14 @@
         <el-form-item label="权限名称" prop="name">
           <el-input v-model="state.form.name" />
         </el-form-item>
-        <el-form-item label="权限描述" prop="path">
-          <el-input v-model="state.form.desc" :rows="2" type="textarea" />
-        </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="state.form.status">
             <el-radio :value="1">启用</el-radio>
             <el-radio :value="0">禁用</el-radio>
           </el-radio-group>
+        </el-form-item>
+        <el-form-item label="权限描述" prop="path">
+          <el-input v-model="state.form.desc" :rows="2" type="textarea" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -130,7 +131,7 @@
       align-center
       draggable
     >
-      <el-form :model="state.form" label-width="200" style="max-width: 650px">
+      <el-form :model="state.form" label-width="200" style="max-width: 600px">
         <el-form-item label="权限编码" prop="code">
           <el-input v-model="state.form.code" disabled />
         </el-form-item>

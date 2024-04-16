@@ -33,7 +33,7 @@ export const fetchUser = () => {
 /**
  * 获取用户信息
  */
-export const fetchUsers = () => {
+export const fetchUserList = () => {
 	return $http({
 		url: "/users",
 		method: "GET",
@@ -47,6 +47,16 @@ export const createUser = (data) => {
 	return $http({
 		url: "/users/create",
 		method: "POST",
+		data
+	})
+}
+/**
+ * 获取用户角色
+ */
+export const fetchUserRoleList = () => {
+	return $http({
+		url: "/users/searchRolesByUserId",
+		method: "GET",
 		data
 	})
 }

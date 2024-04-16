@@ -2,3 +2,15 @@
 .el-dropdown {
     vertical-align: bottom;
 }
+
+.dialog-form-inline .el-input {
+    --el-input-width: 230px;
+}
+
+.dialog-form-inline .el-input {
+    --el-select-width: 230px;
+}
+
+.dialog-form-inline .el-textarea {
+    width: 608px;
+}

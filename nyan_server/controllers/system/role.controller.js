@@ -40,14 +40,26 @@ router.put('/update', expressJoi(roleSchema.update_limit), roleService.update);
 
 
 /**
- * 查询用户
+ * 查询角色
  * @route GET /api/roles
- * @group 用户管理 - list of roles
+ * @group 角色管理 - list of roles
  * @param {string} name
  * @returns {object} 200 - An array of role info
  * @returns {object} 605 - 请求失败
  * @returns {Error}  default - Unexpected error
  */
 router.get('/', roleService.search);
+
+/**
+ * 查询角色权限
+//  * @route GET /api/roles/searchPermissionsByRoleId
+ * @group 角色管理
+ * @param {string} name
+ * @returns {object} 200 - An array of role info
+ * @returns {object} 605 - 请求失败
+ * @returns {Error}  default - Unexpected error
+ */
+router.get('/searchPermissionsByRoleId', expressJoi(roleSchema.search_limit), roleService.searchPermissionsByRoleId);
+
 
 module.exports = router

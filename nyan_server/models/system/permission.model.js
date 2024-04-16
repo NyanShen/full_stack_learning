@@ -15,18 +15,18 @@ module.exports = (sequelize, Sequelize) => {
         id: {
             type: Sequelize.INTEGER(10),
             autoIncrement: true,
-            notNull: true,
+            allowNull: false,
             primaryKey: true
         },
         code: {
             type: Sequelize.STRING,
-            notNull: true,
+            allowNull: false,
             unique: true,
             comment: "权限编码"
         },
         name: {
             type: Sequelize.STRING,
-            notNull: true,
+            allowNull: false,
             unique: true,
             comment: "权限名字"
         },

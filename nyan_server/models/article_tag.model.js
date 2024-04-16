@@ -5,13 +5,12 @@ module.exports = (sequelize, Sequelize) => {
 	return sequelize.define("ArticleTag", {
 		id: {
 			type: Sequelize.UUID,
-			notNull: true,
+			allowNull: false,
 			primaryKey: true,
 			defaultValue: Sequelize.UUIDV4 // 或 DataTypes.UUIDV1
 		},
 		article_id: {
 			type: Sequelize.STRING,
-			notNull: true,
 			allowNull: false,
 			comment: '文章id',
 		},

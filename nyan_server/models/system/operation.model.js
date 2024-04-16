@@ -11,18 +11,18 @@ module.exports = (sequelize, Sequelize) => {
         id: {
             type: Sequelize.INTEGER(10),
             autoIncrement: true,
-            notNull: true,
+            allowNull: false,
             primaryKey: true
         },
         code: {
             type: Sequelize.STRING(20),
-            notNull: true,
+            allowNull: false,
             unique: true,
             comment: "操作编码"
         },
         name: {
             type: Sequelize.STRING(20),
-            notNull: true,
+            allowNull: false,
             comment: "操作名称"
         },
         desc: {

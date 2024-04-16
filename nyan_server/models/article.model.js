@@ -3,31 +3,30 @@ module.exports = (sequelize, Sequelize) => {
     return sequelize.define("Article", {
         id: {
             type: Sequelize.UUID,
-            notNull: true,
+            allowNull: false,
             primaryKey: true,
             defaultValue: Sequelize.UUIDV4 // 或 DataTypes.UUIDV1
         },
         sort_id: {
             type: Sequelize.STRING,
-            notNull: true,
-            notEmpty: true,
+            allowNull: false,
             comment: '分类ID',
         },
         article_title: {
             type: Sequelize.STRING,
-            notNull: true,
-            notEmpty: true,
+            
+            allowNull: false,
             comment: '文章标题',
         },
         article_summary: {
             type: Sequelize.STRING,
-            notNull: true,
-            notEmpty: true,
+            
+            allowNull: false,
             comment: '文章摘要',
         },
         article_content: {
             type: Sequelize.TEXT("long"),
-            notEmpty: true,
+            allowNull: false,
             comment: '文章内容',
         },
         article_cover: {
@@ -42,31 +41,31 @@ module.exports = (sequelize, Sequelize) => {
         },
         viewsCount: {
             type: Sequelize.INTEGER,
-            notEmpty: true,
+            allowNull: false,
             defaultValue: 0,
             comment: '文章浏览量',
         },
         commentsCount: {
             type: Sequelize.INTEGER,
-            notEmpty: true,
+            allowNull: false,
             defaultValue: 0,
             comment: '文章评论数',
         },
         isTop: {
             type: Sequelize.BOOLEAN,
-            notEmpty: true,
+            allowNull: false,
             defaultValue: false,
             comment: '是否顶置',
         },
         isHot: {
             type: Sequelize.BOOLEAN,
-            notEmpty: true,
+            allowNull: false,
             defaultValue: false,
             comment: '是否火热',
         },
         isRecommend: {
             type: Sequelize.BOOLEAN,
-            notEmpty: true,
+            allowNull: false,
             defaultValue: false,
             comment: '是否推荐',
         },

@@ -11,7 +11,7 @@ module.exports = (sequelize, Sequelize) => {
 	return sequelize.define("PermissionsOperations", {
 		id: {
             type: Sequelize.UUID,
-            notNull: true,
+            allowNull: false,
             primaryKey: true,
             defaultValue: Sequelize.UUIDV4 // 或 DataTypes.UUIDV1
         },

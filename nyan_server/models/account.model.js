@@ -12,20 +12,19 @@ module.exports = (sequelize, Sequelize) => {
         id: {
             type: Sequelize.INTEGER(10),
             autoIncrement: true,
-            notNull: true,
+            allowNull: false,
             primaryKey: true,
         },
         account: {
             type: Sequelize.STRING(12),
-            notNull: true,
-            notEmpty: true,
+            allowNull: false,
             unique: true,
             comment: '账号',
             defaultValue: "",
         },
         password: {
             type: Sequelize.STRING,
-            notEmpty: true,
+            allowNull: false,
             comment: '密码',
             defaultValue: '',
             set(value) {

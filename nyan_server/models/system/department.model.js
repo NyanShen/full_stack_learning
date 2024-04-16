@@ -12,17 +12,17 @@ module.exports = (sequelize, Sequelize) => {
         id: {
             type: Sequelize.INTEGER(10),
             autoIncrement: true,
-            notNull: true,
+            allowNull: false,
             primaryKey: true
         },
         pid: {
             type: Sequelize.INTEGER(10),
-            notNull: true,
+            allowNull: false,
             comment: '用户组父级ID',
         },
         name: {
             type: Sequelize.STRING,
-            notNull: true,
+            allowNull: false,
             unique: true,
             comment: '用户组名称',
         },

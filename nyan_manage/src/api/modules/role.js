@@ -9,6 +9,16 @@ export const fetchRoleList = (params) => {
 		params,
 	})
 }
+/**
+ * 查询角色权限
+ */
+export const fetchRolePermissionList = (params) => {
+	return $http({
+		method: 'GET',
+		url: '/roles/searchPermissionsByRoleId',
+		params,
+	})
+}
 
 /**
  * 创建菜单

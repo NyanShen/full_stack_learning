@@ -1,6 +1,7 @@
 const db = require("../../models/index");
 const DAO = require("../../utils/dao.js");
 const RoleModel = db.role;
+const PermissionModel = db.permission;
 
 /**
  * @name 新增角色
@@ -15,8 +16,12 @@ exports.create = async (req, res) => {
         res.sendResult("角色已存在", 605);
         return;
     }
-     await RoleModel.create(req.body);
-  
+    const createdRole = await RoleModel.create(req.body);
+    if (req.body.permissionIds) {
+        const permissionIds = req.body.permissionIds?.split(',');
+        const permissions = await PermissionModel.findAll({ where: { id: permissionIds } });
+        createdRole.setPermissions(permissions);
+    }
     res.sendResult("创建成功", 0);
 }
 /**
@@ -56,7 +61,12 @@ exports.update = async (req, res) => {
         res.sendResult("不存在该角色", 605);
         return;
     }
-    await singleRole.update(req.body);
+    singleRole.update(req.body);
+    if (req.body.permissionIds) {
+        const permissionIds = req.body.permissionIds?.split(',');
+        const permissions = await PermissionModel.findAll({ where: { id: permissionIds } });
+        singleRole.setPermissions(permissions);
+    }
     res.sendResult("修改成功", 0);
 }
 
@@ -80,4 +90,28 @@ exports.search = async (req, res) => {
         }
     }
     DAO.list(RoleModel, conditions, data => res.send(data));
+}
+
+/**
+ * @name 搜索角色权限
+ * @author NyanShen
+ * @param {*} req 
+ * @param {*} res 
+ * @returns RolePermission Array
+ */
+exports.searchPermissionsByRoleId = async (req, res) => {
+    try {
+        const role = await RoleModel.findByPk(req.query.id, {
+            include: {
+                model: PermissionModel,
+                attributes: ['id'],
+                through: {
+                    attributes: []
+                }
+            }
+        });
+        res.sendResult('查询成功!', 0, role?.Permissions?.map(item => item.id));
+    } catch (error) {
+        res.sendResult('查询失败!', -1, error)
+    }
 }

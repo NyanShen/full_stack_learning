@@ -3,14 +3,12 @@ module.exports = (sequelize, Sequelize) => {
 	return sequelize.define("Tag", {
 		id: {
 			type: Sequelize.UUID,
-			notNull: true,
 			primaryKey: true,
 			defaultValue: Sequelize.UUIDV4 // 或 DataTypes.UUIDV1
 		},
 		name: {
 			type: Sequelize.STRING,
-			notNull: true,
-			notEmpty: true,
+			allowNull: false,
 			comment: '标签名称',
 		},
 		desc: {

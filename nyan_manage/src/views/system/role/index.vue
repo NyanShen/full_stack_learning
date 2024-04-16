@@ -63,17 +63,18 @@
     </div>
     <el-dialog
       v-model="state.dialogVisible"
-      :title="state.form.id ? '编辑菜单' : '新增菜单'"
+      :title="state.form.id ? '编辑角色' : '新增角色'"
       width="800"
       align-center
       draggable
     >
       <el-form
+        :inline="true"
         :model="state.form"
-        label-width="auto"
-        style="max-width: 600px"
+        label-width="115"
         ref="formRef"
         :rules="formRules"
+        class="dialog-form-inline"
       >
         <el-form-item label="角色编码" prop="code">
           <el-input v-model="state.form.code" />
@@ -81,20 +82,49 @@
         <el-form-item label="角色名称" prop="name">
           <el-input v-model="state.form.name" />
         </el-form-item>
-        <el-form-item label="角色描述" prop="desc">
-          <el-input v-model="state.form.desc" type="textarea" />
-        </el-form-item>
-        <el-form-item label="是否激活" prop="status">
+        <el-form-item label="状态" prop="status">
           <el-radio-group v-model="state.form.status">
             <el-radio :value="1">启用</el-radio>
             <el-radio :value="0">禁用</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onSubmit(formRef)">提交</el-button>
-          <el-button>取消</el-button>
+        <el-form-item label="角色描述" prop="desc">
+          <el-input v-model="state.form.desc" type="textarea" />
+        </el-form-item>
+        <el-form-item label="角色权限" prop="permissionIds">
+          <el-checkbox
+            v-model="state.checkAll"
+            :indeterminate="state.isIndeterminate"
+            @change="handleCheckAllChange"
+          >
+            全部
+          </el-checkbox>
+          <el-checkbox-group
+            v-model="state.permissionIds"
+            @change="handleCheckedPermissionsChange"
+          >
+            <el-checkbox
+              v-for="item in state.permissions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            >
+              {{ item.name
+              }}<span style="font-size: 12px; color: #999999"
+                >({{ item.desc }})</span
+              >
+            </el-checkbox>
+          </el-checkbox-group>
         </el-form-item>
       </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="state.dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="onSubmit(formRef)">
+            提交
+          </el-button>
+        </div>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -103,7 +133,14 @@
 import { Delete, Edit, Plus, Search, Refresh } from "@element-plus/icons-vue";
 import { ref, reactive, onMounted } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { fetchRoleList, createRole, updateRole, removeRole } from "@api/modules/role";
+import {
+  fetchRoleList,
+  createRole,
+  updateRole,
+  removeRole,
+  fetchRolePermissionList,
+} from "@api/modules/role";
+import { fetchPermissionList } from "@api/modules/permission";
 const tableData = ref([]);
 const formRef = ref(null);
 const formRules = ref({
@@ -128,6 +165,7 @@ const initForm = {
   name: "",
   desc: "",
   status: 1,
+  permissionIds: "",
 };
 const initQuery = {
   name: "",
@@ -141,6 +179,11 @@ const state = reactive({
     ...initQuery,
   },
   dialogVisible: false,
+  // 权限选择
+  checkAll: false,
+  isIndeterminate: false,
+  permissions: [],
+  permissionIds: [],
 });
 /**
  * 获取菜单列表
@@ -151,11 +194,12 @@ const loadList = () => {
   });
 };
 /**
- * 提交新增几编辑数据
+ * 提交新增/编辑数据
  */
 const onSubmit = async (formRef) => {
   await formRef?.validate((valid, fields) => {
     if (valid) {
+      state.form.permissionIds = state.permissionIds.join(",");
       const reqPromise = state.form.id ? updateRole : createRole;
       reqPromise(state.form).then((res) => {
         ElMessage({
@@ -196,7 +240,9 @@ const handlePlus = () => {
   state.form = {
     ...initForm,
   };
+  state.isIndeterminate = false;
   state.dialogVisible = true;
+  loadPermissionList();
 };
 /**
  * 编辑
@@ -206,7 +252,9 @@ const handleEdit = (row) => {
   state.form = {
     ...row,
   };
+  state.isIndeterminate = false;
   state.dialogVisible = true;
+  loadPermissionList();
 };
 /**
  * 删除
@@ -230,7 +278,58 @@ const handleDelete = (row) => {
     });
   });
 };
+/**
+ * 关联权限-获取权限列表
+ */
+const loadPermissionList = () => {
+  fetchPermissionList()
+    .then((res) => {
+      state.permissions = res.data.data || [];
+      loadRolePermissionList();
+    })
+    .catch(() => {});
+};
+/**
+ * 查询已关联权限
+ */
+const loadRolePermissionList = () => {
+  // 新增不需要查询
+  if (!state.form.id) {
+    return;
+  }
+  fetchRolePermissionList({ id: state.form.id })
+    .then((res) => {
+      state.permissionIds = res.data.data || [];
+      handleCheckedPermissionsChange(state.permissionIds);
+    })
+    .catch(() => {});
+};
+/**
+ * 关联权限-全选
+ */
+const handleCheckAllChange = (val) => {
+  state.permissionIds = val ? state.permissions.map((item) => item.id) : [];
+  state.isIndeterminate = false;
+};
+/**
+ * 显示是否全选逻辑
+ * @param {*} value
+ */
+const handleCheckedPermissionsChange = (value) => {
+  const checkedCount = value.length;
+  state.checkAll = checkedCount === state.permissions.length;
+  state.isIndeterminate =
+    checkedCount > 0 && checkedCount < state.permissions.length;
+};
+
 onMounted(() => {
   loadList();
 });
 </script>
+<style lang="scss" scoped>
+.el-checkbox {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
+</style>
