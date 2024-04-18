@@ -156,3 +156,61 @@ exports.searchMenusByPermissionId = async (req, res) => {
         res.sendResult('查询失败!', -1, error)
     }
 }
+
+/**
+ * @name 搜索权限-菜单-返回路由格式
+ * @author NyanShen
+ * @param {*} req 
+ * @param {*} res 
+ * @returns Permission Menu Route Tree
+ */
+exports.searchMenusByPermissionCode = async (req, res) => {
+    try {
+        if (!req.query?.codes) {
+            res.sendResult("权限编码不能为空", -1);
+            return
+        }
+        // 根据权限编码查询所有的菜单
+        const conditions = {
+            where: {
+                code: req.query.codes.split(',')
+            },
+            attributes: [],
+            include: {
+                model: MenuModel,
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },
+                through: {
+                    attributes: []
+                }
+            }
+        }
+        const permissions = await PermissionModel.findAll(conditions);
+        // 获取权限下的菜单
+        let targetMenus = [];
+        permissions?.forEach(permission => {
+            const menus = permission.Menus?.reduce((prev, curr) => {
+                // 不存在且类型不是按钮(按钮另外查询还是根据操作权限控制)
+                if (!prev.includes(curr.code)) {
+                    prev.push(curr)
+                }
+                return prev
+            }, []);
+            targetMenus = [...targetMenus, ...menus];
+        });
+        // 形成路由对象(添加父级菜单)
+        const pids = targetMenus.map(item => item.pid);
+        const menuConditions = {
+            where: { id: pids },
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            }
+        }
+        const pmenus = await MenuModel.findAll(menuConditions);
+        targetMenus = [...pmenus, ...targetMenus];
+        res.sendResult('查询成功!', 0, targetMenus);
+    } catch (error) {
+        res.sendResult('查询失败!', -1, error)
+    }
+}

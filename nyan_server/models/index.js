@@ -42,6 +42,7 @@ db.menu = require("./system/menu.model.js")(sequelize); // 菜单
 db.operation = require("./system/operation.model.js")(sequelize); // 操作
 db.department = require("./system/department.model.js")(sequelize); // 部门
 db.permission = require("./system/permission.model.js")(sequelize); // 权限
+db.usersroles = require('./system/user_role.model.js')(sequelize); // 用户-角色
 db.permissionsroles = require("./system/permission_role.model.js")(sequelize); // 权限-角色
 db.permissionsmenus = require("./system/permission_menu.model.js")(sequelize); // 权限-菜单
 db.permissionsoperations = require("./system/permission_operation.model.js")(sequelize); // 权限-操作

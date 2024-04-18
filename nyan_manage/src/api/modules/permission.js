@@ -19,6 +19,16 @@ export const fetchPermissionMenus = (params) => {
         params,
     })
 }
+/**
+ * 查询权限对应的路由
+ */
+export const fetchUserMenus = (params) => {
+    return $http({
+        method: 'GET',
+        url: '/permissions/getMenus',
+        params,
+    })
+}
 
 /**
  * 创建权限

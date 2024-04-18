@@ -3,10 +3,10 @@
     <!-- 查询 -->
     <div class="app-search-container mgb10">
       <el-form :model="state.queryParams" ref="queryForm" :inline="true">
-        <el-form-item label="菜单名称" prop="name">
+        <el-form-item label="名称" prop="name">
           <el-input
             v-model="state.queryParams.name"
-            placeholder="请输入菜单名称"
+            placeholder="请输入名称"
             clearable
             @keyup.enter.native="handleQuery"
           />
@@ -32,7 +32,7 @@
         default-expand-all
       >
         <el-table-column prop="name" label="名称" />
-        <el-table-column prop="path" label="访问路径" />
+        <el-table-column prop="path" label="当前路径" />
         <el-table-column prop="level" label="类型">
           <template #default="scope">
             <dict-tag dictType="menu" :dictKey="scope.row.level"></dict-tag>
@@ -111,39 +111,38 @@
             <el-radio :value="1">目录</el-radio>
             <el-radio :value="2">菜单</el-radio>
             <el-radio :value="3">详情</el-radio>
-            <el-radio :value="4">按钮</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label="当前路径" prop="path">
+          <el-input
+            v-model="state.form.path"
+            placeholder="填写访问路径的当前路径,按层级模块填写"
+          />
+        </el-form-item>
         <template v-if="state.form.level === 2 || state.form.level === 3">
-          <el-form-item label="访问路径" prop="path">
-            <el-input
-              v-model="state.form.path"
-              placeholder="格式:/system/user"
-            />
-          </el-form-item>
           <el-form-item label="路径参数" prop="params">
             <el-input v-model="state.form.params" placeholder="格式:?id=xxx" />
           </el-form-item>
-          <el-form-item label="页面路径" prop="component">
+          <el-form-item label="组件路径" prop="component">
             <el-input
               v-model="state.form.component"
               placeholder="格式:/system/user/index"
             />
           </el-form-item>
-         <div class="flex-c">
-          <el-form-item label="打开方式" prop="outlink">
-            <el-radio-group v-model="state.form.outlink">
-              <el-radio value="tag">标签</el-radio>
-              <el-radio value="_blank">新窗口</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="使用缓存" prop="noCache">
-            <el-radio-group v-model="state.form.noCache">
-              <el-radio :value="true">使用</el-radio>
-              <el-radio :value="false">不使用</el-radio>
-            </el-radio-group>
-          </el-form-item>
-         </div>
+          <div class="flex-c">
+            <el-form-item label="打开方式" prop="outlink">
+              <el-radio-group v-model="state.form.outlink">
+                <el-radio value="tag">标签</el-radio>
+                <el-radio value="_blank">新窗口</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="使用缓存" prop="noCache">
+              <el-radio-group v-model="state.form.noCache">
+                <el-radio :value="true">使用</el-radio>
+                <el-radio :value="false">不使用</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </div>
         </template>
 
         <el-form-item label="图标" prop="icon">
@@ -152,12 +151,12 @@
         <el-form-item label="排序" prop="sort">
           <el-input v-model="state.form.sort" type="number" />
         </el-form-item>
-          <el-form-item label="状态" prop="status">
-            <el-radio-group v-model="state.form.status">
-              <el-radio :value="1">启用</el-radio>
-              <el-radio :value="0">禁用</el-radio>
-            </el-radio-group>
-          </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-radio-group v-model="state.form.status">
+            <el-radio :value="1">启用</el-radio>
+            <el-radio :value="0">禁用</el-radio>
+          </el-radio-group>
+        </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -232,7 +231,7 @@ const initForm = {
   component: "",
   outlink: "tag",
   noCache: false,
-  status: 1
+  status: 1,
 };
 const initQuery = {
   name: "",

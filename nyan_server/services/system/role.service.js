@@ -1,6 +1,7 @@
 const db = require("../../models/index");
 const DAO = require("../../utils/dao.js");
 const RoleModel = db.role;
+const UserModel = db.user;
 const PermissionModel = db.permission;
 
 /**
@@ -70,6 +71,26 @@ exports.update = async (req, res) => {
     res.sendResult("修改成功", 0);
 }
 
+/**
+ * 角色分配用户
+ * roleId
+ * userIds == users
+ */
+exports.allocateUser = async (req, res) => {
+    let singleRole = await RoleModel.findByPk(req.body.id);
+    if (!singleRole) {
+        res.sendResult("不存在该角色", 605);
+        return;
+    }
+    if (!req.body.userIds) {
+        res.sendResult("用户不能为空", 605);
+        return;
+    }
+    const users = await UserModel.findAll({ where: { id: req.body.userIds?.split(',') } });
+    singleRole.setUsers(users);
+    res.sendResult('分配用户成功', 0);
+
+}
 
 /**
  * @name 搜索角色
@@ -86,7 +107,7 @@ exports.search = async (req, res) => {
             }
         },
         attributes: {
-            exclude: ['updatedAt', 'createdAt']
+            exclude: ['updatedAt']
         }
     }
     DAO.list(RoleModel, conditions, data => res.send(data));

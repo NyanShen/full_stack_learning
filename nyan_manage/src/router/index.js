@@ -4,8 +4,12 @@ import {
 	createWebHashHistory,
 } from 'vue-router';
 import Layout from "../layout/index.vue"; // 全局布局
-
-const routes = [
+/**
+ * 普通用户路由,不需权限控制的路由
+ * 登录、401, 404, error, 403
+ * 首页, 个人中心
+ */
+const commonRoutes = [
 	// Define your routes here
 	{
 		path: "/login",
@@ -18,90 +22,107 @@ const routes = [
 	},
 	{
 		path: "/",
-		component: Layout,
-		name: "container",
+		component: () => import('@/layout/index.vue'),
 		redirect: "home",
 		meta: {
-			requiresAuth: true, // 有一些页面是否登录才能进去
 			name: "首页",
 		},
-		children: [{
-			path: "/home",
-			name: "home",
-			component: () => import("@views/home/index.vue"),
-			meta: {
-				requiresAuth: true, //有一些页面是否登录才能进去
-				name: "首页",
-			},
-		},
-		{
-			path: "/system/permission",
-			name: "permission",
-			component: () => import("@views/system/permission/index.vue"),
-			meta: {
-				requiresAuth: true,
-				name: "权限管理",
-			},
-		},
-		{
-			path: "/system/department",
-			name: "department",
-			component: () => import("@views/system/department/index.vue"),
-			meta: {
-				requiresAuth: true,
-				name: "部门管理",
-			},
-		},
-		{
-			path: "/system/user",
-			name: "user",
-			component: () => import("@views/system/user/index.vue"),
-			meta: {
-				requiresAuth: true,
-				name: "用户管理",
-			},
-		},
-		{
-			path: "/system/role",
-			name: "role",
-			component: () => import("@views/system/role/index.vue"),
-			meta: {
-				requiresAuth: true,
-				name: "角色管理",
-			},
-		},
-		{
-			path: "/system/menu",
-			name: "menu",
-			component: () => import("@views/system/menu/index.vue"),
-			meta: {
-				requiresAuth: true, //有一些页面是否登录才能进去
-				name: "菜单管理",
-			},
-		},
-
-		{
-			path: "/system/operation",
-			name: "operation",
-			component: () => import("@views/system/operation/index.vue"),
-			meta: {
-				requiresAuth: true,
-				name: "操作管理",
-			},
-		},
+		children: [
+			{
+				path: "home",
+				component: () => import("@views/home/index.vue"),
+				meta: {
+					name: "首页",
+				},
+			}
 		],
 	},
 	{
+		path: "/user",
+		component: Layout,
+		redirect: "noredirect",
+		meta: {
+			name: "用户中心",
+		},
+		children: [
+			{
+				path: "profile",
+				component: () => import("@views/user/profile.vue"),
+				meta: {
+					name: "用户中心",
+					icon: "user"
+				}
+			}
+		]
+	},
+	/**
+	 * 
+	{
+		path: "/system",
+		component: Layout,
+		redirect: "noredirect",
+		meta: {
+			name: "系统管理",
+		},
+		children: [
+			{
+				path: "permission",
+				component: () => import("@views/system/permission/index.vue"),
+				meta: {
+					name: "权限管理",
+				},
+			},
+			{
+				path: "department",
+				component: () => import("@views/system/department/index.vue"),
+				meta: {
+					name: "部门管理",
+				},
+			},
+			{
+				path: "user",
+				component: () => import("@views/system/user/index.vue"),
+				meta: {
+					name: "用户管理",
+					icon: ""
+				},
+			},
+			{
+				path: "role",
+				component: () => import("@views/system/role/index.vue"),
+				meta: {
+					requiresAuth: true,
+					name: "角色管理",
+				},
+			},
+			{
+				path: "menu",
+				component: () => import("@views/system/menu/index.vue"),
+				meta: {
+					name: "菜单管理",
+				},
+			},
+
+			{
+				path: "operation",
+				component: () => import("@views/system/operation/index.vue"),
+				meta: {
+					name: "操作管理",
+				},
+			},
+		]
+	},
+	*/
+	{
 		path: '/:pathMatch(.*)*',
 		component: () => import('@/views/error/404.vue'),
-		hidden: true
 	},
 
 ];
 
 const router = createRouter({
 	history: createWebHistory(),
-	routes,
+	routes: commonRoutes,
 });
 
 /**
@@ -110,6 +131,8 @@ const router = createRouter({
 import NProgress from "nprogress";
 import { getToken } from "@common/cookies";
 import { useUserStore } from "@store/userStore";
+import { generateRoutes } from '@common/utils';
+import $message from "@common/message";
 NProgress.configure({ showSpinner: false });
 const whiteList = ['/login', '/register'];
 router.beforeEach(async (to, from, next) => {
@@ -129,10 +152,19 @@ router.beforeEach(async (to, from, next) => {
 		const userStore = useUserStore();
 		// 判断是否有缓存, 没有缓存重新请求, 有没有对应的权限
 		if (userStore.roles.length === 0) {
-			// 获取用户信息
-			await userStore.loadUser();
-			// 获取用户角色下的菜单
-			next();
+			try {
+				// 获取用户信息
+				const result = await userStore.loadUser();
+				// 获取用户角色下的菜单路由
+				const menuTree = await userStore.loadMenuTree(result.permissions.join(','));
+				generateRoutes(router, menuTree);
+				next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
+			} catch (error) {
+				console.log("route error", error)
+				$message.error("获取用户信息异常!");
+				userStore.logout();
+				next({ path: '/' });
+			}
 		}
 		// 有缓存直接进入
 		else {

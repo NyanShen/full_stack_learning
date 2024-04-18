@@ -7,7 +7,6 @@ export const getCaptcha = () => {
 	return $http({
 		url: "/auth/captcha",
 		method: "GET",
-		data: {}
 	})
 }
 /**
@@ -27,7 +26,6 @@ export const fetchUser = () => {
 	return $http({
 		url: "/users/userInfo",
 		method: "GET",
-		data: {}
 	})
 }
 /**
@@ -68,17 +66,16 @@ export const removeUser = (data) => {
 	return $http({
 		url: "/users/delete/" + data.id,
 		method: "DELETE",
-		data: {}
 	})
 }
 
 /**
  * 获取用户角色
  */
-export const fetchUserRoleList = () => {
+export const fetchUserRoleList = (params) => {
 	return $http({
 		url: "/users/searchRolesByUserId",
 		method: "GET",
-		data
+		params
 	})
 }

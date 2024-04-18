@@ -84,8 +84,11 @@
         :rules="formRules"
         class="dialog-form-inline"
       >
-        <el-form-item label="登录账户" prop="code">
+        <el-form-item label="登录账户" prop="account">
           <el-input v-model="state.form.account" />
+        </el-form-item>
+        <el-form-item label="登录密码" prop="password" v-if="!state.form.id">
+          <el-input v-model="state.form.password" type="password" show-password/>
         </el-form-item>
         <el-form-item label="用户名称" prop="name">
           <el-input v-model="state.form.name" />
@@ -111,7 +114,11 @@
         <el-form-item label="用户描述" prop="remark">
           <el-input v-model="state.form.remark" type="textarea" />
         </el-form-item>
-        <el-form-item label="用户角色" prop="roleIds" v-if="state.roles.length > 0">
+        <el-form-item
+          label="用户角色"
+          prop="roleIds"
+          v-if="state.roles.length > 0"
+        >
           <el-checkbox
             v-model="state.checkAll"
             :indeterminate="state.isIndeterminate"
@@ -161,13 +168,23 @@ import {
   fetchUserRoleList,
 } from "@api/modules/user";
 import { fetchRoleList } from "@api/modules/role";
+import { phonePattern, emailPattern } from "@common/validations.js";
 const tableData = ref([]);
 const formRef = ref(null);
-const formRules = ref({
-  code: [
+const passwordRule = {
+  password: [
     {
       required: true,
-      message: "Please input user code",
+      message: "Please input user password",
+      trigger: "blur",
+    },
+  ],
+};
+const baseRules = {
+  account: [
+    {
+      required: true,
+      message: "Please input user account",
       trigger: "blur",
     },
   ],
@@ -178,10 +195,25 @@ const formRules = ref({
       trigger: "blur",
     },
   ],
-});
+  phone: [
+    {
+      pattern: phonePattern,
+      message: "Please input correct user phone",
+      trigger: "blur",
+    }
+  ],
+  email: [
+    {
+      pattern: emailPattern,
+      message: "Please input correct user email",
+      trigger: "blur",
+    }
+  ]
+};
+const formRules = ref(null);
 const queryForm = ref(null);
 const initForm = {
-  code: "",
+  account: "",
   name: "",
   remark: "",
   status: 1,
@@ -259,7 +291,13 @@ const resetQuery = () => {
 const handlePlus = () => {
   state.form = {
     ...initForm,
+    password: "123456",
   };
+  formRules.value = {
+    ...baseRules,
+    ...passwordRule,
+  };
+  state.roleIds = [];
   state.isIndeterminate = false;
   state.dialogVisible = true;
   loadRoleList();
@@ -272,6 +310,7 @@ const handleEdit = (row) => {
   state.form = {
     ...row,
   };
+  formRules.value = { ...baseRules };
   state.isIndeterminate = false;
   state.dialogVisible = true;
   loadRoleList();
@@ -302,6 +341,10 @@ const handleDelete = (row) => {
  * 关联角色-获取角色列表
  */
 const loadRoleList = () => {
+  if (state.roles.length > 0) {
+    loadUserRoles();
+    return 
+  }
   fetchRoleList()
     .then((res) => {
       state.roles = res.data.data || [];

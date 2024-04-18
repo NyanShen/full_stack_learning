@@ -1,12 +1,12 @@
 <template>
-  <div class="app-container menu">
+  <div class="app-container user">
     <!-- 查询 -->
     <div class="app-search-container mgb10">
       <el-form :model="state.queryParams" ref="queryForm" :inline="true">
-        <el-form-item label="菜单名称" prop="name">
+        <el-form-item label="部门名称" prop="name">
           <el-input
             v-model="state.queryParams.name"
-            placeholder="请输入菜单名称"
+            placeholder="请输入部门名称"
             clearable
             @keyup.enter.native="handleQuery"
           />
@@ -16,7 +16,7 @@
             搜索
           </el-button>
           <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
-          <el-button :icon="Plus" class="yellow-btn" @click="handlePlus">
+          <el-button :icon="Plus" type="success" @click="handlePlus">
             新增
           </el-button>
         </el-form-item>
@@ -31,15 +31,22 @@
         border
         default-expand-all
       >
-        <el-table-column prop="name" label="菜单名称" />
-        <el-table-column prop="path" label="菜单路径" />
-        <el-table-column prop="level" label="菜单类型">
+        <el-table-column prop="avatar" label="头像" />
+        <el-table-column prop="account" label="登录账号" />
+        <el-table-column prop="name" label="部门名称" />
+        <el-table-column prop="sex" label="性别">
           <template #default="scope">
-            <dict-tag dictType="menu" :dictKey="scope.row.level"/>
+            <dict-tag dictType="sex" :dictKey="scope.row.sex" />
           </template>
         </el-table-column>
-        <el-table-column prop="icon" label="菜单图标" />
-        <el-table-column prop="outpara1" label="操作标识" />
+        <el-table-column prop="phone" label="手机号码" />
+        <el-table-column prop="email" label="邮箱" />
+        <el-table-column prop="status" label="状态">
+          <template #default="scope">
+            <dict-tag dictType="status" :dictKey="scope.row.status" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="createdAt" label="创建时间" />
         <el-table-column label="操作" width="260">
           <template #default="scope">
             <el-button
@@ -49,14 +56,6 @@
               @click="handleEdit(scope.row)"
             >
               编辑
-            </el-button>
-            <el-button
-              size="small"
-              type="success"
-              :icon="Plus"
-              @click="handlePlus(scope.row)"
-            >
-              新增
             </el-button>
             <el-button
               size="small"
@@ -70,52 +69,79 @@
         </el-table-column>
       </el-table>
     </div>
-    <!-- 添加编辑菜弹窗-->
     <el-dialog
       v-model="state.dialogVisible"
-      :title="state.form.id ? '编辑菜单' : '新增菜单'"
+      :title="state.form.id ? '编辑部门' : '新增部门'"
       width="800"
       align-center
       draggable
     >
       <el-form
+        :inline="true"
         :model="state.form"
-        label-width="200"
-        style="max-width: 650px"
+        label-width="110"
         ref="formRef"
         :rules="formRules"
+        class="dialog-form-inline"
       >
-        <el-form-item label="上级菜单" prop="pid">
-          <el-tree-select
-            v-model="state.form.pid"
-            :data="menuList"
-            value-key="id"
-            :render-after-expand="false"
-            :props="{ value: 'id', label: 'name', children: 'children' }"
-            check-strictly
-            show-checkbox
-            check-on-click-node
-            placeholder="请选择上级菜单"
-          />
+        <el-form-item label="登录账户" prop="account">
+          <el-input v-model="state.form.account" />
         </el-form-item>
-        <el-form-item label="菜单名称" prop="name">
+        <el-form-item label="登录密码" prop="password" v-if="!state.form.id">
+          <el-input v-model="state.form.password" type="password" show-password/>
+        </el-form-item>
+        <el-form-item label="部门名称" prop="name">
           <el-input v-model="state.form.name" />
         </el-form-item>
-        <el-form-item label="菜单路径" prop="path">
-          <el-input v-model="state.form.path" />
-        </el-form-item>
-        <el-form-item label="菜单类型" prop="level">
-          <el-radio-group v-model="state.form.level">
-            <el-radio value="1">目录</el-radio>
-            <el-radio value="2">菜单</el-radio>
-            <el-radio value="3">按钮</el-radio>
+        <el-form-item label="性别" prop="sex">
+          <el-radio-group v-model="state.form.sex">
+            <el-radio :value="1">男</el-radio>
+            <el-radio :value="2">女</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="菜单图标" prop="icon">
-          <el-input v-model="state.form.icon" />
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="state.form.email" />
         </el-form-item>
-        <el-form-item label="操作标识" prop="outpara1">
-          <el-input v-model="state.form.outpara1" />
+        <el-form-item label="手机号" prop="phone">
+          <el-input v-model="state.form.phone" />
+        </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-radio-group v-model="state.form.status">
+            <el-radio :value="1">启用</el-radio>
+            <el-radio :value="0">禁用</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="部门描述" prop="remark">
+          <el-input v-model="state.form.remark" type="textarea" />
+        </el-form-item>
+        <el-form-item
+          label="部门角色"
+          prop="roleIds"
+          v-if="state.roles.length > 0"
+        >
+          <el-checkbox
+            v-model="state.checkAll"
+            :indeterminate="state.isIndeterminate"
+            @change="handleCheckAllChange"
+          >
+            全部
+          </el-checkbox>
+          <el-checkbox-group
+            v-model="state.roleIds"
+            @change="handleCheckedRolesChange"
+          >
+            <el-checkbox
+              v-for="item in state.roles"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            >
+              {{ item.name }}
+              <span style="font-size: 12px; color: #999999">
+                ({{ item.remark }})
+              </span>
+            </el-checkbox>
+          </el-checkbox-group>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -135,37 +161,63 @@ import { Delete, Edit, Plus, Search, Refresh } from "@element-plus/icons-vue";
 import { ref, reactive, onMounted } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import {
-  fetchMenuList,
-  createMenu,
-  updateMenu,
-  deleteMenu,
-} from "@api/modules/menu";
-import { formatTree } from "@common/utils.js";
-let pmenu = {
-  id: 0,
-  name: "主目录",
-  children: [],
-};
-const menuList = ref([]);
+  fetchUserList,
+  createUser,
+  updateUser,
+  removeUser,
+  fetchUserRoleList,
+} from "@api/modules/user";
+import { fetchRoleList } from "@api/modules/role";
+import { phonePattern, emailPattern } from "@common/validations.js";
 const tableData = ref([]);
 const formRef = ref(null);
-const formRules = ref({
-  name: [
+const passwordRule = {
+  password: [
     {
       required: true,
-      message: "Please input menu name",
+      message: "Please input user password",
       trigger: "blur",
     },
   ],
-});
+};
+const baseRules = {
+  account: [
+    {
+      required: true,
+      message: "Please input user account",
+      trigger: "blur",
+    },
+  ],
+  name: [
+    {
+      required: true,
+      message: "Please input user name",
+      trigger: "blur",
+    },
+  ],
+  phone: [
+    {
+      pattern: phonePattern,
+      message: "Please input correct user phone",
+      trigger: "blur",
+    }
+  ],
+  email: [
+    {
+      pattern: emailPattern,
+      message: "Please input correct user email",
+      trigger: "blur",
+    }
+  ]
+};
+const formRules = ref(null);
 const queryForm = ref(null);
 const initForm = {
-  pid: 0,
+  account: "",
   name: "",
-  path: "",
-  level: "",
-  icon: "",
-  outpara1: "",
+  remark: "",
+  status: 1,
+  roleIds: "",
 };
 const initQuery = {
   name: "",
@@ -179,71 +231,96 @@ const state = reactive({
     ...initQuery,
   },
   dialogVisible: false,
+  // 角色选择
+  checkAll: false,
+  isIndeterminate: false,
+  roles: [],
+  roleIds: [],
 });
 /**
  * 获取菜单列表
  */
-const loadMenuList = () => {
-  tableData.value = [];
-  menuList.value = [];
-  fetchMenuList(state.queryParams).then((res) => {
-    const menuTree = formatTree(res.data.data, "id", "pid");
-    pmenu.children = menuTree;
-    menuList.value.push(pmenu);
-    tableData.value = menuTree;
+const loadList = () => {
+  fetchUserList(state.queryParams).then((res) => {
+    tableData.value = res.data.data;
   });
 };
+/**
+ * 提交新增/编辑数据
+ */
 const onSubmit = async (formRef) => {
   await formRef?.validate((valid, fields) => {
     if (valid) {
-      const reqPromise = state.form.id ? updateMenu : createMenu;
-      reqPromise(state.form)
-	  .then((res) => {
-        if (res.data.code !== 0) {
-          ElMessage.error(res.data.msg);
-          return;
-        }
-        ElMessage.success("保存成功.");
+      state.form.roleIds = state.roleIds.join(",");
+      const reqPromise = state.form.id ? updateUser : createUser;
+      reqPromise(state.form).then((res) => {
+        ElMessage({
+          message: "保存成功.",
+          type: "success",
+        });
         state.form = {
           ...initForm,
         };
-        loadMenuList();
+        loadList();
         state.dialogVisible = false;
-      })
-	  .catch(err => {
-		
-	  });
+      });
     } else {
       console.log("error submit!", fields);
     }
   });
 };
+/**
+ * 查询
+ */
 const handleQuery = () => {
   tableData.value = [];
-  loadMenuList();
+  loadList();
 };
+/**
+ * 重置查询
+ */
 const resetQuery = () => {
   state.queryParams = {
     ...initQuery,
   };
 };
-const handlePlus = (row) => {
+/**
+ * 新增
+ * @param {*} row
+ */
+const handlePlus = () => {
   state.form = {
     ...initForm,
+    password: "123456",
   };
-  if (row) {
-    state.form.pid = row.id;
-  }
+  formRules.value = {
+    ...baseRules,
+    ...passwordRule,
+  };
+  state.roleIds = [];
+  state.isIndeterminate = false;
   state.dialogVisible = true;
+  loadRoleList();
 };
+/**
+ * 编辑
+ * @param {*} row
+ */
 const handleEdit = (row) => {
   state.form = {
     ...row,
   };
+  formRules.value = { ...baseRules };
+  state.isIndeterminate = false;
   state.dialogVisible = true;
+  loadRoleList();
 };
+/**
+ * 删除
+ * @param {*} row
+ */
 const handleDelete = (row) => {
-  ElMessageBox.confirm("确定删除该条菜单信息吗？", "系统提示", {
+  ElMessageBox.confirm("确定删除该条部门信息吗？", "系统提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
@@ -251,16 +328,70 @@ const handleDelete = (row) => {
     let data = {
       id: row.id,
     };
-    deleteMenu(data).then((res) => {
+    removeUser(data).then((res) => {
       ElMessage({
         message: "删除成功.",
         type: "success",
       });
-      loadMenuList();
+      loadList();
     });
   });
 };
+/**
+ * 关联角色-获取角色列表
+ */
+const loadRoleList = () => {
+  if (state.roles.length > 0) {
+    loadUserRoles();
+    return 
+  }
+  fetchRoleList()
+    .then((res) => {
+      state.roles = res.data.data || [];
+      loadUserRoles();
+    })
+    .catch(() => {});
+};
+/**
+ * 查询已关联角色
+ */
+const loadUserRoles = () => {
+  // 新增不需要查询
+  if (!state.form.id) {
+    return;
+  }
+  fetchUserRoleList({ id: state.form.id })
+    .then((res) => {
+      state.roleIds = res.data.data || [];
+      handleCheckedRolesChange(state.roleIds);
+    })
+    .catch(() => {});
+};
+/**
+ * 关联角色-全选
+ */
+const handleCheckAllChange = (val) => {
+  state.roleIds = val ? state.roles.map((item) => item.id) : [];
+  state.isIndeterminate = false;
+};
+/**
+ * 显示是否全选逻辑
+ * @param {*} value
+ */
+const handleCheckedRolesChange = (value) => {
+  const checkedCount = value.length;
+  state.checkAll = checkedCount === state.roles.length;
+  state.isIndeterminate = checkedCount > 0 && checkedCount < state.roles.length;
+};
+
 onMounted(() => {
-  loadMenuList();
+  loadList();
 });
 </script>
+<style lang="scss" scoped>
+.el-checkbox {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
+</style>

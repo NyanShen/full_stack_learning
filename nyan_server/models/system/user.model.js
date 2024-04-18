@@ -48,7 +48,7 @@ module.exports = (sequelize) => {
             defaultValue: '',
         },
         phone: {
-            type: DataTypes.INTEGER(20),
+            type: DataTypes.STRING(20),
             comment: '手机号码',
         },
         email: {

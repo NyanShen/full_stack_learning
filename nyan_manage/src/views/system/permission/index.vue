@@ -147,9 +147,7 @@
             :render-after-expand="false"
             :props="{ value: 'id', label: 'name', children: 'children' }"
             multiple
-            check-strictly
             show-checkbox
-            check-on-click-node
             placeholder="请选择菜单"
           />
         </el-form-item>
@@ -331,6 +329,7 @@ const handleCommand = (command, row) => {
   switch (command) {
     case "menu":
       loadMenuList();
+      state.menuDialogVisible = true;
       break;
     case "data":
       break;
@@ -343,18 +342,27 @@ const handleCommand = (command, row) => {
   }
 };
 /**
+ * 获取权限所设置的菜单
+ */
+const loadPermissionMenus = () => {
+  fetchPermissionMenus({ id: state.form.id })
+    .then((res) => {
+      state.menuIds = res.data.data;
+    })
+    .catch(() => {});
+};
+/**
  * 获取菜单列表
  */
 const loadMenuList = () => {
-  state.menuList = [];
+  if (state.menuList.length > 0) {
+    loadPermissionMenus();
+    return;
+  }
   fetchMenuList()
     .then((res) => {
       state.menuList = formatTree(res.data.data, "id", "pid");
-      state.menuDialogVisible = true;
-      return fetchPermissionMenus({ id: state.form.id });
-    })
-    .then((res) => {
-      state.menuIds = res.data.data;
+      loadPermissionMenus();
     })
     .catch(() => {});
 };

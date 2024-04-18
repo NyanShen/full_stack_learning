@@ -50,9 +50,10 @@ router.patch('/assignMenus', expressJoi(permissionSchema.update_menu_limit), per
  * @returns {Error}  default - Unexpected error
  */
 router.get('/', permissionService.search);
+
 /**
  * 查询权限
-//  * @route GET /api/permissions/searchMenusByPermissionId
+ * @route GET /api/permissions/searchMenusByPermissionId
  * @group 权限管理
  * @param {string} name
  * @returns {object} 200 - An array of permission info
@@ -60,5 +61,17 @@ router.get('/', permissionService.search);
  * @returns {Error}  default - Unexpected error
  */
 router.get('/searchMenusByPermissionId', expressJoi(permissionSchema.search_limit), permissionService.searchMenusByPermissionId);
+
+
+/**
+ * 查询权限
+ * @route GET /api/permissions/getMenus
+ * @group 权限管理
+ * @param {string} name
+ * @returns {object} 200 - An array of permission info
+ * @returns {object} 605 - 请求失败
+ * @returns {Error}  default - Unexpected error
+ */
+router.get('/getMenus', permissionService.searchMenusByPermissionCode);
 
 module.exports = router;

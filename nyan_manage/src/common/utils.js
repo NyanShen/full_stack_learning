@@ -50,3 +50,39 @@ export function formatTree(list, id = 'id', parentId = 'parentId', children = 'c
 	}
 	return tree;
 }
+/**
+ * 由菜单树转换成路由树动态路由
+ * @param {*} menuData 
+ */
+export function generateRoutes(router, menuData, pname = '') {
+	menuData.forEach((menuItem) => {
+		const route = {
+			path: `/${menuItem.path}`,
+			name: pname ? `${pname}-${menuItem.path}` : menuItem.path,
+			// redirect: menuItem.outlink,
+			component: () => import(/* @vite-ignore */ `../views${menuItem.component}.vue`),
+			meta: {
+				title: menuItem.name,
+				noCache: menuItem.noCache,
+			},
+		};
+		/**
+		 * 如果是根菜单，使用layout组件作为父组件
+		 */
+		if (!menuItem.component) {
+			route.component = () => import(/* @vite-ignore */ `../layout/index.vue`);
+		}
+		if (pname) {
+			route.path = menuItem.path;
+			router.addRoute(pname, route);
+		} else {
+			router.addRoute(route);
+		}
+
+		if (menuItem.children && menuItem.children.length > 0) {
+			// 如果有子菜单，构建嵌套路由
+			generateRoutes(router, menuItem.children, menuItem.path);
+		}
+	});
+}
+

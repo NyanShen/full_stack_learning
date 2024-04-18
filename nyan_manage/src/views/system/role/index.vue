@@ -92,7 +92,11 @@
         <el-form-item label="角色描述" prop="remark">
           <el-input v-model="state.form.remark" type="textarea" />
         </el-form-item>
-        <el-form-item label="角色权限" prop="permissionIds" v-if="state.permissions.length > 0">
+        <el-form-item
+          label="角色权限"
+          prop="permissionIds"
+          v-if="state.permissions.length > 0"
+        >
           <el-checkbox
             v-model="state.checkAll"
             :indeterminate="state.isIndeterminate"
@@ -283,6 +287,10 @@ const handleDelete = (row) => {
  * 关联权限-获取权限列表
  */
 const loadPermissionList = () => {
+  if (state.permissions.length > 0) {
+    loadRolePermissionList();
+    return;
+  }
   fetchPermissionList()
     .then((res) => {
       state.permissions = res.data.data || [];

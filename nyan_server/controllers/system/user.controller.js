@@ -16,7 +16,7 @@ const userService = require('../../services/system/user.service');
  * @returns {object} 605 - 请求失败
  * @returns {Error}  default - Unexpected error
  */
-// router.post('/create', expressJoi(userSchema.create_limit), userService.create);
+router.post('/create', expressJoi(userSchema.create_limit), userService.create);
 
 /**
  * 删除用户信息
@@ -38,7 +38,7 @@ router.delete("/delete/:id", userService.delete);
  * @returns {object} 605 - 请求失败
  * @returns {Error}  default - Unexpected error
  */
-// router.patch('/update', expressJoi(userSchema.update_limit), userService.update);
+router.put('/update', expressJoi(userSchema.update_limit), userService.update);
 
 /**
  * 查询用户
@@ -50,6 +50,17 @@ router.delete("/delete/:id", userService.delete);
  * @returns {Error}  default - Unexpected error
  */
 router.get('/', userService.search);
+
+/**
+ * 查询用户
+ * @route GET /api/users
+ * @group 用户管理
+ * @param {string} name
+ * @returns {object} 200 - An array of user info
+ * @returns {object} 605 - 请求失败
+ * @returns {Error}  default - Unexpected error
+ */
+router.get('/searchRolesByUserId', expressJoi(userSchema.search_limit), userService.searchRolesByUserId);
 
 
 /**

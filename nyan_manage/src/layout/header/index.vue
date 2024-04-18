@@ -12,7 +12,7 @@
         <img class="user-avatar" :src="userStore.userAvatar" alt="" />
         <div class="user-name">{{ userStore.name }}</div>
         <ul class="dropdown-menu">
-          <li>
+          <li @click="toProfile">
             <font-awesome-icon size="sm" icon="fa-solid fa-user" />
             个人中心
           </li>
@@ -52,6 +52,12 @@ const logout = () => {
     })
     .catch(() => {});
 };
+/**
+ * personal center
+ */
+const toProfile = () => {
+  router.push('/user/profile');
+}
 onMounted(() => {
   fullscreenStore.init();
 })
