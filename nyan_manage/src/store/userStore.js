@@ -2,7 +2,6 @@ import { defineStore } from "pinia"
 import { fetchUser } from "@api/modules/user";
 import { fetchUserMenus } from "@api/modules/permission";
 import { removeToken } from "@common/cookies";
-import { formatTree, generateRoutes } from "@common/utils";
 import defaultAvatar from "@/assets/default_avatar.png"
 
 
@@ -13,7 +12,7 @@ export const useUserStore = defineStore('user', {
         avatar: "", // 用户头像
         roles: [], // 关联角色
         permissions: [], // 关联权限
-        menuTree: []
+        menus: []
     }),
     getters: {
         rolesStr: (state) => state.roles.join(','),
@@ -35,8 +34,8 @@ export const useUserStore = defineStore('user', {
         setPermissions(permissions) {
             this.permissions = permissions;
         },
-        setMenuTree(tree) {
-            this.menuTree = tree;
+        setMenus(tree) {
+            this.menus = tree;
         },
         async loadUser() {
             try {
@@ -55,16 +54,14 @@ export const useUserStore = defineStore('user', {
                 return Promise.reject(error)
             }
         },
-        async loadMenuTree(codes) {
+        async loadMenus(codes) {
             try {
                 const res = await fetchUserMenus({ codes });
                 if (res.data.code !== 0) {
                     return Promise.reject(new Error(res.data.msg))
                 }
-                const menuTree = formatTree(res.data.data, "id", "pid");
-                console.log("menuTree1111>>>", menuTree)
-                this.setMenuTree(menuTree)
-                return menuTree
+                this.setMenus(res.data.data);
+                return res.data.data; // 形成路由菜单树
             } catch (error) {
                 return Promise.reject(error)
             }

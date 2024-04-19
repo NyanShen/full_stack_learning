@@ -28,6 +28,7 @@ const dicts = {
     2: { type: "danger", name: "女" },
     3: { type: "warning", name: "未知" },
   },
+  
 };
 
 const dictMap = dicts[props.dictType] || {

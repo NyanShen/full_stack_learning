@@ -132,7 +132,7 @@
           <div class="flex-c">
             <el-form-item label="打开方式" prop="outlink">
               <el-radio-group v-model="state.form.outlink">
-                <el-radio value="tag">标签</el-radio>
+                <el-radio value="noRedirect">标签</el-radio>
                 <el-radio value="_blank">新窗口</el-radio>
               </el-radio-group>
             </el-form-item>
@@ -146,7 +146,7 @@
         </template>
 
         <el-form-item label="图标" prop="icon">
-          <el-input v-model="state.form.icon" />
+          <IconPicker :modelValue="state.form.icon" @updateIcon="handleUpdateIcon" />
         </el-form-item>
         <el-form-item label="排序" prop="sort">
           <el-input v-model="state.form.sort" type="number" />
@@ -181,6 +181,7 @@ import {
   deleteMenu,
 } from "@api/modules/menu";
 import { formatTree } from "@common/utils.js";
+import IconPicker from "@components/IconPicker.vue";
 let pmenu = {
   id: 0,
   name: "主目录",
@@ -344,6 +345,12 @@ const handleDelete = (row) => {
       loadMenuList();
     });
   });
+};
+/**
+ * 更新图标
+ */
+const handleUpdateIcon = (icon) => {
+  state.form.icon = icon;
 };
 onMounted(() => {
   loadMenuList();

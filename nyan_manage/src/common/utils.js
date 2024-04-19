@@ -59,8 +59,7 @@ export function generateRoutes(router, menuData, pname = '') {
 		const route = {
 			path: `/${menuItem.path}`,
 			name: pname ? `${pname}-${menuItem.path}` : menuItem.path,
-			// redirect: menuItem.outlink,
-			component: () => import(/* @vite-ignore */ `../views${menuItem.component}.vue`),
+			component: () => import(/* @vite-ignore */ `../views${menuItem.component}.vue`), // @vite-ignore 忽略 vite 的解析, 否则会报错, just for vite, 不然加载组件失败
 			meta: {
 				title: menuItem.name,
 				noCache: menuItem.noCache,
@@ -72,13 +71,16 @@ export function generateRoutes(router, menuData, pname = '') {
 		if (!menuItem.component) {
 			route.component = () => import(/* @vite-ignore */ `../layout/index.vue`);
 		}
+		/**
+		 * 如果是子菜单，使用父组件作为父组件
+		 */
 		if (pname) {
 			route.path = menuItem.path;
 			router.addRoute(pname, route);
 		} else {
 			router.addRoute(route);
 		}
-
+		// 递归
 		if (menuItem.children && menuItem.children.length > 0) {
 			// 如果有子菜单，构建嵌套路由
 			generateRoutes(router, menuItem.children, menuItem.path);

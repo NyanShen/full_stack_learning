@@ -143,6 +143,7 @@ const login = (formEl) => {
         loading.value = false;
         if (res.data.code !== 0) {
           $message.error(res.data.msg);
+          loginForm.value.code = "";
           loadCaptcha();
           return;
         }

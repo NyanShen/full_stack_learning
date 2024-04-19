@@ -1,9 +1,6 @@
 <template>
   <div class="app-sidebar">
-    <div
-      class="app-sidebar-header flex-column-cc"
-     
-    >
+    <div class="app-sidebar-header flex-column-cc">
       <p class="app-header-title">
         <font-awesome-icon size="xl" icon="fa-solid fa-registered" />
         <span class="title" v-if="!sidebarStore.isCollapse">NyanShen live</span>
@@ -15,55 +12,61 @@
       @open="handleOpen"
       @close="handleClose"
     >
-      <el-sub-menu index="1">
-        <template #title>
-          <el-icon><location /></el-icon>
-          <span>Navigator One</span>
-        </template>
-        <el-menu-item-group>
-          <template #title><span>Group One</span></template>
-          <el-menu-item index="1-1">item one</el-menu-item>
-          <el-menu-item index="1-2">item two</el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group title="Group Two">
-          <el-menu-item index="1-3">item three</el-menu-item>
-        </el-menu-item-group>
-        <el-sub-menu index="1-4">
-          <template #title><span>item four</span></template>
-          <el-menu-item index="1-4-1">item one</el-menu-item>
+      <template v-for="(item, index) in menuTree">
+        <el-sub-menu
+          :index="item.path"
+          :key="index"
+          v-if="item.children?.length > 0"
+        >
+          <template #title>
+            <el-icon v-if="item.icon">
+              <component :is="item.icon"></component>
+            </el-icon>
+            <span>{{ item.name }}</span>
+          </template>
+          <el-menu-item
+            :index="subitem.path"
+            v-for="(subitem, subindex) in item.children"
+            :key="subindex"
+          >
+            <template #title>
+              <el-icon v-if="subitem.icon">
+                <component :is="subitem.icon"></component>
+              </el-icon>
+              <span>{{ subitem.name }}</span>
+            </template>
+          </el-menu-item>
         </el-sub-menu>
-      </el-sub-menu>
-      <el-menu-item index="2">
-        <el-icon><icon-menu /></el-icon>
-        <template #title>Navigator Two</template>
-      </el-menu-item>
-      <el-menu-item index="3" disabled>
-        <el-icon><document /></el-icon>
-        <template #title>Navigator Three</template>
-      </el-menu-item>
-      <el-menu-item index="4">
-        <el-icon><font-awesome-icon icon="fa-solid fa-coffee" /></el-icon>
-        <template #title>Navigator Four</template>
-      </el-menu-item>
+        <el-menu-item :index="item.path" :key="item.path + index" v-else>
+          <template #title>
+            <el-icon v-if="item.icon">
+              <component :is="item.icon"></component>
+            </el-icon>
+            <span>{{ item.name }}</span>
+          </template>
+        </el-menu-item>
+      </template>
     </el-menu>
   </div>
 </template>
 <script setup>
 import { ref } from "vue";
-import {
-  Document,
-  Menu as IconMenu,
-  Location,
-  Setting,
-} from "@element-plus/icons-vue";
 import { useSidebarStore } from "@store/siderbarStore";
+import { useUserStore } from "@store/userStore";
+import { formatTree } from "@common/utils";
 const sidebarStore = useSidebarStore();
+const userStore = useUserStore();
 const handleOpen = (key, keyPath) => {
-  console.log('handleOpen>>>', key, keyPath);
+  console.log("handleOpen>>>", key, keyPath);
 };
 const handleClose = (key, keyPath) => {
-  console.log('handleOpen>>>', key, keyPath);
+  console.log("handleOpen>>>", key, keyPath);
 };
+/**
+ * 遍历用户缓存的菜单树, 去除详情类型菜单
+ */
+const menuData = userStore.menus.filter((item) => item.level !== 3);
+const menuTree = formatTree(menuData, "id", "pid");
 </script>
 <style>
 .el-menu-vertical-demo:not(.el-menu--collapse) {
@@ -76,6 +79,9 @@ const handleClose = (key, keyPath) => {
   height: $app-header-height;
   background-color: $primary-dark-color;
   color: $white-color;
+  .el-element {
+    width: 200px;
+  }
   .app-header-logo {
     font-size: $fs-lg;
     font-weight: bold;

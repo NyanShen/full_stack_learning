@@ -131,7 +131,7 @@ const router = createRouter({
 import NProgress from "nprogress";
 import { getToken } from "@common/cookies";
 import { useUserStore } from "@store/userStore";
-import { generateRoutes } from '@common/utils';
+import { formatTree, generateRoutes } from '@common/utils';
 import $message from "@common/message";
 NProgress.configure({ showSpinner: false });
 const whiteList = ['/login', '/register'];
@@ -156,9 +156,11 @@ router.beforeEach(async (to, from, next) => {
 				// 获取用户信息
 				const result = await userStore.loadUser();
 				// 获取用户角色下的菜单路由
-				const menuTree = await userStore.loadMenuTree(result.permissions.join(','));
-				generateRoutes(router, menuTree);
-				next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
+				const menus = await userStore.loadMenus(result.permissions.join(','));
+				// 动态添加路由
+				generateRoutes(router, formatTree(menus, 'id', 'pid'));
+				// 跳转 - hack方法 确保addRoutes已完成
+				next({ ...to, replace: true });
 			} catch (error) {
 				console.log("route error", error)
 				$message.error("获取用户信息异常!");
@@ -182,5 +184,9 @@ router.beforeEach(async (to, from, next) => {
 	}
 
 })
+
+router.afterEach(() => {
+	NProgress.done();
+});
 
 export default router;
