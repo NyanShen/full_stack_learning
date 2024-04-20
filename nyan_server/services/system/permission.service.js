@@ -183,8 +183,11 @@ exports.searchMenusByPermissionCode = async (req, res) => {
                 },
                 through: {
                     attributes: []
-                }
-            }
+                },
+                order: [
+                    ['sort', 'ASC']
+                ]
+            },
         }
         const permissions = await PermissionModel.findAll(conditions);
         // 获取权限下的菜单
@@ -208,7 +211,7 @@ exports.searchMenusByPermissionCode = async (req, res) => {
             }
         }
         const pmenus = await MenuModel.findAll(menuConditions);
-        targetMenus = [...pmenus, ...targetMenus];
+        targetMenus = [...targetMenus, ...pmenus];
         res.sendResult('查询成功!', 0, targetMenus);
     } catch (error) {
         res.sendResult('查询失败!', -1, error)

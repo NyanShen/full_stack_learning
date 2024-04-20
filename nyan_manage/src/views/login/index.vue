@@ -48,7 +48,7 @@
               <img :src="codeUrl" @click="loadCaptcha" class="login-code-img" />
             </div>
           </el-form-item>
-          <div class="flex-sbc">
+          <div class="flex-csb">
             <el-checkbox
               style="flex: 1"
               v-model="loginForm.rememberMe"

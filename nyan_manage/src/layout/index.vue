@@ -46,8 +46,8 @@ import AppSidebar from "./sidebar/index.vue";
   }
   .app-header-container {
     height: $app-header-height;
-	background-color: $primary-light-color;
-	color: $white-color;
+    background-color: $primary-light-color;
+    color: $white-color;
   }
 
   .main-tabs {

@@ -6,46 +6,19 @@
         <span class="title" v-if="!sidebarStore.isCollapse">NyanShen live</span>
       </p>
     </div>
+    <el-scrollbar> </el-scrollbar>
     <el-menu
-      default-active="2"
+      :default-active="activeMenu"
       :collapse="sidebarStore.isCollapse"
       @open="handleOpen"
       @close="handleClose"
     >
-      <template v-for="(item, index) in menuTree">
-        <el-sub-menu
-          :index="item.path"
-          :key="index"
-          v-if="item.children?.length > 0"
-        >
-          <template #title>
-            <el-icon v-if="item.icon">
-              <component :is="item.icon"></component>
-            </el-icon>
-            <span>{{ item.name }}</span>
-          </template>
-          <el-menu-item
-            :index="subitem.path"
-            v-for="(subitem, subindex) in item.children"
-            :key="subindex"
-          >
-            <template #title>
-              <el-icon v-if="subitem.icon">
-                <component :is="subitem.icon"></component>
-              </el-icon>
-              <span>{{ subitem.name }}</span>
-            </template>
-          </el-menu-item>
-        </el-sub-menu>
-        <el-menu-item :index="item.path" :key="item.path + index" v-else>
-          <template #title>
-            <el-icon v-if="item.icon">
-              <component :is="item.icon"></component>
-            </el-icon>
-            <span>{{ item.name }}</span>
-          </template>
-        </el-menu-item>
-      </template>
+      <sidebar-item
+        v-for="(item, index) in menuTree"
+        :key="item.path + '_' + index"
+        :item="item"
+      >
+      </sidebar-item>
     </el-menu>
   </div>
 </template>
@@ -54,8 +27,10 @@ import { ref } from "vue";
 import { useSidebarStore } from "@store/siderbarStore";
 import { useUserStore } from "@store/userStore";
 import { formatTree } from "@common/utils";
+import SidebarItem from "./SidebarItem.vue";
 const sidebarStore = useSidebarStore();
 const userStore = useUserStore();
+const activeMenu = ref("/home");
 const handleOpen = (key, keyPath) => {
   console.log("handleOpen>>>", key, keyPath);
 };
@@ -77,6 +52,7 @@ const menuTree = formatTree(menuData, "id", "pid");
 <style lang="scss" scoped>
 .app-sidebar-header {
   height: $app-header-height;
+  padding: 0 20px;
   background-color: $primary-dark-color;
   color: $white-color;
   .el-element {

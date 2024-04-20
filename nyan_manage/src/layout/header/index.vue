@@ -1,6 +1,6 @@
 <template>
-  <div class="app-header-body flex-sbc">
-    <el-icon @click="sidebarStore.toggleIsCollapse()">
+  <div class="app-header-body flex-csb">
+    <el-icon @click="sidebarStore.toggleIsCollapse()" style="cursor: pointer;">
       <font-awesome-icon size="sm" icon="fa-solid fa-bars" />
     </el-icon>
     <div class="flex-cc">
