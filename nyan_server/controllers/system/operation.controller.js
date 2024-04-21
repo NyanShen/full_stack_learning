@@ -38,7 +38,7 @@ router.delete("/delete/:id", operationService.delete);
  * @returns {object} 605 - 请求失败
  * @returns {Error}  default - Unexpected error
  */
-router.patch('/update', expressJoi(operationSchema.update_limit), operationService.update);
+router.put('/update', expressJoi(operationSchema.update_limit), operationService.update);
 
 /**
  * 查询操作
@@ -50,6 +50,18 @@ router.patch('/update', expressJoi(operationSchema.update_limit), operationServi
  * @returns {Error}  default - Unexpected error
  */
 router.get('/', operationService.search);
+
+
+/**
+ * 查询操作权限
+//  * @route GET /api/roles/searchPermissionsByOperationId
+ * @group 操作管理
+ * @param {string} name
+ * @returns {object} 200 - An array of operation info
+ * @returns {object} 605 - 请求失败
+ * @returns {Error}  default - Unexpected error
+ */
+router.get('/searchPermissionsByOperationId', expressJoi(operationSchema.search_limit), operationService.searchPermissionsByOperationId);
 
 /* 
  * 分页查询

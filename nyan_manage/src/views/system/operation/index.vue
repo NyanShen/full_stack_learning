@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container role">
+  <div class="app-container operation">
     <!-- 查询 -->
     <div class="app-search-container mgb10">
       <el-form :model="state.queryParams" ref="queryForm" :inline="true">
@@ -139,12 +139,12 @@ import { Delete, Edit, Plus, Search, Refresh } from "@element-plus/icons-vue";
 import { ref, reactive, onMounted } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import {
-  fetchRoleList,
-  createRole,
-  updateRole,
-  removeRole,
-  fetchRolePermissionList,
-} from "@api/modules/role";
+  fetchOperationList,
+  createOperation,
+  updateOperation,
+  removeOperation,
+  fetchOperationPermissionList,
+} from "@api/modules/operation";
 import { fetchPermissionList } from "@api/modules/permission";
 const tableData = ref([]);
 const formRef = ref(null);
@@ -152,14 +152,14 @@ const formRules = ref({
   code: [
     {
       required: true,
-      message: "Please input role code",
+      message: "Please input operation code",
       trigger: "blur",
     },
   ],
   name: [
     {
       required: true,
-      message: "Please input role name",
+      message: "Please input operation name",
       trigger: "blur",
     },
   ],
@@ -194,7 +194,7 @@ const state = reactive({
  * 获取菜单列表
  */
 const loadList = () => {
-  fetchRoleList(state.queryParams).then((res) => {
+  fetchOperationList(state.queryParams).then((res) => {
     tableData.value = res.data.data;
   });
 };
@@ -205,7 +205,7 @@ const onSubmit = async (formRef) => {
   await formRef?.validate((valid, fields) => {
     if (valid) {
       state.form.permissionIds = state.permissionIds.join(",");
-      const reqPromise = state.form.id ? updateRole : createRole;
+      const reqPromise = state.form.id ? updateOperation : createOperation;
       reqPromise(state.form).then((res) => {
         ElMessage({
           message: "保存成功.",
@@ -274,7 +274,7 @@ const handleDelete = (row) => {
     let data = {
       id: row.id,
     };
-    removeRole(data).then((res) => {
+    removeOperation(data).then((res) => {
       ElMessage({
         message: "删除成功.",
         type: "success",
@@ -288,25 +288,25 @@ const handleDelete = (row) => {
  */
 const loadPermissionList = () => {
   if (state.permissions.length > 0) {
-    loadRolePermissionList();
+    loadOperationPermissionList();
     return;
   }
   fetchPermissionList()
     .then((res) => {
       state.permissions = res.data.data || [];
-      loadRolePermissionList();
+      loadOperationPermissionList();
     })
     .catch(() => {});
 };
 /**
  * 查询已关联权限
  */
-const loadRolePermissionList = () => {
+const loadOperationPermissionList = () => {
   // 新增不需要查询
   if (!state.form.id) {
     return;
   }
-  fetchRolePermissionList({ id: state.form.id })
+  fetchOperationPermissionList({ id: state.form.id })
     .then((res) => {
       state.permissionIds = res.data.data || [];
       handleCheckedPermissionsChange(state.permissionIds);

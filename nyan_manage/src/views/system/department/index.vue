@@ -31,16 +31,10 @@
         border
         default-expand-all
       >
-        <el-table-column prop="avatar" label="头像" />
-        <el-table-column prop="account" label="登录账号" />
         <el-table-column prop="name" label="部门名称" />
-        <el-table-column prop="sex" label="性别">
-          <template #default="scope">
-            <dict-tag dictType="sex" :dictKey="scope.row.sex" />
-          </template>
-        </el-table-column>
-        <el-table-column prop="phone" label="手机号码" />
+        <el-table-column prop="leader" label="负责人" />
         <el-table-column prop="email" label="邮箱" />
+        <el-table-column prop="phone" label="手机号码" />
         <el-table-column prop="status" label="状态">
           <template #default="scope">
             <dict-tag dictType="status" :dictKey="scope.row.status" />
@@ -56,6 +50,14 @@
               @click="handleEdit(scope.row)"
             >
               编辑
+            </el-button>
+            <el-button
+              size="small"
+              type="success"
+              :icon="Plus"
+              @click="handlePlus(scope.row)"
+            >
+              新增
             </el-button>
             <el-button
               size="small"
@@ -84,20 +86,12 @@
         :rules="formRules"
         class="dialog-form-inline"
       >
-        <el-form-item label="登录账户" prop="account">
-          <el-input v-model="state.form.account" />
-        </el-form-item>
-        <el-form-item label="登录密码" prop="password" v-if="!state.form.id">
-          <el-input v-model="state.form.password" type="password" show-password/>
-        </el-form-item>
+        
         <el-form-item label="部门名称" prop="name">
           <el-input v-model="state.form.name" />
         </el-form-item>
-        <el-form-item label="性别" prop="sex">
-          <el-radio-group v-model="state.form.sex">
-            <el-radio :value="1">男</el-radio>
-            <el-radio :value="2">女</el-radio>
-          </el-radio-group>
+        <el-form-item label="负责人" prop="leader">
+          <el-input v-model="state.form.leader" />
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="state.form.email" />
@@ -171,23 +165,7 @@ import { fetchRoleList } from "@api/modules/role";
 import { phonePattern, emailPattern } from "@common/validations.js";
 const tableData = ref([]);
 const formRef = ref(null);
-const passwordRule = {
-  password: [
-    {
-      required: true,
-      message: "Please input user password",
-      trigger: "blur",
-    },
-  ],
-};
-const baseRules = {
-  account: [
-    {
-      required: true,
-      message: "Please input user account",
-      trigger: "blur",
-    },
-  ],
+const formRules = ref({
   name: [
     {
       required: true,
@@ -200,17 +178,16 @@ const baseRules = {
       pattern: phonePattern,
       message: "Please input correct user phone",
       trigger: "blur",
-    }
+    },
   ],
   email: [
     {
       pattern: emailPattern,
       message: "Please input correct user email",
       trigger: "blur",
-    }
-  ]
-};
-const formRules = ref(null);
+    },
+  ],
+});
 const queryForm = ref(null);
 const initForm = {
   account: "",
@@ -293,10 +270,6 @@ const handlePlus = () => {
     ...initForm,
     password: "123456",
   };
-  formRules.value = {
-    ...baseRules,
-    ...passwordRule,
-  };
   state.roleIds = [];
   state.isIndeterminate = false;
   state.dialogVisible = true;
@@ -310,7 +283,6 @@ const handleEdit = (row) => {
   state.form = {
     ...row,
   };
-  formRules.value = { ...baseRules };
   state.isIndeterminate = false;
   state.dialogVisible = true;
   loadRoleList();
@@ -343,7 +315,7 @@ const handleDelete = (row) => {
 const loadRoleList = () => {
   if (state.roles.length > 0) {
     loadUserRoles();
-    return 
+    return;
   }
   fetchRoleList()
     .then((res) => {

@@ -15,6 +15,7 @@ const base_limit = {
     }),
     remark: Joi.string().empty(null).default(''),
     status: Joi.number().empty(null).default(1),
+    permissionIds: Joi.string().empty(["", null]).default("")
 }
 /**
  * 新增校验
@@ -32,6 +33,14 @@ exports.update_limit = {
     // req.body数据验证
     body: {
         ...base_limit,
+        id: Joi.number().required().messages({
+            'any.required': '操作ID不能为空',
+        })
+    }
+}
+
+exports.search_limit = {
+    query: {
         id: Joi.number().required().messages({
             'any.required': '操作ID不能为空',
         })
