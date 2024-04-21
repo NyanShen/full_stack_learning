@@ -9,7 +9,7 @@
           <AppHeader />
         </div>
         <div class="flx-row main-tabs">
-          <AppTabs />
+          <AppTags />
         </div>
       </el-header>
       <el-main>
@@ -25,7 +25,7 @@
 </template>
 <script setup>
 import AppHeader from "./header/index.vue";
-import AppTabs from "./tabs/index.vue";
+import AppTags from "./tags/index.vue";
 import AppSidebar from "./sidebar/index.vue";
 </script>
 <style lang="scss" scoped>
