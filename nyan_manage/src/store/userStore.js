@@ -47,8 +47,8 @@ export const useUserStore = defineStore('user', {
                 this.setId(id);
                 this.setName(name || account);
                 this.setAvatar(avatar);
-                this.setRoles(roles ? [roles] : []);
-                this.setPermissions(permissions ? [permissions] : []);
+                this.setRoles(roles || []);
+                this.setPermissions(permissions || []);
                 return res.data.data;
             } catch (error) {
                 return Promise.reject(error)

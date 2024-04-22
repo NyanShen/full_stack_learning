@@ -158,7 +158,7 @@ module.exports = {
 					.then(data => {
 						cb(resExtra({
 							list: data,
-							count: countAll.count,
+							total: countAll.count,
 							current: conditions.offset || 1,
 							limit: conditions.limit || 10
 						}))

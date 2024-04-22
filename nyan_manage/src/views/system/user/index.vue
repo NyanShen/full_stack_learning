@@ -31,7 +31,6 @@
         border
         default-expand-all
       >
-        <el-table-column prop="avatar" label="头像" />
         <el-table-column prop="account" label="登录账号" />
         <el-table-column prop="name" label="用户名称" />
         <el-table-column prop="sex" label="性别">
@@ -68,6 +67,15 @@
           </template>
         </el-table-column>
       </el-table>
+      <div class="flex-cse">
+        <el-pagination
+          background
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="state.total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
     </div>
     <el-dialog
       v-model="state.dialogVisible"
@@ -88,7 +96,11 @@
           <el-input v-model="state.form.account" />
         </el-form-item>
         <el-form-item label="登录密码" prop="password" v-if="!state.form.id">
-          <el-input v-model="state.form.password" type="password" show-password/>
+          <el-input
+            v-model="state.form.password"
+            type="password"
+            show-password
+          />
         </el-form-item>
         <el-form-item label="用户名称" prop="name">
           <el-input v-model="state.form.name" />
@@ -200,15 +212,15 @@ const baseRules = {
       pattern: phonePattern,
       message: "Please input correct user phone",
       trigger: "blur",
-    }
+    },
   ],
   email: [
     {
       pattern: emailPattern,
       message: "Please input correct user email",
       trigger: "blur",
-    }
-  ]
+    },
+  ],
 };
 const formRules = ref(null);
 const queryForm = ref(null);
@@ -236,13 +248,16 @@ const state = reactive({
   isIndeterminate: false,
   roles: [],
   roleIds: [],
+  total: 0,
 });
 /**
  * 获取菜单列表
  */
 const loadList = () => {
   fetchUserList(state.queryParams).then((res) => {
-    tableData.value = res.data.data;
+    const { list, total } = res.data.data;
+    tableData.value = list;
+    state.total = total;
   });
 };
 /**
@@ -284,6 +299,11 @@ const resetQuery = () => {
     ...initQuery,
   };
 };
+/**
+ * 分页
+ */
+const handleSizeChange = (val) => {};
+const handleCurrentChange = (val) => {};
 /**
  * 新增
  * @param {*} row
@@ -343,7 +363,7 @@ const handleDelete = (row) => {
 const loadRoleList = () => {
   if (state.roles.length > 0) {
     loadUserRoles();
-    return 
+    return;
   }
   fetchRoleList()
     .then((res) => {

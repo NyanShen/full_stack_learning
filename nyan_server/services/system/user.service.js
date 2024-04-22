@@ -101,6 +101,9 @@ exports.update = async (req, res) => {
  * @returns User Array
  */
 exports.search = async (req, res) => {
+	const token = req.headers.authorization.replace('Bearer ', '');
+	const tokenUser = unsignToken(token);
+	
 	let conditions = {
 		params: {
 			account: {
@@ -115,7 +118,13 @@ exports.search = async (req, res) => {
 			exclude: ['password', 'updatedAt']
 		}
 	}
-	DAO.list(UserModel, conditions, data => res.send(data));
+	// 如果不是超级管理员, 查询除超级管理员之外的用户
+	if (tokenUser.id !== 1) {
+		conditions.params.id = {
+			[db.Op.ne]: 1, // != 1
+		}
+	}
+	DAO.listByPage(UserModel, conditions, data => res.send(data));
 }
 /**
  * @name 搜索用户所关联角色
