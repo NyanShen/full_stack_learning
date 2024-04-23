@@ -2,7 +2,7 @@ import $http from "../index";
 /**
  * 查询部门
  */
-export const fetchPermissionList = (params) => {
+export const fetchDeparmentList = (params) => {
     return $http({
         method: 'GET',
         url: '/departments',
@@ -13,7 +13,7 @@ export const fetchPermissionList = (params) => {
 /**
  * 创建部门
  */
-export const createPermission = (data) => {
+export const createDeparment = (data) => {
     return $http({
         method: 'POST',
         url: '/departments/create',
@@ -24,7 +24,7 @@ export const createPermission = (data) => {
 /**
  * 更新部门
  */
-export const updatePermission = (data) => {
+export const updateDeparment = (data) => {
     return $http({
         method: 'PUT',
         url: '/departments/update',
@@ -35,9 +35,19 @@ export const updatePermission = (data) => {
 /**
  * 删除部门
  */
-export const deletePermission = (data) => {
+export const removeDeparment = (data) => {
     return $http({
         method: 'DELETE',
+        url: '/departments/delete/' + data.id,
+        data: {},
+    })
+}
+/**
+ * 查询部门角色
+ */
+export const fetchDeparmentRoleList = (data) => {
+    return $http({
+        method: 'GET',
         url: '/departments/delete/' + data.id,
         data: {},
     })

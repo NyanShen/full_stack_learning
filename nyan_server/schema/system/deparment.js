@@ -35,7 +35,7 @@ exports.create_limit = {
 /**
  * 修改校验
  */
-exports.create_limit = {
+exports.update_limit = {
     // req.body数据验证
     body: {
         ...base_limit,

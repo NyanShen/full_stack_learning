@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container user">
+  <div class="app-container deparment">
     <!-- 查询 -->
     <div class="app-search-container mgb10">
       <el-form :model="state.queryParams" ref="queryForm" :inline="true">
@@ -86,8 +86,27 @@
         :rules="formRules"
         class="dialog-form-inline"
       >
-        
-        <el-form-item label="部门名称" prop="name">
+        <el-form-item
+          label="上级部门"
+          prop="pid"
+          v-if="departmentTree.length > 0"
+        >
+          <el-tree-select
+            v-model="state.form.id"
+            :data="departmentTree"
+            value-key="id"
+            :render-after-expand="false"
+            :props="{ value: 'id', label: 'name', children: 'children' }"
+            check-strictly
+            show-checkbox
+            check-on-click-node
+            placeholder="请选择上级部门"
+          />
+        </el-form-item>
+        <el-form-item
+          :label="departmentTree.length > 0 ? '部门名称' : '公司名称'"
+          prop="name"
+        >
           <el-input v-model="state.form.name" />
         </el-form-item>
         <el-form-item label="负责人" prop="leader">
@@ -154,43 +173,49 @@
 import { Delete, Edit, Plus, Search, Refresh } from "@element-plus/icons-vue";
 import { ref, reactive, onMounted } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
+import { fetchRoleList } from "@api/modules/role.js";
 import {
-  fetchUserList,
-  createUser,
-  updateUser,
-  removeUser,
-  fetchUserRoleList,
-} from "@api/modules/user";
-import { fetchRoleList } from "@api/modules/role";
+  fetchDeparmentList,
+  createDeparment,
+} from "@api/modules/department.js";
 import { phonePattern, emailPattern } from "@common/validations.js";
+import { formatTree } from "@common/utils.js";
 const tableData = ref([]);
+const departmentTree = ref([]);
 const formRef = ref(null);
 const formRules = ref({
+  pid: [
+    {
+      required: true,
+      message: "Please select deparment pid",
+      trigger: "blur",
+    },
+  ],
   name: [
     {
       required: true,
-      message: "Please input user name",
+      message: "Please input deparment name",
       trigger: "blur",
     },
   ],
   phone: [
     {
       pattern: phonePattern,
-      message: "Please input correct user phone",
+      message: "Please input correct deparment phone",
       trigger: "blur",
     },
   ],
   email: [
     {
       pattern: emailPattern,
-      message: "Please input correct user email",
+      message: "Please input correct deparment email",
       trigger: "blur",
     },
   ],
 });
 const queryForm = ref(null);
 const initForm = {
-  account: "",
+  pid: null,
   name: "",
   remark: "",
   status: 1,
@@ -218,8 +243,9 @@ const state = reactive({
  * 获取菜单列表
  */
 const loadList = () => {
-  fetchUserList(state.queryParams).then((res) => {
+  fetchDeparmentList(state.queryParams).then((res) => {
     tableData.value = res.data.data;
+    departmentTree.value = formatTree(res.data.data, "id", "pid");
   });
 };
 /**
@@ -228,8 +254,9 @@ const loadList = () => {
 const onSubmit = async (formRef) => {
   await formRef?.validate((valid, fields) => {
     if (valid) {
+      console.log("state.form.value>>>", state.form);
       state.form.roleIds = state.roleIds.join(",");
-      const reqPromise = state.form.id ? updateUser : createUser;
+      const reqPromise = state.form.id ? updateDeparment : createDeparment;
       reqPromise(state.form).then((res) => {
         ElMessage({
           message: "保存成功.",
@@ -268,8 +295,10 @@ const resetQuery = () => {
 const handlePlus = () => {
   state.form = {
     ...initForm,
-    password: "123456",
   };
+  if (departmentTree.value.length === 0) {
+    state.form.pid = 0;
+  }
   state.roleIds = [];
   state.isIndeterminate = false;
   state.dialogVisible = true;
@@ -300,7 +329,7 @@ const handleDelete = (row) => {
     let data = {
       id: row.id,
     };
-    removeUser(data).then((res) => {
+    removeDeparment(data).then((res) => {
       ElMessage({
         message: "删除成功.",
         type: "success",
@@ -314,25 +343,25 @@ const handleDelete = (row) => {
  */
 const loadRoleList = () => {
   if (state.roles.length > 0) {
-    loadUserRoles();
+    loadDeparmentRoles();
     return;
   }
   fetchRoleList()
     .then((res) => {
       state.roles = res.data.data || [];
-      loadUserRoles();
+      loadDeparmentRoles();
     })
     .catch(() => {});
 };
 /**
  * 查询已关联角色
  */
-const loadUserRoles = () => {
+const loadDeparmentRoles = () => {
   // 新增不需要查询
   if (!state.form.id) {
     return;
   }
-  fetchUserRoleList({ id: state.form.id })
+  fetchDeparmentRoleList({ id: state.form.id })
     .then((res) => {
       state.roleIds = res.data.data || [];
       handleCheckedRolesChange(state.roleIds);
