@@ -86,13 +86,9 @@
         :rules="formRules"
         class="dialog-form-inline"
       >
-        <el-form-item
-          label="上级部门"
-          prop="pid"
-          v-if="departmentTree.length > 0"
-        >
+        <el-form-item label="上级部门" prop="pid" v-if="showTopDepartment">
           <el-tree-select
-            v-model="state.form.id"
+            v-model="state.form.pid"
             :data="departmentTree"
             value-key="id"
             :render-after-expand="false"
@@ -104,7 +100,7 @@
           />
         </el-form-item>
         <el-form-item
-          :label="departmentTree.length > 0 ? '部门名称' : '公司名称'"
+          :label="showTopDepartment ? '部门名称' : '公司名称'"
           prop="name"
         >
           <el-input v-model="state.form.name" />
@@ -171,12 +167,13 @@
 
 <script setup>
 import { Delete, Edit, Plus, Search, Refresh } from "@element-plus/icons-vue";
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, computed, onMounted } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { fetchRoleList } from "@api/modules/role.js";
 import {
   fetchDeparmentList,
   createDeparment,
+  updateDeparment
 } from "@api/modules/department.js";
 import { phonePattern, emailPattern } from "@common/validations.js";
 import { formatTree } from "@common/utils.js";
@@ -240,12 +237,29 @@ const state = reactive({
   roleIds: [],
 });
 /**
+ * 是否显示顶级部门
+ * 如果不是顶级并且有顶级部门
+ */
+const showTopDepartment = computed(() => {
+  return state.form.pid !== 0 && departmentTree.value.length > 0;
+});
+/**
  * 获取菜单列表
  */
 const loadList = () => {
   fetchDeparmentList(state.queryParams).then((res) => {
-    tableData.value = res.data.data;
+    tableData.value = formatTree(res.data.data, "id", "pid");
+  });
+};
+/**
+ * 获取菜单列表
+ */
+const loadDepartmentTree = () => {
+  fetchDeparmentList({}).then((res) => {
     departmentTree.value = formatTree(res.data.data, "id", "pid");
+    if (departmentTree.value.length === 0) {
+      state.form.pid = 0;
+    }
   });
 };
 /**
@@ -292,17 +306,18 @@ const resetQuery = () => {
  * 新增
  * @param {*} row
  */
-const handlePlus = () => {
+const handlePlus = (row) => {
   state.form = {
     ...initForm,
   };
-  if (departmentTree.value.length === 0) {
-    state.form.pid = 0;
+  if (row) {
+    state.form.pid = row.id;
   }
   state.roleIds = [];
   state.isIndeterminate = false;
   state.dialogVisible = true;
-  loadRoleList();
+  // loadRoleList();
+  loadDepartmentTree();
 };
 /**
  * 编辑
@@ -314,7 +329,8 @@ const handleEdit = (row) => {
   };
   state.isIndeterminate = false;
   state.dialogVisible = true;
-  loadRoleList();
+  // loadRoleList();
+  loadDepartmentTree();
 };
 /**
  * 删除

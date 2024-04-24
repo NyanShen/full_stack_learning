@@ -25,6 +25,22 @@ exports.create = async (req, res) => {
 
 
 /**
+ * @name 更新部门
+ * @author NyanShen
+ * @param {*} req 
+ * @param {*} res 
+ * @returns 
+ */
+exports.update = async (req, res) => {
+    let singleDepartment = await DepartmentModel.findByPk(req.body.id);
+    if (!singleDepartment) {
+        res.sendResult("不存在该菜单", 605);
+        return;
+    }
+    let key = { id: req.body.id };
+    DAO.update(DepartmentModel, req.body, key, data => res.send(data));
+}
+/**
  * @name 搜索部门
  * @author NyanShen
  * @param {*} req 

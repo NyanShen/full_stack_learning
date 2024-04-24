@@ -38,7 +38,7 @@ router.post('/create', expressJoi(deparmentSchema.create_limit), deparmentServic
  * @returns {object} 605 - 请求失败
  * @returns {Error}  default - Unexpected error
  */
-// router.patch('/update', expressJoi(deparmentSchema.update_limit), deparmentService.update);
+router.put('/update', expressJoi(deparmentSchema.update_limit), deparmentService.update);
 
 /**
  * 查询部门

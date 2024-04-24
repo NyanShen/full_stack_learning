@@ -18,7 +18,7 @@ const base_limit = {
     leader: Joi.string().empty([null, '']),
     phone: Joi.string().empty([null, '']),
     remark: Joi.string().empty([null, '']),
-    email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'cn'] } }).messages({
+    email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'cn'] } }).empty([null, '']).messages({
         'string.email': '邮箱格式错误',
     }),
     status: Joi.number().empty([null, 0]).default(1)
