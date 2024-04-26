@@ -12,3 +12,7 @@ nyan_manage/node_modules/
 nyan_manage/.vscode
 nyan_manage/.vite
 
+nyan_next/node_modules/
+nextjs-dashboard/node_modules/
+nextjs-dashboard/.env
+
