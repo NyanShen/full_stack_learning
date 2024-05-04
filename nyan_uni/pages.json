@@ -99,6 +99,12 @@
 			}
 		},
 		{
+			"path": "pages/chat/index",
+			"style": {
+				"navigationBarTitleText": "聊天室"
+			}
+		},
+		{
 			"path": "pages/login/index",
 			"style": {
 				"navigationBarTitleText": "",

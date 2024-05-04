@@ -10,6 +10,7 @@
 		</view>
 		<view class="iconfont iconaddress">测试</view>
 		<button class="btn btn-primary" @click="toHome">意见反馈</button>
+		<button class="btn btn-primary" @click="toChat">聊天主页</button>
 		<view class="form">
 			<view class="flex-c form-item">
 				<label for="name">角色名称</label>
@@ -21,13 +22,20 @@
 			</view>
 			<button class="btn btn-primary" @click="onSubmit">提交</button>
 		</view>
+		<ua-input class="flex1" v-model="editorText" type="textarea" :autosize="{maxRows: 3}" clearable
+			placeholder="Prompt..." @clear="handleClear" style="width: 60%;" >
+		</ua-input>
 	</view>
 </template>
 
 <script>
 	import $request from "@/api/request";
 	import $uniApi from "@/common/uni.app.api.js";
+	import UaInput from "@/components/ua-input/ua-input"
 	export default {
+		components: {
+			UaInput
+		},
 		data() {
 			return {
 				form: {
@@ -42,6 +50,9 @@
 				marqueeInterval: 20, // 文字移动间隔时间
 				textLen: 0, // 轮播文字的长度,
 				size: 14, // 字体大小
+
+				editorText: "",
+
 			};
 		},
 		onLoad() {
@@ -58,8 +69,12 @@
 			clearInterval(this.timer);
 		},
 		methods: {
+			handleClear() {},
 			toHome() {
 				$uniApi.navigateTo("services/feedback")
+			},
+			toChat() {
+				$uniApi.navigateTo("chat")
 			},
 			testServeice() {
 				$request.baseRequest({
@@ -86,7 +101,7 @@
 					}
 				}, self.marqueeInterval)
 			},
-			
+
 			onSubmit() {
 				let self = this;
 				$request.baseRequest({
