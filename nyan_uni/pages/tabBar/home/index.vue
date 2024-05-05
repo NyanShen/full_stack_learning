@@ -1,5 +1,6 @@
 <template>
 	<view class="home">
+		<!-- 水平文字跑马灯  -->
 		<view class="flex-c notify">
 			<img class="img" src="/static/images/alert.png" />
 			<view class="marquee">
@@ -8,40 +9,15 @@
 				</text>
 			</view>
 		</view>
-		<view class="iconfont iconaddress">测试</view>
-		<button class="btn btn-primary" @click="toHome">意见反馈</button>
-		<button class="btn btn-primary" @click="toChat">聊天主页</button>
-		<view class="form">
-			<view class="flex-c form-item">
-				<label for="name">角色名称</label>
-				<input type="text" placeholder="请输入角色名称" v-model="form.name" />
-			</view>
-			<view class="flex-c  form-item">
-				<label for="name">角色描述</label>
-				<textarea type="text" placeholder="请输入角色描述" v-model="form.desc" />
-			</view>
-			<button class="btn btn-primary" @click="onSubmit">提交</button>
-		</view>
-		<ua-input class="flex1" v-model="editorText" type="textarea" :autosize="{maxRows: 3}" clearable
-			placeholder="Prompt..." @clear="handleClear" style="width: 60%;" >
-		</ua-input>
+
 	</view>
 </template>
 
 <script>
-	import $request from "@/api/request";
 	import $uniApi from "@/common/uni.app.api.js";
-	import UaInput from "@/components/ua-input/ua-input"
 	export default {
-		components: {
-			UaInput
-		},
 		data() {
 			return {
-				form: {
-					name: "",
-					desc: ""
-				},
 				// 跑马灯变量
 				timer: null,
 				text: "测试环境, 非测试人员请勿操作",
@@ -50,15 +26,11 @@
 				marqueeInterval: 20, // 文字移动间隔时间
 				textLen: 0, // 轮播文字的长度,
 				size: 14, // 字体大小
-
-				editorText: "",
-
 			};
 		},
-		onLoad() {
-			this.testServeice();
-		},
+		onLoad() {},
 		onShow() {
+			// 文字长度 = 文字个数 * 文字大小
 			this.length = this.text.length * this.size;
 			this.scorllingText();
 		},
@@ -69,21 +41,6 @@
 			clearInterval(this.timer);
 		},
 		methods: {
-			handleClear() {},
-			toHome() {
-				$uniApi.navigateTo("services/feedback")
-			},
-			toChat() {
-				$uniApi.navigateTo("chat")
-			},
-			testServeice() {
-				$request.baseRequest({
-					baseUrl: "{testUrl}",
-					apiPath: "/users",
-				}).then(res => {
-					console.log("testServeice", res)
-				})
-			},
 			/**
 			 * 跑马灯文字原理
 			 * 文字绝对定位, 按一定的时间和位移进行移动位置,移完后文字在轮播框的最右边开始移动
@@ -96,24 +53,10 @@
 					} else {
 						clearInterval(self.timer);
 						let result = $uniApi.loadSystemInfoSync();
-						self.left = result.windowWidth - 40;
+						self.left = result.windowWidth - 40; // 轮播宽度约等于系统宽度, 两边留20
 						self.scorllingText();
 					}
 				}, self.marqueeInterval)
-			},
-
-			onSubmit() {
-				let self = this;
-				$request.baseRequest({
-					data: {
-						...self.form
-					},
-					baseUrl: "{testUrl}",
-					apiPath: "/roles/create",
-					method: "POST"
-				}).then(res => {
-					console.log("roles create >>>>", res)
-				})
 			}
 		}
 	}

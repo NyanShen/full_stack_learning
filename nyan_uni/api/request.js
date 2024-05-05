@@ -15,7 +15,7 @@ const urlMap = {
  */
 const baseRequest = ({
 	apiPath = "",
-	baseUrl = "baseUrl",
+	baseUrl = "{baseUrl}",
 	method = "GET",
 	responseType = "text",
 	dataType = "json",

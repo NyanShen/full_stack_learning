@@ -87,3 +87,22 @@ export const formatChatListTime = (timestamp, type = 1) => {
 
     return timeStr;
 }
+/**
+ * 防抖
+ * @param {*} func 
+ * @param {*} delay 
+ * @returns 
+ */
+export const debounce = (func, delay) => {
+    let timer = null;
+    return function (...args) {
+        if (timer) {
+            clearTimeout(timer);
+        }
+        timer = setTimeout(() => {
+            func.apply(this, args);
+            // 清除定时器引用，防止内存泄漏
+            timer = null;
+        }, delay);
+    }
+}

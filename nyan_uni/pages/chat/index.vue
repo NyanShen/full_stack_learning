@@ -3,97 +3,106 @@
     <!-- 聊天内容 -->
     <scroll-view
       scroll-y
-      class="chat_box"
-	  :reverse="true"
-	  :scroll-top="state.scrollTop"
+      class="chat-body"
+      :scroll-top="state.scrollTop"
       :style="{ height: state.scrollContentH + 'px' }"
     >
-      <view
-        v-for="(message, index) in state.chatList"
-        :key="index"
-        :id="'messageItem' + index"
-        class="message"
-      >
+      <view class="chat-list">
         <view
-          class="message-box"
-          :class="{
-            'doctor-message': message.from === 'doctor',
-            'patient-message': message.from === 'patient',
-          }"
+          class="chat-item"
+          v-for="(message, index) in state.chatList"
+          :key="index"
         >
-          <view class="message-avatar">
-            <image
-              class="img"
-              v-if="message.from === 'doctor'"
-              src="https://zxyy.alipayxy.com:1502/wenxinmp/images/public/doctor_icon.png"
-              mode="aspectFill"
-            />
-            <image
-              class="img"
-              v-if="message.from === 'patient'"
-              src="https://img.yzcdn.cn/vant/cat.jpeg"
-              mode="aspectFill"
-            />
-          </view>
-          <view class="message-content">
-            <view v-if="message.type === 'text'" class="message-text">
-              {{ message.content }}
-              <view class="message-arrow"></view>
-            </view>
-            <view v-if="message.type === 'image'" class="message-image">
+          <view
+            class="chat-item-content"
+            :class="{
+              doctor: message.from === 'doctor',
+              patient: message.from === 'patient',
+            }"
+          >
+            <!-- 头像 -->
+            <view class="avatar">
               <image
                 class="img"
-                :src="message.content"
-                mode="aspectFit"
-                @tap="showImage(message.content)"
+                v-if="message.from === 'doctor'"
+                src="https://zxyy.alipayxy.com:1502/wenxinmp/images/public/doctor_icon.png"
+                mode="aspectFill"
+              />
+              <image
+                class="img"
+                v-if="message.from === 'patient'"
+                src="https://img.yzcdn.cn/vant/cat.jpeg"
+                mode="aspectFill"
               />
             </view>
+            <!-- 聊天具体内容展示 -->
+            <view class="message">
+              <view v-if="message.type === 'text'" class="text">
+                {{ message.content }}
+                <view class="arrow"></view>
+              </view>
+              <view v-if="message.type === 'image'" class="image">
+                <image
+                  class="img"
+                  :src="message.content"
+                  mode="aspectFill"
+                  @tap="showImage(message.content)"
+                />
+              </view>
+            </view>
           </view>
-        </view>
-
-        <view class="message-time" v-if="shouldShowTime(message, index)">
-          {{ formatTime(message.time) }}
+          <view class="chat-item-time" v-if="shouldShowTime(message, index)">
+            {{ formatTime(message.time) }}
+          </view>
         </view>
       </view>
     </scroll-view>
-    <!-- 发送按钮 -->
-    <view class="chat_send_box">
+    <!-- 发送按钮 h5不生效show-scrollbar enhanced-->
+    <view class="chat-bot" :style="{ bottom: state.kbHeight + 'px' }">
       <scroll-view
         scroll-y
-        class="chat_input_box"
+        class="chat-input-wrap"
         :show-scrollbar="false"
         :enhanced="true"
       >
         <textarea
           v-model="state.msg"
-          name="chat_input"
-          id="chat_input"
+          name="chat-input"
+          id="chat-input"
+          :maxlength="500"
           :auto-height="true"
           :cursor-spacing="20"
           :show-confirm-bar="false"
+          :adjust-position="false"
+          cursor-color="#2279ea"
+          @input="onInput"
         ></textarea>
       </scroll-view>
-      <view class="btn_group">
-        <button class="btn btn-primary send_btn">发送</button>
+
+      <view class="chat-btn-group">
+        <button class="btn btn-primary btn-send" @click="sendTextMsg()">
+          发送
+        </button>
       </view>
 
       <!-- 其他弹窗 -->
-      <view class="bot_menu" v-show="state.showBotMenu"> 按钮组 </view>
+      <view class="chat-bot-menu" v-show="state.showBotMenu"> 按钮组 </view>
     </view>
   </view>
 </template>
 <script setup>
-import { reactive } from "vue";
+import { reactive, nextTick } from "vue";
 import { onReady } from "@dcloudio/uni-app";
-import { formatChatListTime } from "@/common/index";
+import { formatChatListTime, debounce } from "@/common/index";
+import $uniApi from "@/common/uni.app.api.js";
 const state = reactive({
-  sendBoxH: 60,
+  sendBoxH: 0,
   scrollContentH: 0,
   msg: "",
   kbHeight: 0,
   showBotMenu: false,
-  intoView: "",
-  scrollTop: 300, // 滚动内容的高度
+  scrollTop: 0, // 滚动内容的高度
+  windowHeight: 0,
   chatList: [
     {
       id: 1,
@@ -143,30 +152,94 @@ const state = reactive({
     },
   ],
 });
+/**
+ * 判断该条信息时间是否显示
+ * @param {*} message
+ * @param {*} index
+ */
 const shouldShowTime = (message, index) => {
   if (index === 0) return true; // 总是显示第一条消息的时间
   const prevMessage = state.chatList[index - 1];
   return (
-    new Date(message.time).getTime() - new Date(prevMessage.time).getTime() >=
-    10 * 1000
+    new Date(message.time.replace(/-/g, "/")).getTime() -
+      new Date(prevMessage.time.replace(/-/g, "/")).getTime() >=
+    30 * 1000
   );
 };
-
+/**
+ * 格式化显示时间
+ * @param {*} time
+ */
 const formatTime = (time) => {
-  const date = new Date(time);
+  const date = new Date(time.replace(/-/g, "/"));
   return `${formatChatListTime(date.getTime() / 1000)}`;
 };
 // 打开图片预览，这里只是示例，实际需要实现图片预览功能
 const showImage = (url) => {
   console.log("打开图片预览:", url);
 };
+/**
+ * 获取聊天内容总高度
+ */
+const toScrollBottom = () => {
+  // nextTick确保最后发的消息能获取到对应的高度
+  uni
+    .createSelectorQuery()
+    .select(".chat-list")
+    .boundingClientRect((res) => {
+      state.scrollTop = res.height;
+      console.log("scrollTop>>>", state.scrollTop);
+    })
+    .exec();
+};
+/**
+ * 获取底部高度
+ */
+const calcBottomHeight = () => {
+  nextTick(() => {
+    uni
+      .createSelectorQuery()
+      .select(".chat-bot")
+      .boundingClientRect((res) => {
+        state.sendBoxH = res.height;
+        state.scrollContentH = state.windowHeight - state.sendBoxH;
+        console.log("chat-bot>>>", state.sendBoxH, res);
+        toScrollBottom();
+      })
+      .exec();
+  });
+};
+/**
+ * 输入换行之后重新计算底部高度
+ */
+const onInput = debounce((e) => {
+  console.log("onInput>>>", e.detail.value);
+  state.msg = e.detail.value;
+  calcBottomHeight();
+}, 500);
+/**
+ * 发送文本消息
+ */
+const sendTextMsg = () => {
+  if (!state.msg) return;
+  state.chatList.push({
+    id: state.chatList.length + 1,
+    type: "text",
+    from: "patient",
+    content: state.msg,
+    time: new Date().toLocaleString(),
+  });
+  state.msg = "";
+  calcBottomHeight();
+};
 onReady(() => {
   // 获取系统可视高度 - 底部固定高度
-  uni.getSystemInfo({
-    success: (res) => {
-      state.scrollContentH = res.windowHeight - state.sendBoxH;
-      state.intoView = `messageItem${state.chatList.length - 1}`;
-    },
+  let result = $uniApi.loadSystemInfoSync();
+  state.windowHeight = result.windowHeight;
+  calcBottomHeight();
+
+  uni.onKeyboardHeightChange((res) => {
+    state.kbHeight = res.height;
   });
 });
 </script>
@@ -176,13 +249,115 @@ onReady(() => {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-
-  .chat_box {
-    width: 100%;
+}
+// 聊天内容滚动区域, 高度通过计算设置
+.chat-body {
+  width: 100%;
+  // 用于聊天内容总高度计算, scrollTop滚动到最底部
+  .chat-list {
+    padding: 20rpx;
+    box-sizing: border-box;
   }
 }
+// 每一天聊天记录
+.chat-item {
+  margin-bottom: 10px;
+  // 聊天对象(头像 + 聊天具体内容)
+  .chat-item-content {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    // 头像
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
 
-.chat_send_box {
+      .img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    // 聊天具体内容(文本 + 图片 + 其他待定)
+    .message {
+      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 480rpx;
+      .text {
+        font-size: 30rpx;
+        padding: 20rpx;
+        border-radius: 10rpx;
+        line-height: 1.5;
+        word-break: break-all;
+        background-color: aliceblue;
+        // 三角形样式
+        .arrow {
+          position: absolute;
+          top: 20rpx;
+          width: 0;
+          height: 0;
+          border: 10px solid transparent;
+          z-index: 1;
+        }
+      }
+      .image {
+        margin-top: 5px;
+        margin-bottom: 5px;
+        max-width: 500rpx;
+        overflow: hidden;
+        cursor: pointer;
+
+        .img {
+          width: 100%;
+          border-radius: 10rpx;
+          background-color: #f7f7f7;
+        }
+      }
+    }
+
+    &.doctor {
+      flex-direction: row-reverse;
+      .avatar {
+        margin-left: 10px;
+      }
+      .message {
+        .text {
+          background-color: ghostwhite;
+          .arrow {
+            right: -16px;
+            border-left-color: ghostwhite;
+          }
+        }
+      }
+    }
+    &.patient {
+      flex-direction: row;
+      .avatar {
+        margin-right: 10px;
+      }
+      .message {
+        .text {
+          background-color: aliceblue;
+          .arrow {
+            left: -30rpx;
+            border-right-color: aliceblue;
+          }
+        }
+      }
+    }
+  }
+  // 每条聊天时间
+  .chat-item-time {
+    font-size: 12px;
+    text-align: center;
+    color: #999;
+  }
+}
+// 聊天输入框(输入 + 操作按钮)
+.chat-bot {
   display: flex;
   align-items: flex-end;
   position: sticky;
@@ -194,7 +369,7 @@ onReady(() => {
   box-sizing: border-box;
   background-color: #f7f7f7;
 
-  .chat_input_box {
+  .chat-input-wrap {
     flex: 1;
     max-height: 250rpx;
     min-height: 70rpx;
@@ -209,114 +384,23 @@ onReady(() => {
     }
   }
 
-  .btn_group {
+  .chat-btn-group {
     display: flex;
     align-items: center;
     margin-left: 20rpx;
     height: 70rpx;
+
+    .btn-send {
+      width: 120rpx;
+      height: 60rpx;
+      line-height: 60rpx;
+      border-radius: 10rpx;
+    }
   }
 
-  .send_btn {
-    width: 120rpx;
-    height: 60rpx;
-    line-height: 60rpx;
-    border-radius: 10rpx;
-  }
-
-  .bot_menu {
+  .chat-bot-menu {
     width: 100%;
     height: 320rpx;
   }
-}
-
-.message {
-  padding: 20rpx;
-}
-
-.message-box {
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 10px;
-
-  &.doctor-message {
-    flex-direction: row-reverse;
-
-    .message-avatar {
-      margin-left: 10px;
-      margin-right: 0;
-    }
-
-    .message-text {
-      background-color: ghostwhite;
-      .message-arrow {
-        right: -16px;
-        border-left-color: ghostwhite;
-      }
-    }
-  }
-  &.patient-message {
-    .message-text {
-      .message-arrow {
-        left: -30rpx;
-        border-right-color: aliceblue;
-      }
-    }
-  }
-
-  .message-avatar {
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
-    border-radius: 50%;
-    overflow: hidden;
-
-    .img {
-      width: 100%;
-      height: 100%;
-    }
-  }
-
-  .message-content {
-    position: relative;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    max-width: 480rpx;
-  }
-
-  .message-text {
-    background-color: aliceblue;
-    font-size: 30rpx;
-    padding: 20rpx;
-    border-radius: 10rpx;
-    line-height: 1.5;
-    word-break: break-all;
-    // 三角形样式
-    .message-arrow {
-      position: absolute;
-      top: 20rpx;
-      width: 0;
-      height: 0;
-      border: 10px solid transparent;
-      z-index: 1;
-    }
-  }
-
-  .message-image {
-    margin-top: 5px;
-    margin-bottom: 5px;
-    cursor: pointer;
-
-    .img {
-      width: 100%;
-      background-color: #f7f7f7;
-    }
-  }
-}
-
-.message-time {
-  font-size: 12px;
-  text-align: center;
-  color: #999;
 }
 </style>

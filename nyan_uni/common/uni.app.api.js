@@ -1,7 +1,9 @@
 /**
  * 对uniapp api 二次封装
  */
-import store from "@/store/index";
+import {
+	useSystemInfoStore
+} from "@/stores/systemInfo";
 export default {
 	/**
 	 * 加载动画
@@ -65,12 +67,13 @@ export default {
 	 * 加载系统信息
 	 */
 	loadSystemInfoSync() {
-		let systemInfo = store.state.systemInfo;
-		if (systemInfo) {
-			return systemInfo
+		let systemInfoStore = useSystemInfoStore();
+		if (systemInfoStore.systemInfo) {
+			return systemInfoStore.systemInfo
 		}
 		let result = uni.getSystemInfoSync();
-		store.commit("setSystemInfo", result);
+		systemInfoStore.setSystemInfo(result);
+		console.log("init systemInfo>>>", result);
 		return result;
 	}
 }
