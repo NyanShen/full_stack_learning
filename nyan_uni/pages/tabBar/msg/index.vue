@@ -5,7 +5,7 @@
         class="flex-c msg-item"
         v-for="(item, index) in msgList"
         :key="index"
-		@click="toChat(item)"
+        @click="toChat(item)"
       >
         <image class="img" :src="item.avatar" mode="scaleToFill" />
         <view class="content">
@@ -27,8 +27,7 @@ export default {
           type: "text",
           sendName: "沈医生",
           lastContent: "测试环境, 非测试人员请勿操作",
-          avatar:
-            "https://zxyy.alipayxy.com:1502/wenxinmp/images/public/doctor_icon.png",
+          avatar: "/static/images/default.png",
           time: "2020-01-01 12:12:12",
           readed: false,
         },
@@ -78,17 +77,18 @@ export default {
       activeStrategy[`${show}_${index}`](index, text);
       // #endif
     },
-	toChat(item) {
-		$uniApi.navigateTo("chat", item)
-	}
+    toChat(item) {
+      $uniApi.navigateTo("chat", item);
+    },
   },
 };
 </script>
 
 <style lang="stylus">
 .msg-item {
-	padding: 20rpx;
-	margin-bottom: 20rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+
   .img {
     width: 60px;
     height: 60px;
@@ -98,6 +98,7 @@ export default {
 
   .content {
     .msg {
+      font-size: 26rpx;
       color: #999;
     }
   }
