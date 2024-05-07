@@ -128,6 +128,12 @@
 					"style": {
 						"navigationBarTitleText": "意见反馈"
 					}
+				},
+				{
+					"path": "watermark/index",
+					"style": {
+						"navigationBarTitleText": "页面水印"
+					}
 				}
 			]
 		}

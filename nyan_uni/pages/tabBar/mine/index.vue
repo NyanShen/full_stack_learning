@@ -1,12 +1,6 @@
 <template>
 	<view class="uni-container">
-		<image class="logo" src="/static/images/logo.png"></image>
-		<view class="text-area mgb30" @click="toLogin">
-			<text class="title">{{title}}</text>
-		</view>
-		<view class="text-area" @click="handleText">
-			<text class="title">我是描述文字测试</text>
-		</view>
+		
 	</view>
 </template>
 
@@ -16,7 +10,7 @@
 	export default {
 		data() {
 			return {
-				title: '登录'
+				title: ''
 			}
 		},
 		onLoad() {

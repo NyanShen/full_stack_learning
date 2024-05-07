@@ -1,6 +1,6 @@
 <template>
   <view class="chat">
-    <!-- 聊天内容 -->
+    <!-- 聊天记录box -->
     <scroll-view
       scroll-y
       class="chat-body"
@@ -57,9 +57,10 @@
         </view>
       </view>
     </scroll-view>
-    <!-- 发送按钮 -->
+    <!-- 底部输入box -->
     <view class="chat-bot" :style="{ bottom: kbHeight + 'px' }">
       <view class="chat-bot-input-box">
+        <!-- 左边按钮 -->
         <view class="btn-group">
           <image
             class="btn-img show mr20"
@@ -67,6 +68,7 @@
             mode="aspectFill"
           />
         </view>
+        <!-- 中间输入框 -->
         <scroll-view
           scroll-y
           class="input-wrap"
@@ -89,7 +91,7 @@
             @keyboardheightchange="handleKeyboardheightchange"
           ></textarea>
         </scroll-view>
-
+        <!-- 右边按钮 -->
         <view class="btn-group">
           <image
             :class="{ show: !message }"
@@ -107,7 +109,7 @@
           </button>
         </view>
       </view>
-      <!-- 其他弹窗 -->
+      <!-- 底部按钮组 -->
       <view class="chat-bot-menu-box" v-if="showBotMenu">
         <view class="menu-item flex-column">
           <view class="icon flex-column">
@@ -221,9 +223,7 @@ const state = reactive({
  * 监听多个属性,只能使用ref对象了
  */
 watch([showBotMenu, kbHeight, message], () => {
-  nextTick(() => {
-    calcBottomHeight();
-  });
+  calcBottomHeight();
   console.log("监听键盘高度变化情况:", showBotMenu.value);
   console.log("监听按钮组显示隐藏情况:", kbHeight.value);
   console.log("监听输入内容变化情况:", message.value);
@@ -249,19 +249,24 @@ const toScrollBottom = () => {
 /**
  * 获取底部高度
  * 滚动可视区高度 = 窗口可视高度 - 键盘高度 - 输入框总高度
+ * h5初始化输入框总高度怎么是161? .chat-bot没有高度
  */
 const calcBottomHeight = () => {
-  uni
-    .createSelectorQuery()
-    .select(".chat-bot")
-    .boundingClientRect((res) => {
-      state.sendBoxH = res.height;
-      state.scrollContentH =
-        state.windowHeight - kbHeight.value - state.sendBoxH;
-      console.log("scrollContentH>>>", state.scrollTop);
-      toScrollBottom();
-    })
-    .exec();
+  nextTick(() => {
+    uni
+      .createSelectorQuery()
+      .select(".chat-bot")
+      .boundingClientRect((res) => {
+        state.sendBoxH = res.height;
+        state.scrollContentH =
+          state.windowHeight - kbHeight.value - state.sendBoxH;
+        console.log(
+          `scrollContentH >>> ${state.windowHeight}-${kbHeight.value}-${state.sendBoxH}=${state.scrollContentH}`
+        );
+        toScrollBottom();
+      })
+      .exec();
+  });
 };
 
 /**
@@ -362,8 +367,10 @@ const showImage = (url) => {
 onReady(() => {
   // 获取窗口可视高度 - 底部固定高度
   let result = $uniApi.loadSystemInfoSync();
+  state.sendBoxH = uni.upx2px(112); // 解决H5初始化使用查询器获取高度错误的问题
   state.windowHeight = result.windowHeight;
-  calcBottomHeight();
+  state.scrollContentH = state.windowHeight - state.sendBoxH;
+  toScrollBottom();
 });
 </script>
 <style lang="scss" scoped>
@@ -488,7 +495,6 @@ onReady(() => {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: auto;
   box-sizing: border-box;
   background-color: #f7f7f7;
 }

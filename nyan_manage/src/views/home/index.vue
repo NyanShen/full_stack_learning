@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <div v-watermark="{text: 'NyanShen'}"></div>
     hello home
     <font-awesome-icon icon="fa-solid fa-coffee" />
     permission test: 
@@ -11,3 +12,9 @@
 
 <script setup>
 </script>
+<style scoped>
+.home {
+  position: relative;
+  height: 100%;
+}
+</style>

@@ -22,11 +22,15 @@ export function removeToken() {
  */
 const LOGIN_KEY = "Login_Info";
 export function getLoginInfo() {
-    let storageData = JSON.parse(decodeURIComponent(Cookies.get(LOGIN_KEY)));
-    return {
-        password: Base64.decode(storageData?.password || ""),
-        account: storageData?.account,
-        rememberMe: storageData?.rememberMe
+    try {
+        let storageData = JSON.parse(decodeURIComponent(Cookies.get(LOGIN_KEY)));
+        return {
+            password: Base64.decode(storageData?.password || ""),
+            account: storageData?.account,
+            rememberMe: storageData?.rememberMe
+        }
+    } catch (error) {
+        return {}
     }
 }
 export function setLoginInfo(loginInfo) {
