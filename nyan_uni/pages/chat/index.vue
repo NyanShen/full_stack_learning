@@ -7,49 +7,49 @@
       :scroll-top="state.scrollTop"
       :style="{ height: state.scrollContentH + 'px' }"
     >
-      <view class="chat-list" @click.stop="toggleBotMenu(false)">
+      <view class="chat-list" @click.stop="touchChatList">
         <view
           class="chat-item"
-          v-for="(message, index) in state.chatList"
+          v-for="(chatItem, index) in state.chatList"
           :key="index"
         >
-          <view class="chat-item-time" v-if="shouldShowTime(message, index)">
-            {{ formatTime(message.time) }}
+          <view class="chat-item-time" v-if="shouldShowTime(chatItem, index)">
+            {{ formatTime(chatItem.time) }}
           </view>
           <view
             class="chat-item-content"
             :class="{
-              doctor: message.from === 'doctor',
-              patient: message.from === 'patient',
+              doctor: chatItem.from === 'doctor',
+              patient: chatItem.from === 'patient',
             }"
           >
             <!-- 头像 -->
             <view class="avatar">
               <image
                 class="img"
-                v-if="message.from === 'doctor'"
+                v-if="chatItem.from === 'doctor'"
                 src="/static/images/default.png"
                 mode="aspectFill"
               />
               <image
                 class="img"
-                v-if="message.from === 'patient'"
+                v-if="chatItem.from === 'patient'"
                 src="https://img.yzcdn.cn/vant/cat.jpeg"
                 mode="aspectFill"
               />
             </view>
             <!-- 聊天具体内容展示 -->
             <view class="message">
-              <view v-if="message.type === 'text'" class="text">
-                {{ message.content }}
+              <view v-if="chatItem.type === 'text'" class="text">
+                {{ chatItem.content }}
                 <view class="arrow"></view>
               </view>
-              <view v-if="message.type === 'image'" class="image">
+              <view v-if="chatItem.type === 'image'" class="image">
                 <image
                   class="img"
-                  :src="message.content"
+                  :src="chatItem.content"
                   mode="aspectFill"
-                  @tap="showImage(message.content)"
+                  @tap="showImage(chatItem.content)"
                 />
               </view>
             </view>
@@ -58,11 +58,11 @@
       </view>
     </scroll-view>
     <!-- 发送按钮 -->
-    <view class="chat-bot" :style="{ bottom: state.kbHeight + 'px' }">
+    <view class="chat-bot" :style="{ bottom: kbHeight + 'px' }">
       <view class="chat-bot-input-box">
         <view class="btn-group">
           <image
-            class="btn-img mr20"
+            class="btn-img show mr20"
             src="/static/images/voice.png"
             mode="aspectFill"
           />
@@ -74,30 +74,32 @@
           :enhanced="true"
         >
           <textarea
-            v-model="state.msg"
+            v-model="message"
             name="chatmsginput"
             id="chatmsginput"
-            :fixed="true"
             :maxlength="500"
             :auto-height="true"
             :cursor-spacing="20"
             :show-confirm-bar="false"
             :adjust-position="false"
+            :focus="inputFocus"
+            @blur="onBlur"
+            @focus="onFocus"
+            @input="onInput"
             @keyboardheightchange="handleKeyboardheightchange"
-            @input="handleInputChange"
           ></textarea>
         </scroll-view>
 
         <view class="btn-group">
           <image
-            :class="{ show: !state.msg }"
+            :class="{ show: !message }"
             class="btn-img ml20"
             src="/static/images/plus.png"
             mode="aspectFill"
-            @tap="toggleBotMenu(!state.showBotMenu)"
+            @tap="toggleBotMenu(!showBotMenu)"
           />
           <button
-            :class="{ show: state.msg }"
+            :class="{ show: message }"
             class="btn btn-primary btn-send ml20"
             @click="sendTextMsg()"
           >
@@ -106,7 +108,7 @@
         </view>
       </view>
       <!-- 其他弹窗 -->
-      <view class="chat-bot-menu-box" v-if="state.showBotMenu">
+      <view class="chat-bot-menu-box" v-if="showBotMenu">
         <view class="menu-item flex-column">
           <view class="icon flex-column">
             <text class="iconfont iconphoto"></text>
@@ -142,34 +144,38 @@
   </view>
 </template>
 <script setup>
-import { reactive, nextTick } from "vue";
+import { ref, watch, reactive, nextTick } from "vue";
 import { onReady } from "@dcloudio/uni-app";
 import { formatChatListTime, debounce } from "@/common/index";
 import $uniApi from "@/common/uni.app.api.js";
+/**
+ * 需要监听的变量
+ */
+const message = ref(""); // 发送信息内容
+const kbHeight = ref(0); // 键盘高度
+const inputFocus = ref(false); // 输入框聚焦状态
+const showBotMenu = ref(false); // 其他聊天功能按钮, 底部按钮组的显示隐藏
 const state = reactive({
   sendBoxH: 0, // 聊天输入框总高度
-  scrollContentH: 0, // 滚动可视区域高度
-  kbHeight: 0, // 键盘高度
   scrollTop: 0, // 滚动内容的高度
+  scrollContentH: 0, // 滚动可视区域高度
   windowHeight: 0, // 手机可视高度
-  msg: "", // 发送信息
-  showBotMenu: false, // 其他聊天功能按钮显示
   chatList: [
     {
       id: 1,
       type: "text",
       from: "doctor",
-      content: "请你回答咏柳古诗做测试",
-      time: "2024-02-01 15:14:12",
+      content: "您好! 很开心为您提供服务, 请您开始您的咨询.",
+      time: "2024-05-01 15:14:12",
     },
-    // {
-    //   id: 2,
-    //   type: "text",
-    //   from: "doctor",
-    //   content:
-    //     "了解了position: sticky; 的作用, flex-direction: row-reverse;聊天显示反转",
-    //   time: "2024-05-02 16:18:00",
-    // },
+    {
+      id: 2,
+      type: "text",
+      from: "patient",
+      content:
+        "绝对定位position: sticky; 固定在底部并且占据高度, flex-direction: row-reverse; 聊天显示反转, caret-color设置光标的颜色; 监听键盘高度, 底部按钮组显示, 输入内容的变化进行重新计算渲染",
+      time: "2024-05-02 16:18:00",
+    },
     // {
     //   id: 3,
     //   type: "text",
@@ -177,14 +183,14 @@ const state = reactive({
     //   content: "你好,测试文案",
     //   time: "2024-05-02 16:18:02",
     // },
-    {
-      id: 4,
-      type: "text",
-      from: "patient",
-      content:
-        "咏柳, 碧玉妆成一树高, 万条垂下绿丝绦, 不知细叶谁裁出,二月春风似剪刀",
-      time: "2024-05-02 17:12:13",
-    },
+    // {
+    //   id: 4,
+    //   type: "text",
+    //   from: "patient",
+    //   content:
+    //     "《咏柳》-- 碧玉妆成一树高, 万条垂下绿丝绦, 不知细叶谁裁出,二月春风似剪刀.",
+    //   time: "2024-05-02 17:12:13",
+    // },
     {
       id: 5,
       type: "image",
@@ -192,23 +198,134 @@ const state = reactive({
       content: "/static/bg-wall.png",
       time: "2024-05-03 19:12:15",
     },
-    {
-      id: 6,
-      type: "text",
-      from: "patient",
-      content:
-        "游子吟, 慈母手中线,游子身上衣,临行密密缝,意恐迟迟归,谁言寸草心,报得三春晖.",
-      time: "2024-05-02 17:12:15",
-    },
+    // {
+    //   id: 6,
+    //   type: "text",
+    //   from: "patient",
+    //   content:
+    //     "《游子吟》-- 慈母手中线,游子身上衣,临行密密缝,意恐迟迟归,谁言寸草心,报得三春晖.",
+    //   time: "2024-05-02 17:12:15",
+    // },
     {
       id: 7,
       type: "text",
       from: "doctor",
-      content: "一期模仿结束",
+      content: "一期模仿微信APP聊天输入框结束",
       time: "2024-05-06 17:11:44",
     },
   ],
 });
+/**
+ * 监听键盘高度+底部按钮组+输入内容发生变化时, 重新计算并渲染
+ * watch监听ref对象, 或整个state, 或state的某个属性
+ * 监听多个属性,只能使用ref对象了
+ */
+watch([showBotMenu, kbHeight, message], () => {
+  nextTick(() => {
+    calcBottomHeight();
+  });
+  console.log("监听键盘高度变化情况:", showBotMenu.value);
+  console.log("监听按钮组显示隐藏情况:", kbHeight.value);
+  console.log("监听输入内容变化情况:", message.value);
+});
+/**
+ * 获取聊天内容总高度
+ * scrollTop滚动位置
+ * + Math.random() 防止同样的scrollTop不会再次触发滚动
+ * nextTick确保最后发的消息能获取到对应的高度
+ */
+const toScrollBottom = () => {
+  nextTick(() => {
+    uni
+      .createSelectorQuery()
+      .select(".chat-list")
+      .boundingClientRect((res) => {
+        state.scrollTop = res.height + Math.random();
+        console.log("scrollTop>>>", state.scrollTop);
+      })
+      .exec();
+  });
+};
+/**
+ * 获取底部高度
+ * 滚动可视区高度 = 窗口可视高度 - 键盘高度 - 输入框总高度
+ */
+const calcBottomHeight = () => {
+  uni
+    .createSelectorQuery()
+    .select(".chat-bot")
+    .boundingClientRect((res) => {
+      state.sendBoxH = res.height;
+      state.scrollContentH =
+        state.windowHeight - kbHeight.value - state.sendBoxH;
+      console.log("scrollContentH>>>", state.scrollTop);
+      toScrollBottom();
+    })
+    .exec();
+};
+
+/**
+ * 输入框聚焦
+ */
+const onFocus = () => {
+  inputFocus.value = true;
+  showBotMenu.value = false;
+};
+
+/**
+ * 输入换行之后重新计算底部高度
+ */
+const onInput = debounce((e) => {
+  message.value = e.detail.value;
+}, 100);
+
+/**
+ * 输入框失去焦点
+ */
+const onBlur = () => {
+  inputFocus.value = false;
+};
+
+/**
+ * 键盘高度发生变化,隐藏底部按钮组,重新计算并滚动
+ */
+const handleKeyboardheightchange = (e) => {
+  if (kbHeight.value === e.detail.height) {
+    return;
+  }
+  kbHeight.value = e.detail.height;
+  console.log("handleKeyboardheightchange>>>", kbHeight.value);
+};
+
+/**
+ * 触碰聊天列表界面时, 键盘收起, 隐藏底部按钮组
+ */
+const touchChatList = () => {
+  showBotMenu.value = false;
+  inputFocus.value = false;
+};
+/**
+ * 展示、隐藏底部按钮组
+ */
+const toggleBotMenu = (value) => {
+  inputFocus.value = !value;
+  showBotMenu.value = value;
+};
+/**
+ * 发送文本消息
+ */
+const sendTextMsg = () => {
+  if (!message.value) return;
+  state.chatList.push({
+    id: state.chatList.length + 1,
+    type: "text",
+    from: "patient",
+    content: message.value,
+    time: new Date().toLocaleString(),
+  });
+  message.value = "";
+};
+
 /**
  * 判断该条信息时间是否显示
  * @param {*} message
@@ -231,93 +348,19 @@ const formatTime = (time) => {
   const date = new Date(time.replace(/-/g, "/"));
   return `${formatChatListTime(date.getTime() / 1000)}`;
 };
-// 打开图片预览，这里只是示例，实际需要实现图片预览功能
+
+/**
+ * 预览聊天图片
+ * @param {*} url
+ */
 const showImage = (url) => {
-  console.log("打开图片预览:", url);
-};
-/**
- * 获取聊天内容总高度
- */
-const toScrollBottom = () => {
-  // nextTick确保最后发的消息能获取到对应的高度
-  nextTick(() => {
-    uni
-      .createSelectorQuery()
-      .select(".chat-list")
-      .boundingClientRect((res) => {
-        state.scrollTop = res.height + Math.random(); // 同样的scrollTop不会再次触发滚动
-        console.log("scrollTop>>>", state.scrollTop);
-      })
-      .exec();
-  });
-};
-/**
- * 获取底部高度
- */
-const calcBottomHeight = () => {
-  uni
-    .createSelectorQuery()
-    .select(".chat-bot")
-    .boundingClientRect((res) => {
-      state.sendBoxH = res.height;
-      state.scrollContentH =
-        state.windowHeight - state.kbHeight - state.sendBoxH;
-      console.log(
-        "chat-bot sendBoxH scrollContentH>>>",
-        state.sendBoxH,
-        state.scrollContentH
-      );
-      toScrollBottom();
-    })
-    .exec();
-};
-/**
- * 输入换行之后重新计算底部高度
- */
-const handleInputChange = debounce((e) => {
-  state.msg = e.detail.value;
-  calcBottomHeight();
-}, 100);
-/**
- * 展示、隐藏底部按钮组
- */
-const toggleBotMenu = (value) => {
-  state.showBotMenu = value;
-  nextTick(() => {
-    calcBottomHeight();
-  });
-};
-/**
- * 发送文本消息
- */
-const sendTextMsg = () => {
-  if (!state.msg) return;
-  state.chatList.push({
-    id: state.chatList.length + 1,
-    type: "text",
-    from: "patient",
-    content: state.msg,
-    time: new Date().toLocaleString(),
-  });
-  state.msg = "";
-  calcBottomHeight();
-};
-/**
- * 键盘高度发生变化,隐藏底部按钮组,重新计算并滚动
- */
-const handleKeyboardheightchange = (e) => {
-  console.log("handleKeyboardheightchange>>>", state.kbHeight, e.detail.height);
-  if (state.kbHeight === e.detail.height) {
-    return;
-  }
-  state.kbHeight = e.detail.height;
-  state.showBotMenu = false;
-  nextTick(() => {
-    calcBottomHeight();
+  uni.previewImage({
+    urls: [url],
+    current: url,
   });
 };
 onReady(() => {
-  // 获取系统可视高度 - 底部固定高度
+  // 获取窗口可视高度 - 底部固定高度
   let result = $uniApi.loadSystemInfoSync();
   state.windowHeight = result.windowHeight;
   calcBottomHeight();
@@ -467,6 +510,7 @@ onReady(() => {
       width: 100%;
       font-size: 28rpx;
       line-height: 40rpx;
+      caret-color: #2279ea;
     }
   }
 
