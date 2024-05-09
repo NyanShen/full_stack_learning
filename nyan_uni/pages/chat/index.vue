@@ -376,11 +376,9 @@ onReady(() => {
 <style lang="scss" scoped>
 // 聊天总体布局(聊天记录BOX + 底部输入框BOX)
 .chat {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
+  position: relative;
   height: 100%;
+  background-color: #f7f7f7;
 }
 // 聊天内容滚动区域, 高度通过计算设置
 .chat-body {

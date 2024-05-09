@@ -2,5 +2,5 @@
 module.exports = {
     algorithms: ['HS256'],
     jwtSecretKey: "NyanShenForDevelopment",
-    unlessPath: [/^\/api\/auth\//, /^\/api\/uni\//]
+    unlessPath: [/^\/api\/auth\//, /^\/api\/uni\//, /^\/api\/test\//]
 }

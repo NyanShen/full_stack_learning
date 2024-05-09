@@ -41,8 +41,8 @@ app.use(session({
 }));
 
 // jwt token配置
-const { jwtMiddleware } = require('./middlewares/jwt');
-app.use(jwtMiddleware)
+// const { jwtMiddleware } = require('./middlewares/jwt');
+// app.use(jwtMiddleware)
 
 // sequalize同步
 const db = require("./models/index.js");
@@ -57,6 +57,18 @@ app.all('/api/*', function (req, res, next) {
 		"Origin, X-Requested-With, Content-Type, Accept, Authorization, X-CSRF-Token");
 	next();
 })
+
+// 链接socket
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+
+io.on('connection', (socket) => {
+	console.log('a user connection');
+	socket.on('chat message', (msg) => {
+		console.log('message: ' + msg);
+	});
+});
+
 
 // error handler
 app.use(function (req, res, next) {
@@ -81,6 +93,10 @@ app.use('/api/operations', operationController);
 app.use('/api/departments', departmentController);
 app.use('/api/permissions', permissionController);
 app.use('/api/file', fileController);
+
+app.get('/api/test/socket', (req, res) => {
+	res.sendFile(__dirname + '/index.html');
+});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
