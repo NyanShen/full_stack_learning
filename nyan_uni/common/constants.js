@@ -3,8 +3,9 @@
  */
 
 let CONFIG = {
-	testUrl: "http://localhost:3000/api",
-	fileUrl: "http://localhost:3000/api",
+	testUrl: "http://localhost:8888/api",
+	fileUrl: "http://localhost:8888/api",
+	socketUrl: "http://localhost:8888"
 }
 
 export default {

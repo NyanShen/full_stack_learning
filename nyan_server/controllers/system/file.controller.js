@@ -1,4 +1,5 @@
 const express = require("express");
+const XLSX = require('xlsx');
 const multer = require("multer"); // 文件上传服务
 const db = require("../../models/index.js");
 const imageModel = db.image;
@@ -8,12 +9,12 @@ const router = express.Router();
 // 文件上传-设置存储位置
 const storage = multer.diskStorage({
 	//保存路径
-	destination: function(req, file, cb) {
+	destination: function (req, file, cb) {
 		cb(null, 'public/images')
 		//注意这里的文件路径,不是相对路径，直接填写从项目根路径开始写就行了
 	},
 	//保存在 destination 中的文件名
-	filename: function(req, file, cb) {
+	filename: function (req, file, cb) {
 		/**
 		  {
 			  fieldname: 'image',
@@ -86,6 +87,25 @@ router.delete('/delete/filePath', async (req, res) => {
 			res.status(200).send('Image deleted successfully.');
 		}
 	});
+});
+
+
+router.get("/excelToJson", async (req, res) => {
+	try {
+		// 假设Excel文件位于项目的公共文件夹中，例如public/data.xlsx
+		const file = XLSX.readFile('public/files/country.xls');
+		const sheetNames = file.SheetNames;
+		const sheet = file.Sheets[sheetNames[0]];
+		const jsonData = XLSX.utils.sheet_to_json(sheet);
+		const result = jsonData.sort(function (a, b) {
+			let nameA = a.name.toUpperCase(); // 将name转换为大写以忽略大小写
+			let nameB = b.name.toUpperCase(); // 将name转换为大写以忽略大小写
+			return nameA < nameB ? -1 : nameA > nameB ? 1 : 0; // 比较大写字符串
+		})
+		res.json(result);
+	} catch (error) {
+		res.sendResult(error.message, 500);
+	}
 });
 
 module.exports = router;

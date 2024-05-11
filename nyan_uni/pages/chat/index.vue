@@ -146,10 +146,14 @@
   </view>
 </template>
 <script setup>
-import { ref, watch, reactive, nextTick } from "vue";
+import { ref, watch, reactive, nextTick, onBeforeUnmount } from "vue";
 import { onReady } from "@dcloudio/uni-app";
 import { formatChatListTime, debounce } from "@/common/index";
 import $uniApi from "@/common/uni.app.api.js";
+import { socket } from "@/common/socket";
+import { useSocketStore } from "@/stores/socket.js";
+
+const socketStore = useSocketStore();
 /**
  * 需要监听的变量
  */
@@ -279,6 +283,7 @@ const onFocus = () => {
 
 /**
  * 输入换行之后重新计算底部高度
+ * IOS系统不兼容
  */
 const onInput = debounce((e) => {
   message.value = e.detail.value;
@@ -321,14 +326,19 @@ const toggleBotMenu = (value) => {
  */
 const sendTextMsg = () => {
   if (!message.value) return;
-  state.chatList.push({
+  const chatMsg = {
     id: state.chatList.length + 1,
     type: "text",
     from: "patient",
     content: message.value,
     time: new Date().toLocaleString(),
+  }
+  state.chatList.push(chatMsg);
+  socket.emit("chat:msg", chatMsg, () => {
+    console.log("socket发送消息成功");  
   });
   message.value = "";
+
 };
 
 /**
@@ -371,6 +381,15 @@ onReady(() => {
   state.windowHeight = result.windowHeight;
   state.scrollContentH = state.windowHeight - state.sendBoxH;
   toScrollBottom();
+
+  // remove any existing listeners (in case of hot reload)
+  socket.off();
+  socketStore.bindEvents();
+  socketStore.connect();
+});
+onBeforeUnmount(() => {
+  socket.disconnect();
+  console.log("onBeforeUnmount socket isConnected", socketStore.isConnected);
 });
 </script>
 <style lang="scss" scoped>

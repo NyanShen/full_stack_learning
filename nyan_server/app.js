@@ -58,17 +58,6 @@ app.all('/api/*', function (req, res, next) {
 	next();
 })
 
-// 链接socket
-const http = require('http').createServer(app);
-const io = require('socket.io')(http);
-
-io.on('connection', (socket) => {
-	console.log('a user connection');
-	socket.on('chat message', (msg) => {
-		console.log('message: ' + msg);
-	});
-});
-
 
 // error handler
 app.use(function (req, res, next) {
@@ -117,7 +106,28 @@ app.use(function (err, req, res, next) {
 	next()
 });
 
-app.listen(8888, function () {
+
+// socket
+const server = require('http').createServer(app);
+const io = require('socket.io')(server, {
+	cors: {
+		origin: "*",
+		methods: ["GET", "POST"]
+	}
+});
+
+io.on('connection', (socket) => {
+	console.log('a user connection');
+	socket.on("chat:msg", function(data) {
+		console.log('chat:msg', data);
+		io.emit("chat:msg", data)
+	})
+});
+
+/**
+ * 使用server,而不是app
+ */
+server.listen(8888, function () {
 	console.log("服务运行http://localhost:8888/api");
 })
 module.exports = app;
