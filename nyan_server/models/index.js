@@ -47,6 +47,13 @@ db.permissionsroles = require("./system/permission_role.model.js")(sequelize); /
 db.permissionsmenus = require("./system/permission_menu.model.js")(sequelize); // 权限-菜单
 db.permissionsoperations = require("./system/permission_operation.model.js")(sequelize); // 权限-操作
 
+// 点餐系统--菜单
+db.ordermenu = require("./orderSystem/menu.model.js")(sequelize);
+db.category = require("./orderSystem/category.model.js")(sequelize);
+db.option = require("./orderSystem/option.model.js")(sequelize);
+db.menuscategory = require("./orderSystem/menu_category.model.js")(sequelize);
+db.menusoptions = require("./orderSystem/menu_option.model.js")(sequelize);
+
 // 上传图片
 db.image = require("./system/image.model.js")(sequelize);
 
