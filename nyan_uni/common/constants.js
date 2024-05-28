@@ -4,6 +4,8 @@
 
 let CONFIG = {
 	testUrl: "http://localhost:8888/api",
+	baseUrl: "http://localhost:8888/api",
+	hostUrl: "http://localhost:8888/api",
 	fileUrl: "http://localhost:8888/api",
 	socketUrl: "http://localhost:8888"
 }

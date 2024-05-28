@@ -54,6 +54,9 @@ db.option = require("./orderSystem/option.model.js")(sequelize);
 db.menuscategory = require("./orderSystem/menu_category.model.js")(sequelize);
 db.menusoptions = require("./orderSystem/menu_option.model.js")(sequelize);
 
+// 聊天消息
+db.chat = require("./chat/chat.model.js")(sequelize);
+
 // 上传图片
 db.image = require("./system/image.model.js")(sequelize);
 

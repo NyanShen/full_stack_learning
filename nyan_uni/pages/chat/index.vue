@@ -19,21 +19,21 @@
           <view
             class="chat-item-content"
             :class="{
-              doctor: chatItem.from === 'doctor',
-              patient: chatItem.from === 'patient',
+              doctor: chatItem.name === 'doctor',
+              patient: chatItem.name === 'patient',
             }"
           >
             <!-- 头像 -->
             <view class="avatar">
               <image
                 class="img"
-                v-if="chatItem.from === 'doctor'"
+                v-if="chatItem.name === 'doctor'"
                 src="/static/images/default.png"
                 mode="aspectFill"
               />
               <image
                 class="img"
-                v-if="chatItem.from === 'patient'"
+                v-if="chatItem.name === 'patient'"
                 src="https://img.yzcdn.cn/vant/cat.jpeg"
                 mode="aspectFill"
               />
@@ -88,7 +88,7 @@
             @blur="onBlur"
             @focus="onFocus"
             @input="onInput"
-            @keyboardheightchange="handleKeyboardheightchange"
+            @keyboardheightchange="onKeyboardHeightChange"
           ></textarea>
         </scroll-view>
         <!-- 右边按钮 -->
@@ -152,6 +152,7 @@ import { formatChatListTime, debounce } from "@/common/index";
 import $uniApi from "@/common/uni.app.api.js";
 import { socket } from "@/common/socket";
 import { useSocketStore } from "@/stores/socket.js";
+import { sendChatMsg, fetchChatList } from "@/api/chat";
 
 const socketStore = useSocketStore();
 /**
@@ -166,61 +167,17 @@ const state = reactive({
   scrollTop: 0, // 滚动内容的高度
   scrollContentH: 0, // 滚动可视区域高度
   windowHeight: 0, // 手机可视高度
-  chatList: [
-    {
-      id: 1,
-      type: "text",
-      from: "doctor",
-      content: "您好! 很开心为您提供服务, 请您开始您的咨询.",
-      time: "2024-05-01 15:14:12",
-    },
-    {
-      id: 2,
-      type: "text",
-      from: "patient",
-      content:
-        "绝对定位position: sticky; 固定在底部并且占据高度, flex-direction: row-reverse; 聊天显示反转, caret-color设置光标的颜色; 监听键盘高度, 底部按钮组显示, 输入内容的变化进行重新计算渲染",
-      time: "2024-05-02 16:18:00",
-    },
-    // {
-    //   id: 3,
-    //   type: "text",
-    //   from: "patient",
-    //   content: "你好,测试文案",
-    //   time: "2024-05-02 16:18:02",
-    // },
-    // {
-    //   id: 4,
-    //   type: "text",
-    //   from: "patient",
-    //   content:
-    //     "《咏柳》-- 碧玉妆成一树高, 万条垂下绿丝绦, 不知细叶谁裁出,二月春风似剪刀.",
-    //   time: "2024-05-02 17:12:13",
-    // },
-    {
-      id: 5,
-      type: "image",
-      from: "doctor",
-      content: "/static/bg-wall.png",
-      time: "2024-05-03 19:12:15",
-    },
-    // {
-    //   id: 6,
-    //   type: "text",
-    //   from: "patient",
-    //   content:
-    //     "《游子吟》-- 慈母手中线,游子身上衣,临行密密缝,意恐迟迟归,谁言寸草心,报得三春晖.",
-    //   time: "2024-05-02 17:12:15",
-    // },
-    {
-      id: 7,
-      type: "text",
-      from: "doctor",
-      content: "一期模仿微信APP聊天输入框结束",
-      time: "2024-05-06 17:11:44",
-    },
-  ],
+  chatList: [],
 });
+/**
+ * 获取聊天消息
+ */
+const loadChatList = () => {
+  fetchChatList().then(res=> {
+    state.chatList = res.data.data.list;
+    toScrollBottom();
+  })
+}
 /**
  * 监听键盘高度+底部按钮组+输入内容发生变化时, 重新计算并渲染
  * watch监听ref对象, 或整个state, 或state的某个属性
@@ -244,7 +201,7 @@ const toScrollBottom = () => {
       .createSelectorQuery()
       .select(".chat-list")
       .boundingClientRect((res) => {
-        state.scrollTop = res.height + Math.random();
+        state.scrollTop = res.height + Math.random() * 100;
         console.log("scrollTop>>>", state.scrollTop);
       })
       .exec();
@@ -297,17 +254,6 @@ const onBlur = () => {
 };
 
 /**
- * 键盘高度发生变化,隐藏底部按钮组,重新计算并滚动
- */
-const handleKeyboardheightchange = (e) => {
-  if (kbHeight.value === e.detail.height) {
-    return;
-  }
-  kbHeight.value = e.detail.height;
-  console.log("handleKeyboardheightchange>>>", kbHeight.value);
-};
-
-/**
  * 触碰聊天列表界面时, 键盘收起, 隐藏底部按钮组
  */
 const touchChatList = () => {
@@ -327,18 +273,22 @@ const toggleBotMenu = (value) => {
 const sendTextMsg = () => {
   if (!message.value) return;
   const chatMsg = {
-    id: state.chatList.length + 1,
     type: "text",
-    from: "patient",
+    name: "patient",
     content: message.value,
-    time: new Date().toLocaleString(),
-  }
-  state.chatList.push(chatMsg);
-  socket.emit("chat:msg", chatMsg, () => {
-    console.log("socket发送消息成功");  
-  });
-  message.value = "";
-
+  };
+  sendChatMsg(chatMsg)
+    .then((res) => {
+      console.log("发送消息成功", res);
+      state.chatList.push(chatMsg);
+      socket.emit("chat:msg", chatMsg, () => {
+        console.log("socket发送消息成功");
+      });
+      message.value = "";
+    })
+    .catch((err) => {
+      console.log("发送消息失败", err);
+    });
 };
 
 /**
@@ -374,18 +324,40 @@ const showImage = (url) => {
     current: url,
   });
 };
+const onKeyboardHeightChange = (e) => {
+  // #ifdef H5
+  if (kbHeight.value === e.detail.height) {
+    return;
+  }
+  kbHeight.value = e.detail.height;
+  // #endif
+};
 onReady(() => {
+  loadChatList();
   // 获取窗口可视高度 - 底部固定高度
   let result = $uniApi.loadSystemInfoSync();
   state.sendBoxH = uni.upx2px(112); // 解决H5初始化使用查询器获取高度错误的问题
   state.windowHeight = result.windowHeight;
-  state.scrollContentH = state.windowHeight - state.sendBoxH;
-  toScrollBottom();
+  let navHeight = 0;
+  // #ifdef H5
+  navHeight = result.statusBarHeight;
+  // #endif
+  state.scrollContentH = state.windowHeight - state.sendBoxH - navHeight;
+  
 
   // remove any existing listeners (in case of hot reload)
   socket.off();
   socketStore.bindEvents();
   socketStore.connect();
+  // #ifdef MP-WEIXIN
+  uni.onKeyboardHeightChange((res) => {
+    if (kbHeight.value === res.height) {
+      return;
+    }
+    kbHeight.value = res.height;
+  });
+  // #endif
+
 });
 onBeforeUnmount(() => {
   socket.disconnect();
