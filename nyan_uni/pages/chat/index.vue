@@ -2,12 +2,15 @@
   <view class="chat">
     <!-- 聊天记录box -->
     <scroll-view
-      scroll-y
       class="chat-body"
+      :scroll-y="true"
       :scroll-top="state.scrollTop"
-      :style="{ height: state.scrollContentH + 'px' }"
+      :style="{
+        maxHeight: state.scrollContentH + 'px',
+        bottom: inputBoxB + 'px',
+      }"
     >
-      <view class="chat-list" @click.stop="touchChatList">
+      <view class="chat-list" @touchstart="toggleBotMenu(false)">
         <view
           class="chat-item"
           v-for="(chatItem, index) in state.chatList"
@@ -57,60 +60,58 @@
         </view>
       </view>
     </scroll-view>
-    <!-- 底部输入box -->
-    <view class="chat-bot" :style="{ bottom: kbHeight + 'px' }">
-      <view class="chat-bot-input-box">
-        <!-- 左边按钮 -->
-        <view class="btn-group">
-          <image
-            class="btn-img show mr20"
-            src="/static/images/voice.png"
-            mode="aspectFill"
-          />
-        </view>
-        <!-- 中间输入框 -->
-        <scroll-view
-          scroll-y
-          class="input-wrap"
-          :show-scrollbar="false"
-          :enhanced="true"
-        >
-          <textarea
-            v-model="message"
-            name="chatmsginput"
-            id="chatmsginput"
-            :maxlength="500"
-            :auto-height="true"
-            :cursor-spacing="20"
-            :show-confirm-bar="false"
-            :adjust-position="false"
-            :focus="inputFocus"
-            @blur="onBlur"
-            @focus="onFocus"
-            @input="onInput"
-            @keyboardheightchange="onKeyboardHeightChange"
-          ></textarea>
-        </scroll-view>
-        <!-- 右边按钮 -->
-        <view class="btn-group">
-          <image
-            :class="{ show: !message }"
-            class="btn-img ml20"
-            src="/static/images/plus.png"
-            mode="aspectFill"
-            @tap="toggleBotMenu(!showBotMenu)"
-          />
-          <button
-            :class="{ show: message }"
-            class="btn btn-primary btn-send ml20"
-            @click="sendTextMsg()"
-          >
-            发送
-          </button>
-        </view>
+    <!-- 底部聊天输入框box -->
+    <view class="chat-bot-input-box" :style="{ bottom: inputBoxB + 'px' }">
+      <!-- 左边按钮 -->
+      <view class="btn-group">
+        <image
+          class="btn-img show mr20"
+          src="/static/images/voice.png"
+          mode="aspectFill"
+        />
       </view>
-      <!-- 底部按钮组 -->
-      <view class="chat-bot-menu-box" v-if="showBotMenu">
+      <!-- 中间输入框 -->
+      <scroll-view
+        scroll-y
+        class="input-wrap"
+        :show-scrollbar="false"
+        :enhanced="true"
+      >
+        <textarea
+          v-model="message"
+          name="chatmsginput"
+          id="chatmsginput"
+          :maxlength="500"
+          :auto-height="true"
+          :cursor-spacing="20"
+          :show-confirm-bar="false"
+          :adjust-position="false"
+          @focus="onFocus"
+          @input="onInput"
+          @keyboardheightchange="onKeyboardHeightChange"
+        ></textarea>
+      </scroll-view>
+      <!-- 右边按钮 -->
+      <view class="btn-group">
+        <image
+          :class="{ show: !message }"
+          class="btn-img ml20"
+          src="/static/images/plus.png"
+          mode="aspectFill"
+          @tap="toggleBotMenu(!showBotMenu)"
+        />
+        <button
+          :class="{ show: message }"
+          class="btn btn-primary btn-send"
+          @click="sendTextMsg()"
+        >
+          发送
+        </button>
+      </view>
+    </view>
+    <!-- 底部按钮组跟输入框分离解决页面一上一下的闪动问题 -->
+    <view class="chat-bot-menu-box" :class="{ show: showBotMenu }">
+      <view class="menu-ul">
         <view class="menu-item flex-column">
           <view class="icon flex-column">
             <text class="iconfont iconphoto"></text>
@@ -146,55 +147,114 @@
   </view>
 </template>
 <script setup>
-import { ref, watch, reactive, nextTick, onBeforeUnmount } from "vue";
-import { onReady } from "@dcloudio/uni-app";
+import { ref, watch, reactive, nextTick, onBeforeUnmount, computed } from "vue";
+import { onReady, onLoad } from "@dcloudio/uni-app";
 import { formatChatListTime, debounce } from "@/common/index";
 import $uniApi from "@/common/uni.app.api.js";
 import { socket } from "@/common/socket";
 import { useSocketStore } from "@/stores/socket.js";
-import { sendChatMsg, fetchChatList } from "@/api/chat";
+// import { sendChatMsg, fetchChatList } from "@/api/chat";
 
-const socketStore = useSocketStore();
+// const socketStore = useSocketStore(); // socket
 /**
  * 需要监听的变量
  */
 const message = ref(""); // 发送信息内容
 const kbHeight = ref(0); // 键盘高度
-const inputFocus = ref(false); // 输入框聚焦状态
 const showBotMenu = ref(false); // 其他聊天功能按钮, 底部按钮组的显示隐藏
 const state = reactive({
-  sendBoxH: 0, // 聊天输入框总高度
   scrollTop: 0, // 滚动内容的高度
   scrollContentH: 0, // 滚动可视区域高度
-  windowHeight: 0, // 手机可视高度
-  chatList: [],
+  systemInfo: {}, // 系统信息
+  // 聊天信息
+  chatList: [ 
+    {
+      id: 1,
+      type: "text",
+      name: "doctor",
+      content: "您好! 很开心为您提供服务, 请您开始您的咨询.",
+      time: "2024-05-21 15:14:12",
+    },
+    {
+      id: 2,
+      type: "text",
+      name: "patient",
+      content:
+        "绝对定位position: sticky; 滚动到具体点固定并且占据高度, flex-direction: row-reverse; 聊天显示反转, caret-color设置光标的颜色; 监听键盘高度, 底部按钮组显示, 输入内容的变化进行重新计算渲染",
+      time: "2024-05-22 16:18:00",
+    },
+    {
+      id: 3,
+      type: "text",
+      name: "doctor",
+      content: "由于高度或位置的变化总会导致页面出现闪定问题, 主要是按钮组的显示隐藏导致次闪动",
+      time: "2024-05-23 19:12:15",
+    },
+    {
+      id: 4,
+      type: "text",
+      name: "doctor",
+      content: "因此解决闪动的问题最终的解决办法就是将底部按钮组和输入框分离.",
+      time: "2024-05-23 19:12:15",
+    },
+    {
+      id: 5,
+      type: "image",
+      name: "doctor",
+      content: "/static/bg-wall.png",
+      time: "2024-05-23 19:12:15",
+    },
+    {
+      id: 6,
+      type: "text",
+      name: "patient",
+      content: "由于滚动可视区的最大高度减去了底部输入框的高度, 所以滚动可视区离底部的距离是键盘的高度或按钮组的高度",
+      time: "2024-05-28 19:12:15",
+    },
+    {
+      id: 7,
+      type: "text",
+      name: "doctor",
+      content: "二期模仿微信APP聊天输入框结束",
+      time: "2024-05-29 17:00:44",
+    },
+  ],
 });
 /**
- * 获取聊天消息
+ * 键盘的高度或底部按钮组的高度
+ * 先发生隐藏页面元素, 再计算滚动可视区里底部的距离值
+ * 由于滚动可视区的最大高度减去了底部输入框的高度, 所以滚动可视区离底部的距离是键盘的高度或按钮组的高度
  */
-const loadChatList = () => {
-  fetchChatList().then(res=> {
-    state.chatList = res.data.data.list;
-    toScrollBottom();
-  })
-}
+const inputBoxB = computed(() => {
+  // 双事件触发不进行计算
+  if (showBotMenu.value && kbHeight.value > 0) {
+    return inputBoxB.value;
+  }
+  if (kbHeight.value > 0) {
+    return kbHeight.value;
+  }
+  return showBotMenu.value ? uni.upx2px(450) : 0;
+});
 /**
  * 监听键盘高度+底部按钮组+输入内容发生变化时, 重新计算并渲染
  * watch监听ref对象, 或整个state, 或state的某个属性
  * 监听多个属性,只能使用ref对象了
  */
-watch([showBotMenu, kbHeight, message], () => {
-  calcBottomHeight();
+ watch([showBotMenu, kbHeight, message], () => {
+  calcScorllContentMaxHeight();
   console.log("监听键盘高度变化情况:", showBotMenu.value);
   console.log("监听按钮组显示隐藏情况:", kbHeight.value);
   console.log("监听输入内容变化情况:", message.value);
 });
 /**
- * 获取聊天内容总高度
- * scrollTop滚动位置
- * + Math.random() 防止同样的scrollTop不会再次触发滚动
- * nextTick确保最后发的消息能获取到对应的高度
+ * 获取聊天消息
  */
+// const loadChatList = () => {
+//   fetchChatList().then((res) => {
+//     state.chatList = res.data.data.list;
+//     toScrollBottom();
+//   });
+// };
 const toScrollBottom = () => {
   nextTick(() => {
     uni
@@ -208,34 +268,27 @@ const toScrollBottom = () => {
   });
 };
 /**
- * 获取底部高度
- * 滚动可视区高度 = 窗口可视高度 - 键盘高度 - 输入框总高度
- * h5初始化输入框总高度怎么是161? .chat-bot没有高度
+ * 只有输入框发生高度变化才需要重新计算滚动可视区的最大高度
  */
-const calcBottomHeight = () => {
+const calcScorllContentMaxHeight = () => {
   nextTick(() => {
     uni
       .createSelectorQuery()
-      .select(".chat-bot")
-      .boundingClientRect((res) => {
-        state.sendBoxH = res.height;
+      .select(".chat-bot-input-box")
+      .boundingClientRect((rect) => {
+        let navHeight = 0;
+        // #ifdef H5
+        navHeight = state.systemInfo.statusBarHeight;
+        // #endif
         state.scrollContentH =
-          state.windowHeight - kbHeight.value - state.sendBoxH;
+          state.systemInfo.windowHeight - rect.height - navHeight;
         console.log(
-          `scrollContentH >>> ${state.windowHeight}-${kbHeight.value}-${state.sendBoxH}=${state.scrollContentH}`
+          `scrollContentH>>>${state.scrollContentH}=${state.systemInfo.windowHeight}-${rect.height}`
         );
         toScrollBottom();
       })
       .exec();
   });
-};
-
-/**
- * 输入框聚焦
- */
-const onFocus = () => {
-  inputFocus.value = true;
-  showBotMenu.value = false;
 };
 
 /**
@@ -247,24 +300,19 @@ const onInput = debounce((e) => {
 }, 100);
 
 /**
- * 输入框失去焦点
+ * 输入框聚焦
+ * 如果点击前按钮组是显示的, 那么就是双事件,
+ * 先隐藏按钮, 滚动可视区里底部的距离先不发生变化, 等到键盘弹起了再重新计算滚动可视区里底部的距离
  */
-const onBlur = () => {
-  inputFocus.value = false;
-};
-
-/**
- * 触碰聊天列表界面时, 键盘收起, 隐藏底部按钮组
- */
-const touchChatList = () => {
+const onFocus = () => {
   showBotMenu.value = false;
-  inputFocus.value = false;
 };
 /**
  * 展示、隐藏底部按钮组
+ * 如果点击前是弹起键盘的, 那么就是双事件
+ * 先隐藏键盘, 滚动可视区里底部的距离不做计算, 弹起按钮组再进行计算滚动可视区里底部的距离
  */
 const toggleBotMenu = (value) => {
-  inputFocus.value = !value;
   showBotMenu.value = value;
 };
 /**
@@ -273,22 +321,26 @@ const toggleBotMenu = (value) => {
 const sendTextMsg = () => {
   if (!message.value) return;
   const chatMsg = {
+    id: state.chatList.length + 1,
     type: "text",
-    name: "patient",
+    name: "doctor",
     content: message.value,
+    time: new Date().toLocaleString(),
   };
-  sendChatMsg(chatMsg)
-    .then((res) => {
-      console.log("发送消息成功", res);
-      state.chatList.push(chatMsg);
-      socket.emit("chat:msg", chatMsg, () => {
-        console.log("socket发送消息成功");
-      });
-      message.value = "";
-    })
-    .catch((err) => {
-      console.log("发送消息失败", err);
-    });
+  state.chatList.push(chatMsg);
+  console.log("发送消息成功!");
+  message.value = "";
+
+  // socket.emit("chat:msg", chatMsg, () => {
+  //   console.log("socket发送消息成功");
+  // });
+  // sendChatMsg(chatMsg)
+  //   .then((res) => {
+
+  //   })
+  //   .catch((err) => {
+  //     console.log("发送消息失败", err);
+  //   });
 };
 
 /**
@@ -300,8 +352,8 @@ const shouldShowTime = (message, index) => {
   if (index === 0) return true; // 总是显示第一条消息的时间
   const prevMessage = state.chatList[index - 1];
   return (
-    new Date(message.time.replace(/-/g, "/")).getTime() -
-      new Date(prevMessage.time.replace(/-/g, "/")).getTime() >=
+    new Date(message.time?.replace(/-/g, "/")).getTime() -
+      new Date(prevMessage.time?.replace(/-/g, "/")).getTime() >=
     30 * 1000
   );
 };
@@ -332,23 +384,19 @@ const onKeyboardHeightChange = (e) => {
   kbHeight.value = e.detail.height;
   // #endif
 };
+onLoad(() => {
+  // loadChatList(); // 接口获取聊天记录
+});
 onReady(() => {
-  loadChatList();
   // 获取窗口可视高度 - 底部固定高度
-  let result = $uniApi.loadSystemInfoSync();
-  state.sendBoxH = uni.upx2px(112); // 解决H5初始化使用查询器获取高度错误的问题
-  state.windowHeight = result.windowHeight;
-  let navHeight = 0;
-  // #ifdef H5
-  navHeight = result.statusBarHeight;
-  // #endif
-  state.scrollContentH = state.windowHeight - state.sendBoxH - navHeight;
-  
-
+  state.systemInfo = $uniApi.loadSystemInfoSync();
+  setTimeout(() => {
+    calcScorllContentMaxHeight();
+  }, 0);
   // remove any existing listeners (in case of hot reload)
-  socket.off();
-  socketStore.bindEvents();
-  socketStore.connect();
+  // socket.off();
+  // socketStore.bindEvents();
+  // socketStore.connect();
   // #ifdef MP-WEIXIN
   uni.onKeyboardHeightChange((res) => {
     if (kbHeight.value === res.height) {
@@ -357,23 +405,29 @@ onReady(() => {
     kbHeight.value = res.height;
   });
   // #endif
-
 });
 onBeforeUnmount(() => {
-  socket.disconnect();
-  console.log("onBeforeUnmount socket isConnected", socketStore.isConnected);
+  // socket.disconnect();
+  // console.log("onBeforeUnmount socket isConnected", socketStore.isConnected);
 });
 </script>
 <style lang="scss" scoped>
 // 聊天总体布局(聊天记录BOX + 底部输入框BOX)
 .chat {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   position: relative;
+  width: 100%;
   height: 100%;
   background-color: #f7f7f7;
 }
 // 聊天内容滚动区域, 高度通过计算设置
 .chat-body {
+  position: relative;
+  bottom: 0;
   width: 100%;
+  transition: bottom 0.15s linear;
   // 用于聊天内容总高度计算, scrollTop滚动到最底部
   .chat-list {
     padding: 20rpx;
@@ -478,22 +532,22 @@ onBeforeUnmount(() => {
   text-align: center;
   color: #999;
 }
-// 聊天输入框(操作按钮 + 输入 + 操作按钮) + 隐藏操作按钮组
-.chat-bot {
-  position: sticky;
+
+// 聊天输入框(操作按钮 + 输入 + 操作按钮)
+.chat-bot-input-box {
+  position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
-  box-sizing: border-box;
-  background-color: #f7f7f7;
-}
-// 聊天输入框(操作按钮 + 输入 + 操作按钮)
-.chat-bot-input-box {
   display: flex;
   align-items: flex-end;
   padding: 20rpx;
+  border-top: 2rpx solid #eee;
   border-bottom: 2rpx solid #eee;
-  // 不能使用box-sizing:border-box; 否则会出现textarea滚动条
+  box-sizing: border-box;
+  background-color: #f7f7f7;
+  transition: bottom 0.15s linear;
+  // 不能使用box-sizing:border-box; 否则会出现textarea滚动条?
   .input-wrap {
     flex: 1;
     max-height: 250rpx;
@@ -514,37 +568,49 @@ onBeforeUnmount(() => {
     align-items: center;
     height: 70rpx;
     .btn-img {
-      width: 46rpx;
+      width: 0;
       height: 46rpx;
       border-radius: 50%;
-      display: none;
-      transition: display 0.3s ease-in-out;
       &.show {
-        display: block;
+        width: 46rpx;
       }
     }
     .btn-send {
-      width: 120rpx;
-      height: 60rpx;
-      line-height: 60rpx;
-      padding: 0 10rpx;
-      font-size: 28rpx;
-      border-radius: 10rpx;
-      display: none;
-      transition: display 0.3s ease-in-out;
+      // 不显示的时候覆盖原始按钮样式
+      width: 0;
+      height: 0;
+      padding: 0;
+      font-size: 0;
+      transition: width 0.15s ease;
       &.show {
-        display: block;
+        width: 120rpx;
+        height: 60rpx;
+        line-height: 60rpx;
+        font-size: 28rpx;
+        padding: 0 10rpx;
+        border-radius: 10rpx;
       }
     }
   }
 }
 // 隐藏操作按钮组
 .chat-bot-menu-box {
-  display: flex;
-  flex-wrap: wrap;
+  position: fixed;
+  bottom: 0;
+  left: 0;
   width: 100%;
-  padding: 40rpx 0 30rpx 0;
+  height: 0;
   box-sizing: border-box;
+  background-color: #f7f7f7;
+  transition: height 0.15s linear;
+  &.show {
+    height: 450rpx;
+  }
+  .menu-ul {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 30rpx 0;
+  }
   .menu-item {
     font-size: 24rpx;
     line-height: 56rpx;
