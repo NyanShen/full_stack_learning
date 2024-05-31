@@ -3,14 +3,15 @@
     <!-- 聊天记录box -->
     <scroll-view
       class="chat-body"
-      :scroll-y="true"
+      :scroll-y="state.isScrolling"
       :scroll-top="state.scrollTop"
-      :style="{
-        maxHeight: state.scrollContentH + 'px',
-        bottom: inputBoxB + 'px',
-      }"
+      :style="{ height: scrollContentH + 'px' }"
     >
-      <view class="chat-list" @touchstart="toggleBotMenu(false)">
+      <view
+        class="chat-list"
+        @click="toggleBotMenu(false)"
+        @touchstart="touchChatList()"
+      >
         <view
           class="chat-item"
           v-for="(chatItem, index) in state.chatList"
@@ -43,17 +44,58 @@
             </view>
             <!-- 聊天具体内容展示 -->
             <view class="message">
-              <view v-if="chatItem.type === 'text'" class="text">
+              <!-- 文本消息 -->
+              <view
+                v-if="chatItem.type === 'text'"
+                selectable
+                class="text"
+                :id="'chat_item_message_' + index"
+                @longtap.stop="(e) => messageLongTap(e, chatItem, index)"
+                @click.stop
+              >
                 {{ chatItem.content }}
                 <view class="arrow"></view>
               </view>
-              <view v-if="chatItem.type === 'image'" class="image">
-                <image
-                  class="img"
-                  :src="chatItem.content"
-                  mode="aspectFill"
-                  @tap="showImage(chatItem.content)"
-                />
+              <!-- 图片消息 -->
+              <image
+                v-if="chatItem.type === 'image'"
+                class="image"
+                mode="aspectFill"
+                :src="chatItem.content"
+                @click.stop="showImage(chatItem.content)"
+              />
+
+              <!-- 每条消息按钮组 -->
+              <view
+                class="chat-item-btn-group"
+                :class="chatItem.bottom ? 'bottom' : 'top'"
+                v-show="chatItem.showBtn"
+              >
+                <view class="btn-arrow"></view>
+                <view class="flex-c btn-list">
+                  <view
+                    class="flex-column btn-item"
+                    @click.stop="(e) => onCopy(e, chatItem)"
+                  >
+                    <text class="iconfont iconcopy"></text>
+                    <text class="btn-text">复制</text>
+                  </view>
+                  <view
+                    class="flex-column btn-item"
+                    @click.stop="(e) => onEdit(e, chatItem)"
+                  >
+                    <text class="iconfont iconbianji"></text>
+                    <text class="btn-text">重新编辑</text>
+                  </view>
+                  <view
+                    v-if="showWithdraw(chatItem.time)"
+                    class="flex-column btn-item"
+                    @click.stop="(e) => onWithdraw(e, index)"
+                  >
+                    <text class="iconfont iconchehui"></text>
+                    <text class="btn-text">撤回</text>
+                  </view>
+                </view>
               </view>
             </view>
           </view>
@@ -86,7 +128,7 @@
           :cursor-spacing="20"
           :show-confirm-bar="false"
           :adjust-position="false"
-          @focus="onFocus"
+          @focus="toggleBotMenu(false)"
           @input="onInput"
           @keyboardheightchange="onKeyboardHeightChange"
         ></textarea>
@@ -151,10 +193,9 @@ import { ref, watch, reactive, nextTick, onBeforeUnmount, computed } from "vue";
 import { onReady, onLoad } from "@dcloudio/uni-app";
 import { formatChatListTime, debounce } from "@/common/index";
 import $uniApi from "@/common/uni.app.api.js";
-import { socket } from "@/common/socket";
-import { useSocketStore } from "@/stores/socket.js";
+// import { socket } from "@/common/socket";
+// import { useSocketStore } from "@/stores/socket.js";
 // import { sendChatMsg, fetchChatList } from "@/api/chat";
-
 // const socketStore = useSocketStore(); // socket
 /**
  * 需要监听的变量
@@ -163,11 +204,12 @@ const message = ref(""); // 发送信息内容
 const kbHeight = ref(0); // 键盘高度
 const showBotMenu = ref(false); // 其他聊天功能按钮, 底部按钮组的显示隐藏
 const state = reactive({
+  sendBoxH: 0, // 输入框动态高度
   scrollTop: 0, // 滚动内容的高度
-  scrollContentH: 0, // 滚动可视区域高度
   systemInfo: {}, // 系统信息
+  isScrolling: true,
   // 聊天信息
-  chatList: [ 
+  chatList: [
     {
       id: 1,
       type: "text",
@@ -187,7 +229,8 @@ const state = reactive({
       id: 3,
       type: "text",
       name: "doctor",
-      content: "由于高度或位置的变化总会导致页面出现闪定问题, 主要是按钮组的显示隐藏导致次闪动",
+      content:
+        "由于高度或位置的变化总会导致页面出现闪定问题, 主要是按钮组的显示隐藏导致次闪动",
       time: "2024-05-23 19:12:15",
     },
     {
@@ -208,7 +251,8 @@ const state = reactive({
       id: 6,
       type: "text",
       name: "patient",
-      content: "由于滚动可视区的最大高度减去了底部输入框的高度, 所以滚动可视区离底部的距离是键盘的高度或按钮组的高度",
+      content:
+        "由于滚动可视区的最大高度减去了底部输入框的高度, 所以滚动可视区离底部的距离是键盘的高度或按钮组的高度",
       time: "2024-05-28 19:12:15",
     },
     {
@@ -216,7 +260,14 @@ const state = reactive({
       type: "text",
       name: "doctor",
       content: "二期模仿微信APP聊天输入框结束",
-      time: "2024-05-29 17:00:44",
+      time: "2024-05-31 16:15:14",
+    },
+    {
+      id: 8,
+      type: "text",
+      name: "doctor",
+      content: "短消息样式",
+      time: "2024-05-31 16:15:14",
     },
   ],
 });
@@ -236,11 +287,67 @@ const inputBoxB = computed(() => {
   return showBotMenu.value ? uni.upx2px(450) : 0;
 });
 /**
+ * 滚动可视区高度计算
+ */
+const scrollContentH = computed(() => {
+  // 双事件触发不进行计算
+  if (showBotMenu.value && kbHeight.value > 0) {
+    return scrollContentH.value;
+  }
+  let navHeight = 0;
+  // #ifdef H5
+  navHeight = state.systemInfo.statusBarHeight;
+  // #endif
+  const basicContent =
+    state.systemInfo.windowHeight - state.sendBoxH - navHeight;
+  if (kbHeight.value > 0) {
+    return basicContent - kbHeight.value;
+  }
+  return showBotMenu.value ? basicContent - uni.upx2px(450) : basicContent;
+});
+
+/**
+ * 判断该条信息时间是否显示
+ * @param {*} message
+ * @param {*} index
+ */
+const shouldShowTime = computed(() => {
+  return (chatItem, index) => {
+    if (index === 0) return true; // 总是显示第一条消息的时间
+    const prevChatItem = state.chatList[index - 1];
+    return (
+      new Date(chatItem.time?.replace(/-/g, "/")).getTime() -
+        new Date(prevChatItem.time?.replace(/-/g, "/")).getTime() >=
+      30 * 1000
+    );
+  };
+});
+/**
+ * 判断该条信息是否显示撤回消息按钮
+ * 两分钟之内显示
+ */
+const showWithdraw = computed(() => {
+  return (time) => {
+    const chatTime = new Date(time?.replace(/-/g, "/")).getTime();
+    return Date.now() - chatTime < 2 * 60 * 1000;
+  };
+});
+/**
+ * 格式化显示时间
+ * @param {*} time
+ */
+const formatTime = computed(() => {
+  return (time) => {
+    const date = new Date(time.replace(/-/g, "/"));
+    return `${formatChatListTime(date.getTime() / 1000)}`;
+  };
+});
+/**
  * 监听键盘高度+底部按钮组+输入内容发生变化时, 重新计算并渲染
  * watch监听ref对象, 或整个state, 或state的某个属性
  * 监听多个属性,只能使用ref对象了
  */
- watch([showBotMenu, kbHeight, message], () => {
+watch([showBotMenu, kbHeight, message], () => {
   calcScorllContentMaxHeight();
   console.log("监听键盘高度变化情况:", showBotMenu.value);
   console.log("监听按钮组显示隐藏情况:", kbHeight.value);
@@ -276,21 +383,12 @@ const calcScorllContentMaxHeight = () => {
       .createSelectorQuery()
       .select(".chat-bot-input-box")
       .boundingClientRect((rect) => {
-        let navHeight = 0;
-        // #ifdef H5
-        navHeight = state.systemInfo.statusBarHeight;
-        // #endif
-        state.scrollContentH =
-          state.systemInfo.windowHeight - rect.height - navHeight;
-        console.log(
-          `scrollContentH>>>${state.scrollContentH}=${state.systemInfo.windowHeight}-${rect.height}`
-        );
+        state.sendBoxH = rect.height;
         toScrollBottom();
       })
       .exec();
   });
 };
-
 /**
  * 输入换行之后重新计算底部高度
  * IOS系统不兼容
@@ -298,15 +396,6 @@ const calcScorllContentMaxHeight = () => {
 const onInput = debounce((e) => {
   message.value = e.detail.value;
 }, 100);
-
-/**
- * 输入框聚焦
- * 如果点击前按钮组是显示的, 那么就是双事件,
- * 先隐藏按钮, 滚动可视区里底部的距离先不发生变化, 等到键盘弹起了再重新计算滚动可视区里底部的距离
- */
-const onFocus = () => {
-  showBotMenu.value = false;
-};
 /**
  * 展示、隐藏底部按钮组
  * 如果点击前是弹起键盘的, 那么就是双事件
@@ -314,6 +403,29 @@ const onFocus = () => {
  */
 const toggleBotMenu = (value) => {
   showBotMenu.value = value;
+  if (state.systemInfo.platfrom === "ios") {
+    state.isScrolling = false;
+    setTimeout(() => {
+      state.isScrolling = true;
+    }, 0);
+  }
+  console.log("toggleBotMenu click>>>");
+};
+/**
+ * 键盘弹起滚动时,苹果手机兼容问题
+ */
+const touchChatList = () => {
+  state.chatList = state.chatList.map((item) => {
+    item.showBtn = false;
+    return item;
+  });
+  if (state.systemInfo.platfrom === "ios" && kbHeight.value) {
+    state.isScrolling = false;
+    setTimeout(() => {
+      state.isScrolling = true;
+    }, 0);
+  }
+  console.log("touchChatList touch>>>");
 };
 /**
  * 发送文本消息
@@ -325,12 +437,13 @@ const sendTextMsg = () => {
     type: "text",
     name: "doctor",
     content: message.value,
-    time: new Date().toLocaleString(),
+    time: new Date().Format("yyyy-MM-dd hh:mm:ss"),
   };
   state.chatList.push(chatMsg);
-  console.log("发送消息成功!");
+  showBotMenu.value = false;
   message.value = "";
-
+  console.log("send message success!", state.chatList);
+  // 实时发送socket消息
   // socket.emit("chat:msg", chatMsg, () => {
   //   console.log("socket发送消息成功");
   // });
@@ -344,29 +457,6 @@ const sendTextMsg = () => {
 };
 
 /**
- * 判断该条信息时间是否显示
- * @param {*} message
- * @param {*} index
- */
-const shouldShowTime = (message, index) => {
-  if (index === 0) return true; // 总是显示第一条消息的时间
-  const prevMessage = state.chatList[index - 1];
-  return (
-    new Date(message.time?.replace(/-/g, "/")).getTime() -
-      new Date(prevMessage.time?.replace(/-/g, "/")).getTime() >=
-    30 * 1000
-  );
-};
-/**
- * 格式化显示时间
- * @param {*} time
- */
-const formatTime = (time) => {
-  const date = new Date(time.replace(/-/g, "/"));
-  return `${formatChatListTime(date.getTime() / 1000)}`;
-};
-
-/**
  * 预览聊天图片
  * @param {*} url
  */
@@ -375,6 +465,49 @@ const showImage = (url) => {
     urls: [url],
     current: url,
   });
+};
+/**
+ * 长按显示按钮组
+ * todo: 图片只显示消息撤回, 时间过了, 图片长按没有反应
+ */
+const messageLongTap = (e, chatItem, index) => {
+  uni
+    .createSelectorQuery()
+    .select(`#chat_item_message_${index}`)
+    .boundingClientRect((rect) => {
+      chatItem.bottom = rect.top < 68;
+      chatItem.showBtn = true;
+    })
+    .exec();
+  console.log("messageLongTap longtap>>>");
+};
+/**
+ * 复制文本消息
+ */
+const onCopy = (event, chatItem) => {
+  uni.setClipboardData({
+    data: chatItem.content,
+    success: function () {
+      $uniApi.showToastNone("内容已复制");
+      chatItem.showBtn = false;
+    },
+  });
+  console.log("oncopy click>>>");
+};
+/**
+ * 重新编辑
+ */
+const onEdit = (e, chatItem) => {
+  message.value = chatItem.content;
+  chatItem.showBtn = false;
+  console.log("onEdit click>>>");
+};
+/**
+ * 撤回消息
+ */
+const onWithdraw = (e, index) => {
+  state.chatList.splice(index, 1);
+  console.log("onWithdraw click>>>");
 };
 const onKeyboardHeightChange = (e) => {
   // #ifdef H5
@@ -438,11 +571,54 @@ onBeforeUnmount(() => {
     }
   }
 }
+// 消息功能按钮-消息复制、撤回、转发...
+.chat-item-btn-group {
+  position: absolute;
+  min-width: 90rpx;
+  padding: 10rpx 20rpx;
+  border-radius: 20rpx;
+  background-color: #343434;
+  color: #ffffff;
+  z-index: 3333;
+  .btn-item {
+    margin: 20rpx;
+  }
+  &.top {
+    top: -160rpx;
+    .btn-arrow {
+      bottom: -8rpx;
+      border-width: 10rpx 10rpx 0;
+      border-color: #343434 transparent transparent;
+    }
+  }
+  &.bottom {
+    bottom: -160rpx;
+    .btn-arrow {
+      top: -8rpx;
+      border-width: 0 10rpx 10rpx;
+      border-color: transparent transparent #343434;
+    }
+  }
+  .btn-arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: 50%;
+    border-style: solid;
+  }
+  .btn-text {
+    line-height: 1.5;
+    font-size: 24rpx;
+    white-space: nowrap;
+  }
+}
 // 聊天对象(头像 + 聊天具体内容)
 .chat-item-content {
+  position: relative;
   display: flex;
   align-items: flex-start;
   margin-bottom: 10px;
+
   // 头像
   .avatar {
     width: 40px;
@@ -455,20 +631,22 @@ onBeforeUnmount(() => {
       height: 100%;
     }
   }
+
   // 聊天具体内容(文本 + 图片 + 其他待定)
   .message {
     position: relative;
-    flex: 1;
     display: flex;
     flex-direction: column;
-    max-width: 480rpx;
+    border-radius: 10rpx;
+    max-width: 450rpx;
+
     .text {
       font-size: 30rpx;
       padding: 20rpx;
-      border-radius: 10rpx;
       line-height: 1.5;
       word-break: break-all;
       background-color: aliceblue;
+      // user-select: text; 默认长按复制
       // 三角形样式
       .arrow {
         position: absolute;
@@ -480,20 +658,14 @@ onBeforeUnmount(() => {
       }
     }
     .image {
-      margin-top: 5px;
-      margin-bottom: 5px;
-      max-width: 500rpx;
+      margin: 5px 0;
+      max-width: 450rpx;
+      border-radius: 10rpx;
       overflow: hidden;
       cursor: pointer;
-
-      .img {
-        width: 100%;
-        border-radius: 10rpx;
-        background-color: #f7f7f7;
-      }
+      background-color: #f7f7f7;
     }
   }
-
   &.doctor {
     flex-direction: row-reverse;
     .avatar {
@@ -506,6 +678,10 @@ onBeforeUnmount(() => {
           right: -16px;
           border-left-color: ghostwhite;
         }
+      }
+      .chat-item-btn-group {
+        left: 50%;
+        transform: translateX(-50%);
       }
     }
   }
@@ -521,6 +697,9 @@ onBeforeUnmount(() => {
           left: -30rpx;
           border-right-color: aliceblue;
         }
+      }
+      .chat-item-btn-group {
+        right: 50%;
       }
     }
   }
