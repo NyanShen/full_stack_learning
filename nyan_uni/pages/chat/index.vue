@@ -43,29 +43,33 @@
               />
             </view>
             <!-- 聊天具体内容展示 -->
-            <view class="message">
+            <view class="message" :id="'chat_item_message_' + index">
               <!-- 文本消息 -->
               <view
                 v-if="chatItem.type === 'text'"
                 selectable
                 class="text"
-                :id="'chat_item_message_' + index"
-                @longtap.stop="(e) => messageLongTap(e, chatItem, index)"
+                @longpress="(e) => messageLongTap(e, chatItem, index)"
                 @click.stop
               >
                 {{ chatItem.content }}
                 <view class="arrow"></view>
               </view>
               <!-- 图片消息 -->
-              <image
+              <view
+                class="message-image"
                 v-if="chatItem.type === 'image'"
-                class="image"
-                mode="aspectFill"
-                :src="chatItem.content"
-                @click.stop="showImage(chatItem.content)"
-              />
+                @longpress="(e) => messageLongTap(e, chatItem, index)"
+              >
+                <image
+                  class="image"
+                  mode="aspectFill"
+                  :src="chatItem.content"
+                  @click.stop="(e) => showImage(e, chatItem.content)"
+                />
+              </view>
 
-              <!-- 每条消息按钮组 -->
+              <!-- 每条文本消息按钮组 -->
               <view
                 class="chat-item-btn-group"
                 :class="chatItem.bottom ? 'bottom' : 'top'"
@@ -95,6 +99,21 @@
                     <text class="iconfont iconchehui"></text>
                     <text class="btn-text">撤回</text>
                   </view>
+                </view>
+              </view>
+              <!-- 图片消息按钮组 -->
+              <view
+                class="chat-item-btn-group"
+                :class="chatItem.bottom ? 'bottom' : 'top'"
+                v-show="showImgBtn(chatItem)"
+              >
+                <view class="btn-arrow"></view>
+                <view
+                  class="flex-column btn-item"
+                  @click.stop="(e) => onWithdraw(e, index)"
+                >
+                  <text class="iconfont iconchehui"></text>
+                  <text class="btn-text">撤回</text>
                 </view>
               </view>
             </view>
@@ -269,6 +288,13 @@ const state = reactive({
       content: "短消息样式",
       time: "2024-05-31 16:15:14",
     },
+    {
+      id: 9,
+      type: "image",
+      name: "patient",
+      content: "/static/bg-side.png",
+      time: "2024-06-03 10:20:10",
+    },
   ],
 });
 /**
@@ -332,6 +358,16 @@ const showWithdraw = computed(() => {
     return Date.now() - chatTime < 2 * 60 * 1000;
   };
 });
+/**
+ * 显示图片消息的操作按钮组-只有撤回消息
+ */
+const showImgBtn = computed(() => {
+  return (chatItem) => {
+    const chatTime = new Date(chatItem.time?.replace(/-/g, "/")).getTime();
+    return chatItem.showImgBtn && Date.now() - chatTime < 2 * 60 * 1000;
+  };
+});
+
 /**
  * 格式化显示时间
  * @param {*} time
@@ -417,6 +453,7 @@ const toggleBotMenu = (value) => {
 const touchChatList = () => {
   state.chatList = state.chatList.map((item) => {
     item.showBtn = false;
+    item.showImgBtn = false;
     return item;
   });
   if (state.systemInfo.platfrom === "ios" && kbHeight.value) {
@@ -460,7 +497,11 @@ const sendTextMsg = () => {
  * 预览聊天图片
  * @param {*} url
  */
-const showImage = (url) => {
+const showImage = (e, url) => {
+  console.log("showImage click>>>", e);
+  if (e.type !== "tap") {
+    return 
+  }
   uni.previewImage({
     urls: [url],
     current: url,
@@ -476,7 +517,8 @@ const messageLongTap = (e, chatItem, index) => {
     .select(`#chat_item_message_${index}`)
     .boundingClientRect((rect) => {
       chatItem.bottom = rect.top < 68;
-      chatItem.showBtn = true;
+      chatItem.showBtn = chatItem.type === "text";
+      chatItem.showImgBtn = chatItem.type === "image";
     })
     .exec();
   console.log("messageLongTap longtap>>>");
