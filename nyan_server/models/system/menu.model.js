@@ -80,7 +80,7 @@ module.exports = (sequelize) => {
             allowNull: false,
             defaultValue: DataTypes.NOW,
             get() {
-                let value = this.getDataValue('createdAt');
+                let value = this.getDataValue('updatedAt');
                 return value.Format('yyyy-MM-dd hh:mm:ss')
             }
         },

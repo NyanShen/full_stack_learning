@@ -1,6 +1,7 @@
 /**
  * 对uniapp api 二次封装
  */
+import { nextTick } from "vue";
 import {
 	useSystemInfoStore
 } from "@/stores/systemInfo";
@@ -32,6 +33,17 @@ export default {
 		})
 	},
 	/**
+	 * 获取小程序url参数
+	 */
+	getUrlParams() {
+		let pages = getCurrentPages();
+		let options = pages[pages.length - 1].options;
+		if (options.urlParams) {
+			return JSON.parse(options.urlParams)
+		}
+		return {}
+	},
+	/**
 	 * 提示需要确认
 	 */
 	alert: (content) => {
@@ -45,22 +57,26 @@ export default {
 	 * 定时成功提示
 	 */
 	showToastSuccess(title, duration = 2500) {
-		uni.showToast({
-			icon: "success",
-			title,
-			mask: true,
-			duration
+		nextTick(() => {
+			uni.showToast({
+				icon: "success",
+				title,
+				mask: true,
+				duration
+			})
 		})
 	},
 	/**
 	 * 加载动画
 	 */
 	showToastNone(title, duration = 2500) {
-		uni.showToast({
-			icon: "none",
-			title,
-			mask: true,
-			duration
+		nextTick(() => {
+			uni.showToast({
+				icon: "none",
+				title,
+				mask: true,
+				duration
+			})
 		})
 	},
 	/**

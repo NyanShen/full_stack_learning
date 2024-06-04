@@ -43,24 +43,18 @@
               />
             </view>
             <!-- 聊天具体内容展示 -->
-            <view class="message" :id="'chat_item_message_' + index">
+            <view
+              class="message"
+              :id="'chat_item_message_' + index"
+              @longpress="(e) => messageLongTap(e, chatItem, index)"
+            >
               <!-- 文本消息 -->
-              <view
-                v-if="chatItem.type === 'text'"
-                selectable
-                class="text"
-                @longpress="(e) => messageLongTap(e, chatItem, index)"
-                @click.stop
-              >
+              <view v-if="chatItem.type === 'text'" selectable class="text">
                 {{ chatItem.content }}
                 <view class="arrow"></view>
               </view>
               <!-- 图片消息 -->
-              <view
-                class="message-image"
-                v-if="chatItem.type === 'image'"
-                @longpress="(e) => messageLongTap(e, chatItem, index)"
-              >
+              <view class="message-image" v-if="chatItem.type === 'image'">
                 <image
                   class="image"
                   mode="aspectFill"
@@ -173,7 +167,7 @@
     <!-- 底部按钮组跟输入框分离解决页面一上一下的闪动问题 -->
     <view class="chat-bot-menu-box" :class="{ show: showBotMenu }">
       <view class="menu-ul">
-        <view class="menu-item flex-column">
+        <view class="menu-item flex-column" @click="chooseImage">
           <view class="icon flex-column">
             <text class="iconfont iconphoto"></text>
           </view>
@@ -212,10 +206,17 @@ import { ref, watch, reactive, nextTick, onBeforeUnmount, computed } from "vue";
 import { onReady, onLoad } from "@dcloudio/uni-app";
 import { formatChatListTime, debounce } from "@/common/index";
 import $uniApi from "@/common/uni.app.api.js";
+import Image from "@/api/image";
 // import { socket } from "@/common/socket";
 // import { useSocketStore } from "@/stores/socket.js";
-// import { sendChatMsg, fetchChatList } from "@/api/chat";
+import { sendChatMsg, fetchChatList } from "@/api/chat";
 // const socketStore = useSocketStore(); // socket
+// 假设登陆用户, 作为发送者
+const loginUser = {
+  id: 3,
+  name: "测试",
+  avatar: "https://img.yzcdn.cn/vant/cat.jpeg",
+};
 /**
  * 需要监听的变量
  */
@@ -223,79 +224,13 @@ const message = ref(""); // 发送信息内容
 const kbHeight = ref(0); // 键盘高度
 const showBotMenu = ref(false); // 其他聊天功能按钮, 底部按钮组的显示隐藏
 const state = reactive({
+  urlParams: {},
   sendBoxH: 0, // 输入框动态高度
   scrollTop: 0, // 滚动内容的高度
   systemInfo: {}, // 系统信息
   isScrolling: true,
   // 聊天信息
-  chatList: [
-    {
-      id: 1,
-      type: "text",
-      name: "doctor",
-      content: "您好! 很开心为您提供服务, 请您开始您的咨询.",
-      time: "2024-05-21 15:14:12",
-    },
-    {
-      id: 2,
-      type: "text",
-      name: "patient",
-      content:
-        "绝对定位position: sticky; 滚动到具体点固定并且占据高度, flex-direction: row-reverse; 聊天显示反转, caret-color设置光标的颜色; 监听键盘高度, 底部按钮组显示, 输入内容的变化进行重新计算渲染",
-      time: "2024-05-22 16:18:00",
-    },
-    {
-      id: 3,
-      type: "text",
-      name: "doctor",
-      content:
-        "由于高度或位置的变化总会导致页面出现闪定问题, 主要是按钮组的显示隐藏导致次闪动",
-      time: "2024-05-23 19:12:15",
-    },
-    {
-      id: 4,
-      type: "text",
-      name: "doctor",
-      content: "因此解决闪动的问题最终的解决办法就是将底部按钮组和输入框分离.",
-      time: "2024-05-23 19:12:15",
-    },
-    {
-      id: 5,
-      type: "image",
-      name: "doctor",
-      content: "/static/bg-wall.png",
-      time: "2024-05-23 19:12:15",
-    },
-    {
-      id: 6,
-      type: "text",
-      name: "patient",
-      content:
-        "由于滚动可视区的最大高度减去了底部输入框的高度, 所以滚动可视区离底部的距离是键盘的高度或按钮组的高度",
-      time: "2024-05-28 19:12:15",
-    },
-    {
-      id: 7,
-      type: "text",
-      name: "doctor",
-      content: "二期模仿微信APP聊天输入框结束",
-      time: "2024-05-31 16:15:14",
-    },
-    {
-      id: 8,
-      type: "text",
-      name: "doctor",
-      content: "短消息样式",
-      time: "2024-05-31 16:15:14",
-    },
-    {
-      id: 9,
-      type: "image",
-      name: "patient",
-      content: "/static/bg-side.png",
-      time: "2024-06-03 10:20:10",
-    },
-  ],
+  chatList: [],
 });
 /**
  * 键盘的高度或底部按钮组的高度
@@ -392,12 +327,12 @@ watch([showBotMenu, kbHeight, message], () => {
 /**
  * 获取聊天消息
  */
-// const loadChatList = () => {
-//   fetchChatList().then((res) => {
-//     state.chatList = res.data.data.list;
-//     toScrollBottom();
-//   });
-// };
+const loadChatList = () => {
+  fetchChatList({ chatId: state.urlParams.chatId }).then((res) => {
+    state.chatList = res.data.data.list;
+    toScrollBottom();
+  });
+};
 const toScrollBottom = () => {
   nextTick(() => {
     uni
@@ -471,26 +406,26 @@ const sendTextMsg = () => {
   if (!message.value) return;
   const chatMsg = {
     id: state.chatList.length + 1,
+    chatId: state.urlParams.chatId,
     type: "text",
-    name: "doctor",
     content: message.value,
-    time: new Date().Format("yyyy-MM-dd hh:mm:ss"),
+    senderId: loginUser.id,
+    receiverId: state.urlParams.receiverId,
   };
-  state.chatList.push(chatMsg);
-  showBotMenu.value = false;
-  message.value = "";
-  console.log("send message success!", state.chatList);
   // 实时发送socket消息
   // socket.emit("chat:msg", chatMsg, () => {
   //   console.log("socket发送消息成功");
   // });
-  // sendChatMsg(chatMsg)
-  //   .then((res) => {
-
-  //   })
-  //   .catch((err) => {
-  //     console.log("发送消息失败", err);
-  //   });
+  sendChatMsg(chatMsg)
+    .then((res) => {
+      state.chatList.push(chatMsg);
+      showBotMenu.value = false;
+      message.value = "";
+      console.log("send message success!", state.chatList);
+    })
+    .catch((err) => {
+      console.log("发送消息失败", err);
+    });
 };
 
 /**
@@ -498,10 +433,6 @@ const sendTextMsg = () => {
  * @param {*} url
  */
 const showImage = (e, url) => {
-  console.log("showImage click>>>", e);
-  if (e.type !== "tap") {
-    return 
-  }
   uni.previewImage({
     urls: [url],
     current: url,
@@ -559,8 +490,31 @@ const onKeyboardHeightChange = (e) => {
   kbHeight.value = e.detail.height;
   // #endif
 };
+/**
+ * 底部按钮组事件
+ * 选择照片
+ */
+const chooseImage = () => {
+  Image.chooseImageToUpload({
+    maxCount: 4,
+    success: (res) => {
+      const chatMsg = {
+        id: state.chatList.length + 1,
+        type: "image",
+        content: res.data,
+        senderId: loginUser.id,
+        receiverId: state.urlParams.receiverId,
+      };
+      state.chatList.push(chatMsg);
+      showBotMenu.value = false;
+      message.value = "";
+      console.log("send image message success!", state.chatList);
+    },
+  });
+};
 onLoad(() => {
-  // loadChatList(); // 接口获取聊天记录
+  state.urlParams = $uniApi.getUrlParams();
+  loadChatList(); // 接口获取聊天记录
 });
 onReady(() => {
   // 获取窗口可视高度 - 底部固定高度

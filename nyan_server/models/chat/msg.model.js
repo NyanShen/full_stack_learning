@@ -1,6 +1,4 @@
 const { DataTypes } = require("sequelize");
-const Chat = require("./chat.model");
-const ChatUser = require("./user.model");
 /**
  * @name 聊天model
  * @author NyanShen
@@ -54,16 +52,13 @@ const ChatMsg = (sequelize) => {
             allowNull: false,
             defaultValue: DataTypes.NOW,
             get() {
-                let value = this.getDataValue('createdAt');
+                let value = this.getDataValue('updatedAt');
                 return value.Format('yyyy-MM-dd hh:mm:ss')
             }
-        },
+        }
     }, {
         tableName: "chatmsgs"
     });
 }
-
-// ChatMsg.belongsTo(ChatUser, { foreignKey: 'sender_id' });
-// ChatMsg.belongsTo(Chat, { foreignKey: 'chat_id' });
 
 module.exports = ChatMsg;

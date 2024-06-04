@@ -32,6 +32,7 @@ const testConnection = async () => {
 const db = {};
 
 db.Op = Op; //操作类型
+db.Sequelize = Sequelize; //
 db.sequelize = sequelize; //实例
 db.testConnection = testConnection; //测试数据库连接
 
@@ -56,9 +57,7 @@ db.menusoptions = require("./orderSystem/menu_option.model.js")(sequelize);
 
 // 聊天消息
 db.chat = require("./chat/chat.model.js")(sequelize);
-
-// 上传图片
-db.image = require("./system/image.model.js")(sequelize);
+db.chatMsg = require("./chat/msg.model.js")(sequelize);
 
 // blog 文章-标签-评论-浏览
 

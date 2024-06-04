@@ -2,16 +2,31 @@
   <view class="container">
     <view class="msg-list">
       <view
-        class="flex-c msg-item"
+        class="flex-csb msg-item"
         v-for="(item, index) in msgList"
         :key="index"
         @click="toChat(item)"
       >
-        <image class="img" :src="item.avatar" mode="scaleToFill" />
+        <image
+          class="img"
+          :src="item.receiver.avatar"
+          mode="scaleToFill"
+          v-if="item.receiver.avatar"
+        />
+        <image
+          class="img"
+          src="/static/images/default.png"
+          mode="scaleToFill"
+          v-else
+        />
         <view class="content">
-          <view class="name">{{ item.sendName }}</view>
-          <view class="msg">{{ item.lastContent }}</view>
+          <view class="name">{{ item.receiver.name }}</view>
+          <view class="msg" v-if="item.latestMsgType === 'text'">{{
+            item.latestContent
+          }}</view>
+          <view class="msg" v-if="item.latestMsgType === 'image'">[图片]</view>
         </view>
+        <view class="time">{{ item.latestTime }}</view>
       </view>
     </view>
   </view>
@@ -19,19 +34,11 @@
 
 <script>
 import $uniApi from "@/common/uni.app.api.js";
+import { fetchChatRoom } from "@/api/chat.js";
 export default {
   data() {
     return {
-      msgList: [
-        {
-          type: "text",
-          sendName: "沈医生",
-          lastContent: "测试环境, 非测试人员请勿操作",
-          avatar: "/static/images/default.png",
-          time: "2020-01-01 12:12:12",
-          readed: false,
-        },
-      ],
+      msgList: [],
     };
   },
   onNavigationBarButtonTap(e) {
@@ -40,6 +47,7 @@ export default {
   onReady() {
     this.setStyle(0, true);
     this.setStyle(1, true, 9);
+    this.loadChatRooms();
   },
   methods: {
     /**
@@ -77,8 +85,17 @@ export default {
       activeStrategy[`${show}_${index}`](index, text);
       // #endif
     },
+    loadChatRooms() {
+      fetchChatRoom().then((res) => {
+        this.msgList = res.data.data;
+      });
+    },
     toChat(item) {
-      $uniApi.navigateTo("chat", item);
+      $uniApi.navigateTo("chat", { 
+        chatId: item.id,
+        receiverId: item.receiver.id,
+        receiverName: item.receiver.name,
+       });
     },
   },
 };
@@ -97,10 +114,17 @@ export default {
   }
 
   .content {
+    flex: 1;
+
     .msg {
       font-size: 26rpx;
       color: #999;
     }
+  }
+
+  .time {
+    font-size: 24rpx;
+    color: #999;
   }
 }
 </style>

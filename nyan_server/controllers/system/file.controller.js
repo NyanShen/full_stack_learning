@@ -1,8 +1,6 @@
 const express = require("express");
 const XLSX = require('xlsx');
 const multer = require("multer"); // 文件上传服务
-const db = require("../../models/index.js");
-const imageModel = db.image;
 
 const router = express.Router();
 
@@ -37,23 +35,11 @@ const upload = multer({
  * 上传图片
  */
 router.post('/upload/image', upload.single('image'), (req, res) => {
-	const imageUrl = req.file.path;
 	const filePath = `http://localhost:3000/images/${req.file.filename}`
-
-	imageModel.create({
-		name: "测试",
-		path: filePath
-	}).then(image => {
-		res.json({
-			code: 200,
-			msg: '图片上传成功',
-			data: filePath
-		});
-	}).catch(error => {
-		res.status(500).json({
-			message: '图片上传失败',
-			error
-		});
+	res.json({
+		code: 200,
+		msg: '图片上传成功',
+		data: filePath
 	});
 });
 /**

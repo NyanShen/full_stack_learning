@@ -85,7 +85,7 @@ module.exports = {
 	 * 聊天时间格式化
 	 */
 	formatChatListTime: (timestamp, type = 1) => {
-		let oldtime = new Date(Number(timestamp) * 1000);
+		let oldtime = new Date(Number(timestamp));
 		let date = new Date();
 		let today = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime(); //今天凌晨
 		let yestday = new Date(today - 24 * 3600 * 1000).getTime();

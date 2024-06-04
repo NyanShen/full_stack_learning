@@ -24,9 +24,14 @@ const chooseImageToUpload = ({
 						filePath
 					})
 					.then(resp => {
-						success && success(resp.data);
+						try {
+							success && success(JSON.parse(resp.data));
+						} catch (error) {
+							fail && fail(error);
+						}
 					})
 					.catch(err => {
+						console.log("uploadImage catch", err);
 						fail && fail(err);
 					})
 			})
@@ -57,7 +62,7 @@ const removeImage = ({
 }) => {
 	return $request.baseRequest({
 		baseUrl: "{fileUrl}",
-		apiPath: `/file/delete/filePath`,
+		apiPath: `/delete/filePath`,
 		method: "DELETE",
 		data: {
 			filePath
