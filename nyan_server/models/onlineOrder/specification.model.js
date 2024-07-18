@@ -1,14 +1,14 @@
 const { DataTypes } = require("sequelize");
 /**
- * @name 点餐菜品选项model
+ * @name 菜品规格model
  * @author NyanShen
  * @param {*} sequelize 
  * @param {*} Sequelize 
- * @returns MenuOptionModel
+ * @returns SpecificationModel
  * 
  */
 module.exports = (sequelize) => {
-	return sequelize.define("MenuOption", {
+	return sequelize.define("Specification", {
 		id: {
 			type: DataTypes.INTEGER(10), // 类型
 			allowNull: false, // 不允许为空
@@ -19,11 +19,11 @@ module.exports = (sequelize) => {
 			type: DataTypes.STRING(50),
 			allowNull: false, // 不允许为空
 			unique: true,
-			comment: '菜单选项名字',
+			comment: '菜品规格名字',
 		},
 		priceAddition: {
 			type: DataTypes.DECIMAL(10, 2),
-			comment: '菜单选项价格',
+			comment: '菜品规格价格',
 		},
 		status: {
 			type: DataTypes.INTEGER(1),
@@ -49,6 +49,6 @@ module.exports = (sequelize) => {
 			}
 		},
 	}, {
-		tableName: "menuoptions"
+		tableName: "specifications"
 	});
 }

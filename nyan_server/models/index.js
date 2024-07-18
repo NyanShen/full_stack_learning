@@ -49,11 +49,12 @@ db.permissionsmenus = require("./system/permission_menu.model.js")(sequelize); /
 db.permissionsoperations = require("./system/permission_operation.model.js")(sequelize); // 权限-操作
 
 // 点餐系统--菜单
-db.ordermenu = require("./orderSystem/menu.model.js")(sequelize);
-db.category = require("./orderSystem/category.model.js")(sequelize);
-db.option = require("./orderSystem/option.model.js")(sequelize);
-db.menuscategory = require("./orderSystem/menu_category.model.js")(sequelize);
-db.menusoptions = require("./orderSystem/menu_option.model.js")(sequelize);
+db.category = require("./onlineOrder/category.model.js")(sequelize); // 菜品分类
+db.dish = require("./onlineOrder/dish.model.js")(sequelize); // 菜品
+db.option = require("./onlineOrder/option.model.js")(sequelize); // 菜品选项(加辣、调料类)
+db.specification = require("./onlineOrder/specification.model.js")(sequelize); // 菜品规格(大、中、小)
+db.dishoption = require("./onlineOrder/dish_option.model.js")(sequelize); // 菜品-选项
+db.dishspecification = require("./onlineOrder/dish_specification.model.js")(sequelize); // 菜品-规格
 
 // 聊天消息
 db.chat = require("./chat/chat.model.js")(sequelize);
