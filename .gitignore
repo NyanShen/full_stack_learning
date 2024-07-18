@@ -16,3 +16,6 @@ nyan_next/node_modules/
 nextjs-dashboard/node_modules/
 nextjs-dashboard/.env
 
+nyan_python/study_project/venv/
+nyan_python/study_project/**/*.pyc
+nyan_python/study_project/**/__pycache__/
