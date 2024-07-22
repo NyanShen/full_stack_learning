@@ -12,8 +12,7 @@ const base_limit = {
         .min(0) // 价格至少为0
         .max(10000) // 价格最大不超过10000
         .precision(2) // 价格精确到小数点后两位
-        .required().message({
-            'any.required': '价格不能为空',
+        .message({
             'number.min': '价格不能小于 {#limit}',
             'number.max': '价格不能大于 {#limit}',
             'number.precision': '价格最多只能保留 {#limit} 位小数'
@@ -22,6 +21,7 @@ const base_limit = {
     imageUrl: Joi.string().empty([null, ""]).default(""),
     status: Joi.number().empty([null, 0]).default(1),
     sort: Joi.number().empty([null, 0]).default(1),
+    categoryId: Joi.number().empty(null),
 }
 /**
  * 菜品新增数据校验

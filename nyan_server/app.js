@@ -18,6 +18,7 @@ const permissionController = require('./controllers/system/permission.controller
 const fileController = require('./controllers/system/file.controller');
 const chatController = require('./controllers/chat/chat.controller');
 const categoryController = require('./controllers/onlineOrder/category.controller');
+const dishController = require('./controllers/onlineOrder/dish.controller');
 
 const app = express();
 
@@ -86,6 +87,7 @@ app.use('/api/permissions', permissionController);
 app.use('/api/file', fileController);
 app.use('/api/chat', chatController);
 app.use('/api/onlineOrder/categories', categoryController);
+app.use('/api/onlineOrder/dishes', dishController);
 
 app.get('/api/test/socket', (req, res) => {
 	res.sendFile(__dirname + '/index.html');

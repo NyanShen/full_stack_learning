@@ -32,7 +32,7 @@
           default-expand-all
         >
           <el-table-column prop="name" label="菜品类别名称" />
-          <el-table-column prop="remark" label="菜品类别描述" />
+          <el-table-column prop="description" label="菜品类别描述" />
           <el-table-column prop="status" label="状态">
             <template #default="scope">
               <dict-tag dictType="status" :dictKey="scope.row.status" />
@@ -85,37 +85,8 @@
               <el-radio :value="0">禁用</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="菜品类别描述" prop="remark">
-            <el-input v-model="state.form.remark" type="textarea" />
-          </el-form-item>
-          <el-form-item
-            label="操作权限"
-            prop="permissionIds"
-            v-if="state.permissions.length > 0"
-          >
-            <el-checkbox
-              v-model="state.checkAll"
-              :indeterminate="state.isIndeterminate"
-              @change="handleCheckAllChange"
-            >
-              全部
-            </el-checkbox>
-            <el-checkbox-group
-              v-model="state.permissionIds"
-              @change="handleCheckedPermissionsChange"
-            >
-              <el-checkbox
-                v-for="item in state.permissions"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              >
-                {{ item.name }}
-                <span style="font-size: 12px; color: #999999">
-                  ( {{ item.remark }})
-                </span>
-              </el-checkbox>
-            </el-checkbox-group>
+          <el-form-item label="菜品类别描述" prop="description">
+            <el-input v-model="state.form.description" type="textarea" />
           </el-form-item>
         </el-form>
         <template #footer>
@@ -139,9 +110,7 @@
     createCategory,
     updateCategory,
     removeCategory,
-    fetchCategoryPermissionList,
   } from "@api/modules/onlineOrder";
-  import { fetchPermissionList } from "@api/modules/permission";
   const tableData = ref([]);
   const formRef = ref(null);
   const formRules = ref({
@@ -156,9 +125,8 @@
   const queryForm = ref(null);
   const initForm = {
     name: "",
-    remark: "",
+    description: "",
     status: 1,
-    permissionIds: "",
   };
   const initQuery = {
     name: "",
@@ -192,7 +160,6 @@
   const onSubmit = async (formRef) => {
     await formRef?.validate((valid, fields) => {
       if (valid) {
-        state.form.permissionIds = state.permissionIds.join(",");
         const reqPromise = state.form.id ? updateCategory : createCategory;
         reqPromise(state.form).then((res) => {
           ElMessage({
@@ -235,7 +202,6 @@
     };
     state.isIndeterminate = false;
     state.dialogVisible = true;
-    loadPermissionList();
   };
   /**
    * 编辑
@@ -247,7 +213,6 @@
     };
     state.isIndeterminate = false;
     state.dialogVisible = true;
-    loadPermissionList();
   };
   /**
    * 删除
@@ -271,54 +236,6 @@
       });
     });
   };
-  /**
-   * 关联权限-获取权限列表
-   */
-  const loadPermissionList = () => {
-    if (state.permissions.length > 0) {
-      loadCategoryPermissionList();
-      return;
-    }
-    fetchPermissionList()
-      .then((res) => {
-        state.permissions = res.data.data || [];
-        loadCategoryPermissionList();
-      })
-      .catch(() => {});
-  };
-  /**
-   * 查询已关联权限
-   */
-  const loadCategoryPermissionList = () => {
-    // 新增不需要查询
-    if (!state.form.id) {
-      return;
-    }
-    fetchCategoryPermissionList({ id: state.form.id })
-      .then((res) => {
-        state.permissionIds = res.data.data || [];
-        handleCheckedPermissionsChange(state.permissionIds);
-      })
-      .catch(() => {});
-  };
-  /**
-   * 关联权限-全选
-   */
-  const handleCheckAllChange = (val) => {
-    state.permissionIds = val ? state.permissions.map((item) => item.id) : [];
-    state.isIndeterminate = false;
-  };
-  /**
-   * 显示是否全选逻辑
-   * @param {*} value
-   */
-  const handleCheckedPermissionsChange = (value) => {
-    const checkedCount = value.length;
-    state.checkAll = checkedCount === state.permissions.length;
-    state.isIndeterminate =
-      checkedCount > 0 && checkedCount < state.permissions.length;
-  };
-  
   onMounted(() => {
     loadList();
   });

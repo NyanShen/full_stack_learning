@@ -1,4 +1,5 @@
 @import url('./btn.scss');
+@import "./variables.scss";
 
 .app-search-container {
 	padding: 15px 15px 0 15px;
@@ -44,9 +45,8 @@
   align-items: center;
 }
 
-.flex-c {
+.flx{
   display: flex;
-  align-items: center;
 }
 
 .flex-rc {
@@ -63,7 +63,7 @@
   align-items: center;
 }
 
-.flex-1{
+.flex-1 {
   flex:1;
 }
 
@@ -146,3 +146,15 @@
   min-height: 400px;
 }
 
+
+@each $key, $value in $flex-jc {
+  .jc-#{$key} {
+    justify-content: $value;
+  }
+}
+
+@each $key, $value in $flex-ai {
+  .ai-#{$key} {
+    align-items: $value;
+  }
+}

@@ -129,7 +129,7 @@
               placeholder="格式:/system/user/index"
             />
           </el-form-item>
-          <div class="flex-c">
+          <div class="flx ai-center">
             <el-form-item label="打开方式" prop="outlink">
               <el-radio-group v-model="state.form.outlink">
                 <el-radio value="noRedirect">标签</el-radio>

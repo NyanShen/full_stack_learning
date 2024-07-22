@@ -30,3 +30,20 @@ $text-desc-color: #999999;
 $text-nav-active-color: #23508e;
 
 $border-base-color: #eeeeee;
+
+$flex-jc: (
+    start: flex-start,
+    end: flex-end,
+    center: center,
+    between: space-between,
+    around: space-around,
+    evenly: space-evenly
+);
+
+$flex-ai: (
+    start: flex-start,
+    end: flex-end,
+    center: center,
+    baseline: baseline,
+    stretch: stretch
+);

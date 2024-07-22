@@ -19,6 +19,16 @@ const categoryService = require('../../services/onlineOrder/category.service');
 router.post('/create', expressJoi(categorySchema.create_limit), categoryService.create);
 
 /**
+ * 修改菜品
+ * @route PATCH /api/onlineOrder/categories/update
+ * @group 在线订单-菜品类别
+ * @returns {object} 200 - 
+ * @returns {object} 605 - 请求失败
+ * @returns {Error}  default - Unexpected error
+ */
+router.put('/update', expressJoi(categorySchema.update_limit), categoryService.update);
+
+/**
  * 查询菜品类别
  * @route GET /api/onlineOrder/categories
  * @group 菜品类别管理 - list of category
@@ -28,5 +38,17 @@ router.post('/create', expressJoi(categorySchema.create_limit), categoryService.
  * @returns {Error}  default - Unexpected error
  */
 router.get('/', categoryService.search);
+
+
+/**
+ * 查询菜品选项
+ * @route GET /api/onlineOrder/categories/options
+ * @group 菜品管理 - list of categories
+ * @param {string} - name - category 
+ * @returns {object} 200 - categories list
+ * @returns {object} 605 - 请求失败
+ * @returns {Error}  default - Unexpected error
+ */
+router.get('/options', categoryService.searchOptions);
 
 module.exports = router;

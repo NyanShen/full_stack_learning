@@ -32,9 +32,23 @@ const upload = multer({
 	storage: storage
 })
 /**
- * 上传图片
+ * 小程序-上传图片
  */
 router.post('/upload/image', upload.single('image'), (req, res) => {
+	const filePath = `http://localhost:3000/images/${req.file.filename}`
+	res.json({
+		code: 200,
+		msg: '图片上传成功',
+		data: filePath
+	});
+});
+/**
+ * 后台管理-上传图片
+ */
+router.post('/upload', upload.single('file'), (req, res) => {
+	if (!req.file) {
+		return res.status(400).send('No file uploaded.');
+	  }
 	const filePath = `http://localhost:3000/images/${req.file.filename}`
 	res.json({
 		code: 200,

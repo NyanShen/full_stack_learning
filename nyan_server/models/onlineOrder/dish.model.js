@@ -14,6 +14,10 @@ module.exports = (sequelize) => {
 			autoIncrement: true, // 自增
 			primaryKey: true, // 主键
 		},
+		categoryId: {
+			type: DataTypes.INTEGER(10),
+			comment: '菜品分类',
+		},
 		name: {
 			type: DataTypes.STRING(50),
 			allowNull: false, // 不允许为空
