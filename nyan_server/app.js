@@ -19,6 +19,7 @@ const fileController = require('./controllers/system/file.controller');
 const chatController = require('./controllers/chat/chat.controller');
 const categoryController = require('./controllers/onlineOrder/category.controller');
 const dishController = require('./controllers/onlineOrder/dish.controller');
+const optionController = require('./controllers/onlineOrder/option.controller');
 
 const app = express();
 
@@ -88,6 +89,7 @@ app.use('/api/file', fileController);
 app.use('/api/chat', chatController);
 app.use('/api/onlineOrder/categories', categoryController);
 app.use('/api/onlineOrder/dishes', dishController);
+app.use('/api/onlineOrder/options', optionController);
 
 app.get('/api/test/socket', (req, res) => {
 	res.sendFile(__dirname + '/index.html');

@@ -45,3 +45,18 @@ exports.update_limit = {
         })
     }
 }
+
+/**
+ * 菜品修改数据校验
+ */
+exports.update_option_limit = {
+    // req.body数据验证
+    body: {
+        id: Joi.number().required().messages({
+            'any.required': '菜品ID不能为空',
+        }),
+        optionIds: Joi.string().required().messages({
+            'string.empty': '菜品选项不能为空',
+        }),
+    }
+}

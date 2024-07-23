@@ -47,3 +47,29 @@ $flex-ai: (
     baseline: baseline,
     stretch: stretch
 );
+// mt - margin-top, mx - margin-left, margin-right, m-1
+$spacing-types: (
+    m: margin,
+    p: padding
+);
+$spacing-directions: (
+    t: top,
+    r: right,
+    b: bottom,
+    l: left
+);
+$spacing-base-size: 1px;
+$spacing-sizes: (
+    0: 0,
+    5: 5,
+    8: 8,
+    10: 10,
+    15: 15,
+    20: 20,
+    30: 30,
+    40: 40,
+    50: 50,
+    60: 60,
+    70: 70,
+    80: 80,
+)

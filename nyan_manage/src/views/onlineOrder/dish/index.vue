@@ -84,10 +84,32 @@
             >
               删除
             </el-button>
+            <el-dropdown
+              size="small"
+              @command="(e) => handleCommand(e, scope.row)"
+            >
+              <el-button style="margin-left: 10px" size="small" type="primary">
+                <font-awesome-icon
+                  style="margin-right: 5px"
+                  size="sm"
+                  icon="fa-solid fa-angle-double-right"
+                />
+                更多
+              </el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item command="option">菜品选项</el-dropdown-item>
+                  <el-dropdown-item command="specification"
+                    >菜品规格</el-dropdown-item
+                  >
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
     </div>
+    <!-- 菜品新增编辑 -->
     <el-dialog
       v-model="state.dialogVisible"
       :title="state.form.id ? '编辑操作' : '新增操作'"
@@ -153,6 +175,63 @@
         </div>
       </template>
     </el-dialog>
+    <!-- 菜品选项新增删除 -->
+    <el-dialog
+      v-model="optionDialogVisible"
+      title="菜品选项管理"
+      width="800"
+      align-center
+      draggable
+    >
+      <div class="dish-option-form mb-20">
+        <div class="flx">
+          <div class="mr-15">
+            <el-select
+              v-model="optionIds"
+              multiple
+              placeholder="请选择需要新增的菜品选项(多选)"
+              style="width: 260px"
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+                :disabled="item.disabled"
+              />
+            </el-select>
+          </div>
+          <el-button type="primary" @click="bindDishOptions(state.form.id)">
+            批量新增
+          </el-button>
+          <el-button type="danger" @click="deleteDishOptions(state.form.id)">
+            批量删除
+          </el-button>
+        </div>
+      </div>
+      <el-table
+        ref="multipleTableRef"
+        :data="dishOptions"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column type="selection" width="80" />
+        <el-table-column property="name" label="名称" />
+        <el-table-column property="priceAddition" label="价格" />
+        <el-table-column fixed="right" label="操作" width="120">
+          <template #default="scope">
+            <el-button
+              link
+              type="danger"
+              size="small"
+              @click.prevent="deleteOptionRow(scope.row.id)"
+            >
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
   
@@ -167,6 +246,18 @@ import {
   updateDish,
   removeDish,
 } from "@api/modules/onlineOrder";
+import { useDishOption } from "./optionMixin";
+const {
+  options,
+  dishOptions,
+  optionIds,
+  delOptionIds,
+  optionDialogVisible,
+  loadDishOptionList,
+  bindDishOptions,
+  deleteDishOptions,
+  handleSelectionChange,
+} = useDishOption();
 const uploadUrl = `${import.meta.env.VITE_FILE_URL}/file/upload`;
 const tableData = ref([]);
 const formRef = ref(null);
@@ -215,26 +306,23 @@ const state = reactive({
     ...initQuery,
   },
   dialogVisible: false,
-  // 权限选择
-  categories: [],
+  categories: [], // 选择分类
 });
 
-const handleSelectCategory = (item) => {
-  state.queryParams.categoryId = item.id;
-  loadList();
-}
-
-const loadCategoryList = () => {
-  fetchCategoryOptions().then((res) => {
-    state.categories = res.data.data;
-  });
-};
 /**
- * 获取菜单列表
+ * 获取菜品列表
  */
 const loadList = () => {
   fetchDishList(state.queryParams).then((res) => {
     tableData.value = res.data.data;
+  });
+};
+/**
+ * 获取菜品类别列表用于查询新增修改
+ */
+const loadCategoryList = () => {
+  fetchCategoryOptions().then((res) => {
+    state.categories = res.data.data;
   });
 };
 /**
@@ -274,7 +362,16 @@ const resetQuery = () => {
   state.queryParams = {
     ...initQuery,
   };
+  handleQuery();
 };
+/**
+ * 根据类别查询
+ */
+const handleSelectCategory = (item) => {
+  state.queryParams.categoryId = item.id;
+  loadList();
+};
+
 /**
  * 新增
  * @param {*} row
@@ -320,7 +417,31 @@ const handleDelete = (row) => {
   });
 };
 /**
- *
+ * 更多操作
+ */
+const handleCommand = (command, row) => {
+  state.form = row;
+  switch (command) {
+    case "option":
+      loadDishOptionList(state.form.id);
+      optionDialogVisible.value = true;
+      break;
+    case "specification":
+      break;
+    default:
+      throw new Error("无效指令");
+  }
+};
+
+/**
+ * 菜单选项 - 删除单项
+ */
+const deleteOptionRow = (optionId) => {
+  delOptionIds.value = [optionId];
+  deleteDishOptions(state.form.id);
+};
+/**
+ * 图片上传成功
  */
 const handleUploadSuccess = (res) => {
   state.form.imageUrl = res.data;
