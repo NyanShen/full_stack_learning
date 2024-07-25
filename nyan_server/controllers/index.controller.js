@@ -22,4 +22,15 @@ router.get('/', function(req, res, next) {
 
 });
 
+router.get('/order', function(req, res, next) {
+	res.render('orderform', {
+		title: "创建订单"
+	});
+})
+router.get('/paymethod', function(req, res, next) {
+	res.render('paymethod', {
+		title: ""
+	});
+})
+
 module.exports = router;

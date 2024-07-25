@@ -3,7 +3,6 @@ const { DataTypes } = require("sequelize");
  * @name 菜品与规格model
  * @author NyanShen
  * @param {*} sequelize 
- * @param {*} Sequelize 
  * @returns DishesSpecificationsModel
  * @description 菜单与分类model
  * 一个分类多个菜单, 一个菜单只有一种分类

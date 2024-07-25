@@ -124,5 +124,17 @@ module.exports = {
 			timeStr = '';
 		}
 		return timeStr;
+	},
+	/**
+	 * 生成随机数
+	 * @param {*} length 
+	 * @returns 
+	 */
+	randomString(length) {
+		let result = '';
+		for (let i = 0; i < length; i++) {
+			result += Math.floor(Math.random() * 10);
+		}
+		return result;
 	}
 }

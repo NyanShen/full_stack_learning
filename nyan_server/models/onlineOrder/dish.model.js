@@ -3,7 +3,6 @@ const { DataTypes } = require("sequelize");
  * @name 点餐菜品model
  * @author NyanShen
  * @param {*} sequelize 
- * @param {*} Sequelize 
  * @returns DishModel
  */
 module.exports = (sequelize) => {

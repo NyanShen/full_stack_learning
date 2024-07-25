@@ -1,5 +1,6 @@
 const path = require('path');
 const express = require('express');
+// const bodyParser = require('body-parser');
 const createError = require('http-errors');
 const cookieParser = require('cookie-parser'); // cookie
 const session = require('express-session');
@@ -20,6 +21,7 @@ const chatController = require('./controllers/chat/chat.controller');
 const categoryController = require('./controllers/onlineOrder/category.controller');
 const dishController = require('./controllers/onlineOrder/dish.controller');
 const optionController = require('./controllers/onlineOrder/option.controller');
+const orderController = require('./controllers/onlineOrder/order.controller');
 
 const app = express();
 
@@ -34,6 +36,7 @@ app.use(express.json());
 app.use(express.urlencoded({
 	extended: false
 }));
+// app.use(bodyParser.urlencoded({ extended: true }));
 // cookie中间件
 app.use(cookieParser());
 // session中间件
@@ -90,6 +93,8 @@ app.use('/api/chat', chatController);
 app.use('/api/onlineOrder/categories', categoryController);
 app.use('/api/onlineOrder/dishes', dishController);
 app.use('/api/onlineOrder/options', optionController);
+
+app.use('/api/onlineOrder/order', orderController);
 
 app.get('/api/test/socket', (req, res) => {
 	res.sendFile(__dirname + '/index.html');

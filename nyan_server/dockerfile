@@ -1,0 +1,7 @@
+FROM node:18
+WORKDIR /nyan_app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 8888
+CMD [ "npm", "serve" ]

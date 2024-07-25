@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>录入支付模式</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>Create a New Order</h1>
+    <form action="/api/onlineOrder/order/createPayMethod" method="POST">
+        <!-- type -->
+        <label for="type">type(wx,ali,cash):</label>
+        <input type="text" id="type" name="type" required>
+        <br><br>
+
+        <!-- mode -->
+        <label for="totalAmount">mode:</label>
+        <input type="text" id="mode" name="mode"  required>
+        <br><br>
+
+        <!-- name -->
+        <label for="totalAmount">name:</label>
+        <input type="text" id="name" name="name"  required>
+        <br><br>
+
+        <!-- 提交按钮 -->
+        <button type="submit">Create PayMethod</button>
+    </form>
+  </body>
+</html>

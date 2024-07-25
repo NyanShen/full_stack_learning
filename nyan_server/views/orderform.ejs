@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script>
+      function addOrderItem() {
+          var newOrderItem = document.createElement("div");
+          newOrderItem.innerHTML = `
+              <div class="order-item">
+                  <label for="dishId">Dish ID:</label>
+                  <input type="text" name="orderDetail[][dishId]" required>
+                  <label for="quantity">Quantity:</label>
+                  <input type="number" name="orderDetail[][quantity]" min="1" required>
+                  <label for="uniPrice">Unit Price:</label>
+                  <input type="number" name="orderDetail[][uniPrice]" step="0.01" required>
+                  <button type="button" onclick="removeOrderItem(this)">Remove</button>
+              </div>
+          `;
+          document.getElementById("order-items").appendChild(newOrderItem);
+      }
+
+      function removeOrderItem(button) {
+          button.closest(".order-item").remove();
+      }
+  </script>
+  </head>
+  <body>
+    <h1>Create a New Order</h1>
+    <form action="/api/onlineOrder/order/createBusinessOrder" method="POST">
+        <!-- 用户ID -->
+        <label for="userId">customer ID:</label>
+        <input type="text" id="customerId" name="customerId" required>
+        <br><br>
+
+        <!-- 总金额 -->
+        <label for="totalAmount">Total Amount:</label>
+        <input type="number" id="totalAmount" name="totalAmount" step="0.01" required>
+        <br><br>
+
+        <!-- 支付方式 -->
+        <label for="payMode">Pay Mode:</label>
+        <select id="payMode" name="payMode" required>
+            <option value="wechat">微信</option>
+            <option value="alipay">支付宝</option>
+            <option value="cash">现金</option>
+        </select>
+        <br><br>
+
+        <div id="order-items">
+          <!-- 初始订单项目 -->
+          <div class="order-item">
+              <label for="dishId">Dish ID:</label>
+              <input type="text" name="orderDetail[][dishId]" required>
+              <label for="quantity">Quantity:</label>
+              <input type="number" name="orderDetail[][quantity]" min="1" required>
+              <label for="uniPrice">Unit Price:</label>
+              <input type="number" name="orderDetail[][uniPrice]" step="0.01" required>
+              <button type="button" onclick="removeOrderItem(this)">Remove</button>
+          </div>
+      </div>
+      
+      <button type="button" onclick="addOrderItem()">Add Order Item</button>
+      <br><br>
+        <!-- 提交按钮 -->
+        <button type="submit">Create Order</button>
+    </form>
+  </body>
+</html>

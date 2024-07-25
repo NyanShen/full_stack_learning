@@ -56,6 +56,13 @@ db.specification = require("./onlineOrder/specification.model.js")(sequelize); /
 db.dishoption = require("./onlineOrder/dish_option.model.js")(sequelize); // 菜品-选项
 db.dishspecification = require("./onlineOrder/dish_specification.model.js")(sequelize); // 菜品-规格
 
+// 点餐系统--订单
+db.customer = require("./onlineOrder/customer.model.js")(sequelize);
+db.order = require("./onlineOrder/order.model.js")(sequelize);
+db.orderdetail = require("./onlineOrder/order_detail.model.js")(sequelize);
+db.paymethod= require("./onlineOrder/pay_method.model.js")(sequelize);
+db.payrecord= require("./onlineOrder/pay_record.model.js")(sequelize);
+
 // 聊天消息
 db.chat = require("./chat/chat.model.js")(sequelize);
 db.chatMsg = require("./chat/msg.model.js")(sequelize);

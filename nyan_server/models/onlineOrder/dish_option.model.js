@@ -3,7 +3,6 @@ const { DataTypes } = require("sequelize");
  * @name 菜品与选项model
  * @author NyanShen
  * @param {*} sequelize 
- * @param {*} Sequelize 
  * @returns  DishesOptionsModel
  * ManyToMany 关系
  */
