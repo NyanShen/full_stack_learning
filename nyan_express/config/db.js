@@ -13,7 +13,6 @@ const dbConfig = {
 		idle: 10000, // 链接空闲时间
 	},
 }
-
 /**
  * Option 3: Passing parameters separately (other dialects)
  */

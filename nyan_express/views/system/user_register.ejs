@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>注册用户</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>Register a New User</h1>
+    <form action="/core/system/user/register" method="POST">
+        <!-- account -->
+        <label for="account">account:</label>
+        <input type="text" id="account" name="account" required>
+        <br><br>
+
+        <!-- password -->
+        <label for="password">password:</label>
+        <input type="text" id="password" name="password"  required>
+        <br><br>
+
+        <!-- confirmPassword -->
+        <label for="confirmPassword">confirmPassword:</label>
+        <input type="text" id="confirmPassword" name="confirmPassword"  required>
+        <br><br>
+
+        <!-- 提交按钮 -->
+        <button type="submit">Register</button>
+    </form>
+  </body>
+</html>
