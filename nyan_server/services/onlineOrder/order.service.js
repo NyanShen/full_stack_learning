@@ -27,6 +27,7 @@ class orderService {
     }
     // 创建订单
     async createBusinessOrder(req, res) {
+        const t = await db.sequelize.transaction();
         const { customerId, orderDetail, payMode, totalAmount } = req.body;
         try {
             // 构建交易订单,wx开头+日期(20240725112234)+时间戳
@@ -35,7 +36,7 @@ class orderService {
                 res.sendResult("支付模式不存在", 605);
                 return;
             }
-            const orderId = singlePayMethod.type + new Date().Format("yyyyMMdd") +  Date.now()
+            const orderId = singlePayMethod.type + new Date().Format("yyyyMMdd") + Date.now()
             // 保存订单
             const order = await orderModel.create({
                 orderId,
@@ -43,7 +44,7 @@ class orderService {
                 payMode,
                 totalAmount,
                 status: "pending"
-            });
+            }, { transaction: t });
 
             // 订单详情过滤
             const orderDetailList = orderDetail?.map(item => {
@@ -55,10 +56,12 @@ class orderService {
                     totalPrice: parseInt(item.quantity) * parseFloat(item.uniPrice).toFixed(2)
                 }
             })
-            // 批量保存订单详情
-            await orderDetailModel.bulkCreate(orderDetailList);
+            // 批量保存订单详情 transaction事务:原子性,一致性,隔离性,持久性
+            await orderDetailModel.bulkCreate(orderDetailList, { transaction: t });
+            await t.commit(); // 提交事务
             res.sendResult("创建订单成功", 0, { orderId: order.orderId });
         } catch (error) {
+            await t.rollback(); // 回滚事务
             res.sendResult("创建订单失败", -1, error);
         }
     }

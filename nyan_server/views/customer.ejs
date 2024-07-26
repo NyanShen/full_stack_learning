@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Customer</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>Create a New Customer</h1>
+    <form action="/api/onlineOrder/customer/create" method="POST">
+        <!-- name -->
+        <label for="name">name:</label>
+        <input type="text" id="name" name="name" required>
+        <br><br>
+
+        <!-- openId -->
+        <label for="openId">openId:</label>
+        <input type="text" id="openId" name="openId"  required>
+        <br><br>
+
+        <!-- phone -->
+        <label for="phone">phone:</label>
+        <input type="text" id="phone" name="phone"  required>
+        <br><br>
+
+        <!-- 提交按钮 -->
+        <button type="submit">Create Customer</button>
+    </form>
+  </body>
+</html>

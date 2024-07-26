@@ -22,6 +22,7 @@ const categoryController = require('./controllers/onlineOrder/category.controlle
 const dishController = require('./controllers/onlineOrder/dish.controller');
 const optionController = require('./controllers/onlineOrder/option.controller');
 const orderController = require('./controllers/onlineOrder/order.controller');
+const customerController = require('./controllers/onlineOrder/customer.controller');
 
 const app = express();
 
@@ -95,6 +96,7 @@ app.use('/api/onlineOrder/dishes', dishController);
 app.use('/api/onlineOrder/options', optionController);
 
 app.use('/api/onlineOrder/order', orderController);
+app.use('/api/onlineOrder/customer', customerController);
 
 app.get('/api/test/socket', (req, res) => {
 	res.sendFile(__dirname + '/index.html');

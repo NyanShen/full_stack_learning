@@ -27,10 +27,13 @@ router.get('/order', function(req, res, next) {
 		title: "创建订单"
 	});
 })
+
 router.get('/paymethod', function(req, res, next) {
-	res.render('paymethod', {
-		title: ""
-	});
+	res.render('paymethod', { });
+})
+
+router.get('/customer', function(req, res, next) {
+	res.render('customer', { });
 })
 
 module.exports = router;
