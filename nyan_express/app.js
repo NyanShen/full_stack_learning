@@ -14,6 +14,7 @@ require('./common/utils/tools'); // 工具函数
  * 路由引入
  */
 const indexRouter = require('./routes/index');
+const authRouter = require('./core/auth/routes/index.route');
 const systemRouter = require('./core/system/routes/index.route');
 
 /**
@@ -55,8 +56,9 @@ app.use(responseFormatter());
 /**
  * 加载路由
  */
-app.use('/', indexRouter);
-app.use('/core/system', systemRouter);
+app.use('/index', indexRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/system', systemRouter);
 
 /**
  * 404错误处理
