@@ -28,7 +28,27 @@
 				size: 14, // 字体大小
 			};
 		},
-		onLoad() {},
+		onLoad() {
+			// uniCloud.callFunction({
+			// 	name: 'userpass', // 你的云函数名称
+			// 	data: {
+			// 		user:"username"
+			// 	}
+			// }).then(resp => {
+			// 	// 登录成功，可以关闭一键登录授权界面了
+			// 	console.log("uniCloud succ>>>", resp)
+			// }).catch(err => {
+			// 	// 处理错误
+			// 	console.log("uniCloud err>>>", err)
+			// })
+			// 连接到 WebSocket
+			uni.connectSocket({
+				url: 'ws://localhost:8888',
+				success: function(res) {
+					console.log('WebSocket connected');
+				}
+			});
+		},
 		onShow() {
 			// 文字长度 = 文字个数 * 文字大小
 			this.length = this.text.length * this.size;

@@ -160,6 +160,11 @@
 				"iconPath": "static/tabBar/msg.png",
 				"selectedIconPath": "static/tabBar/msg_hv.png",
 				"text": "消息"
+			},{
+				"pagePath": "pages/tabBar/discover/index",
+				"iconPath": "static/tabBar/msg.png",
+				"selectedIconPath": "static/tabBar/msg_hv.png",
+				"text": "发现"
 			}, {
 				"pagePath": "pages/tabBar/mine/index",
 				"iconPath": "static/tabBar/mine.png",

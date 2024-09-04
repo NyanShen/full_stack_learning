@@ -24,7 +24,7 @@ export const signin = (data) => {
  */
 export const fetchUser = () => {
 	return $http({
-		url: "/users/userInfo",
+		url: "/system/user/loginUser",
 		method: "GET",
 	})
 }

@@ -6,8 +6,6 @@ const sequelize = require('../config/db');
 router.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' });
 });
-
-
 /**
  Testing the connection
  */
@@ -19,9 +17,13 @@ router.get('/testDBConnect', async function (req, res, next) {
     res.json(`Unable to connect to the database:${e}`)
   }
 });
-
+// 注册页面
 router.get('/system/user/register', function (req, res, next) {
   res.render('system/user_register', { title: "注册用户"});
+});
+// 角色创建
+router.get('/system/role/create', function (req, res, next) {
+  res.render('system/role_create', { title: ""});
 });
 
 module.exports = router;

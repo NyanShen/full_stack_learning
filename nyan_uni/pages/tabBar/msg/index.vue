@@ -101,7 +101,7 @@ export default {
 };
 </script>
 
-<style lang="stylus">
+<style lang="scss">
 .msg-item {
   padding: 20rpx;
   margin-bottom: 20rpx;

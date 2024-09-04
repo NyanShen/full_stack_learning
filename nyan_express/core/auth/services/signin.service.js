@@ -14,6 +14,9 @@ class SigninService {
         if (!singleUser?.id) {
             throw new Error('账号不存在');
         }
+        if (singleUser.state === 0) {
+            throw new Error("该账户暂未激活, 请联系管理员激活");
+        }
         if (!bcrypt.compareSync(singinInfo.password, singleUser.password)) {
             throw new Error('密码错误, 登录失败');
         }

@@ -28,6 +28,22 @@ class UserService {
         return { id: registerUser.id }
     }
     /**
+     * @description 获取登录用户信息
+     * @param {*} userId 
+     */
+    async getLoginUser(userId) {
+        // 通过user获取角色
+        const user = await User.findByPk(userId, {
+            attributes: {
+                exclude: ['password', 'updatedAt']
+            }
+        })
+        if (!user) {
+            throw new Error('查询的用户不存在!');
+        }
+        return user
+    }
+    /**
      * @description 更新用户信息
      * @param {*} userInfo 
      * @returns User

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>创建角色</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1>Create a New Role</h1>
+    <form action="/api/system/role/create" method="POST">
+        <!-- code -->
+        <label for="code">code:</label>
+        <input type="text" id="code" name="code" required>
+        <br><br>
+
+        <!-- name -->
+        <label for="name">name:</label>
+        <input type="text" id="name" name="name"  required>
+        <br><br>
+
+        <!-- remark -->
+        <label for="remark">remark:</label>
+        <input type="text" id="remark" name="remark"  required>
+        <br><br>
+
+        <!-- 提交按钮 -->
+        <button type="submit">create</button>
+    </form>
+  </body>
+</html>

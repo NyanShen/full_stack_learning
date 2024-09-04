@@ -1,5 +1,7 @@
 /**
- * @description 验证码
+ * @description 图形-验证码
+ * @author nyanshen
+ * @date 2024-09-04
  */
 const captchaService = require('../services/captcha.service');
 class CaptchaController {

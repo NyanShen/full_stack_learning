@@ -10,8 +10,8 @@ import Layout from "../layout/index.vue"; // 全局布局
  * Note: 路由配置项
  * name:'router-name'               // 设定路由的名字，一定要填写不然使用<keep-alive>时会出现各种问题
  * meta : {
-    noCache: true                   // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
-    tile: 'name'                  // 设置该路由在侧边栏和面包屑中展示的名字
+	noCache: true                   // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+	tile: 'name'                  // 设置该路由在侧边栏和面包屑中展示的名字
   }
  * 普通用户路由,不需权限控制的路由
  * 登录、401, 404, error, 403

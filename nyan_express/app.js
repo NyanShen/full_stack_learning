@@ -56,7 +56,7 @@ app.use(responseFormatter());
 /**
  * 加载路由
  */
-app.use('/index', indexRouter);
+app.use('/indexejs', indexRouter); // /indexejs/system
 app.use('/api/auth', authRouter);
 app.use('/api/system', systemRouter);
 

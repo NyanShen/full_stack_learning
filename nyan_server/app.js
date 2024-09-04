@@ -123,26 +123,19 @@ app.use(function (err, req, res, next) {
 
 
 // socket
-const server = require('http').createServer(app);
-const io = require('socket.io')(server, {
-	cors: {
-		origin: "*",
-		methods: ["GET", "POST"]
-	}
-});
+const server = require('http').createServer(app); // 创建一个 HTTP 服务器
+const WebSocket = require('ws');
+const wss = new WebSocket.Server({ server })
 
-io.on('connection', (socket) => {
-	console.log('a user connection');
-	socket.on("chat:msg", function(data) {
-		console.log('chat:msg', data);
-		io.emit("chat:msg", data)
-	})
+// WebSocket 事件处理器
+wss.on('connection', (socket) => {
+	console.log('WebSocket client connected');
 });
 
 /**
  * 使用server,而不是app
  */
 server.listen(8888, function () {
-	console.log("服务运行http://localhost:8888/api");
+	console.log("服务运行:http://localhost:8888/api;ws://localhost:8888");
 })
 module.exports = app;
