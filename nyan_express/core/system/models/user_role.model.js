@@ -15,4 +15,4 @@ const UserRole = sequelize.define('UserRole', {
         defaultValue: 1,
     },
 })
-module.exports = UserRole
+module.exports = UserRole;

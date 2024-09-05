@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>更新用户</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+
+<body>
+    <h1>Update a Exist User</h1>
+    <form action="/api/system/user/update" method="POST">
+        <!-- id -->
+        <label for="id">id:</label>
+        <input type="text" id="id" name="id" required>
+        <br><br>
+
+        <!-- name -->
+        <label for="name">name:</label>
+        <input type="text" id="name" name="name" required>
+        <br><br>
+
+        <!-- gender -->
+        <label for="sex">gender:</label>
+        <select id="sex" name="sex" required>
+            <option value="1">男</option>
+            <option value="2">女</option>
+            <option value="3">其他</option>
+        </select>
+        <br><br>
+
+        <!-- email -->
+        <label for="email">email:</label>
+        <input type="email" id="email" name="email">
+        <br><br>
+
+        <!-- phone -->
+        <label for="phone">phone:</label>
+        <input type="number" id="phone" name="phone">
+        <br><br>
+
+        <!-- remark -->
+        <label for="remark">remark:</label>
+        <input type="text" id="remark" name="remark">
+        <br><br>
+
+        <!-- roleIds -->
+        <label for="roleIds">roleIds:</label>
+        <input type="text" id="roleIds" name="roleIds">
+        <br><br>
+
+        <!-- 提交按钮 -->
+        <button type="submit">Submit</button>
+    </form>
+</body>
+
+</html>

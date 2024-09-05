@@ -9,6 +9,12 @@ const userController = require('../controllers/user.controller');
 router.post('/register', userController.register);
 
 /**
+ * @api {post} /api/system/user/update 更新用户信息
+ * @apiGroup User
+ */
+router.post('/update', userController.updateUser);
+
+/**
  * @api {get} /api/system/user/loginUser 查询用户信息
  * @apiGroup User
  */

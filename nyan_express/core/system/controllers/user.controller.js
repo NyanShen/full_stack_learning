@@ -28,6 +28,14 @@ class UserController {
             res.sendResult(error, -1);
         }
     }
+    async updateUser(req, res) {
+        try {
+            let result = await userService.updateUser(req.body);
+            res.sendResult("更新成功", 0, result);
+        } catch (error) {
+            res.sendResult(error, -1);
+        }
+    }
     /**
      * @description 查询用户信息
      * @param {*} req 
