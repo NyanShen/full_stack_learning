@@ -8,8 +8,9 @@
 					{{ text }}
 				</text>
 			</view>
-		</view>
 
+		</view>
+		<uni-custom-tarbar></uni-custom-tarbar>
 	</view>
 </template>
 
@@ -110,5 +111,14 @@
 				color: #EA8B28;
 			}
 		}
+	}
+
+	.arc {
+		width: 200px;
+		height: 100px;
+		background-image: linear-gradient(to bottom, #f0f0f0 50%, #ffffff 50%);
+		background-size: 100% 200px;
+		border-radius: 50% 50% 0 0;
+		transform: rotate(-10deg);
 	}
 </style>

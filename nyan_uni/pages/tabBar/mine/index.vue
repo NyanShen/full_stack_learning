@@ -9,6 +9,14 @@
         />
         <view class="menu-item-text">聊天测试</view>
       </view>
+      <view class="flex-column menu-item" @click="toNextPage('services/poster')">
+        <image
+          class="menu-item-icon"
+          src="/static/images/icon_msg.png"
+          mode="scaleToFill"
+        />
+        <view class="menu-item-text">海报生成</view>
+      </view>
     </view>
   </view>
 </template>
@@ -27,6 +35,9 @@ export default {
   methods: {
     toLogin() {
       $uniApi.navigateTo("login");
+    },
+    toNextPage() {
+      $uniApi.navigateTo("services/poster");
     },
     handleText() {
       $uniApi.alert("hello" + $constant.CONFIG.testUrl);

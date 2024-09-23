@@ -134,6 +134,12 @@
 					"style": {
 						"navigationBarTitleText": "页面水印"
 					}
+				},
+				{
+					"path": "poster/index",
+					"style": {
+						"navigationBarTitleText": "海报生成"
+					}
 				}
 			]
 		}
