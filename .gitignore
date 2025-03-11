@@ -32,3 +32,4 @@ nyan_python/**/.env
 nyan_python/**/data/
 nyan_python/**/models/
 nyan_python/**/vector_store
+nyan_python/**/*.pdf
