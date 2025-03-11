@@ -1,0 +1,9 @@
+name: llm-learn
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.12          # 推荐版本[[2]][[11]]
+  - pip
+  - pip:
+      - langchain==0.3.0        # LLM框架[[5]][[8]]

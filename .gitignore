@@ -24,7 +24,11 @@ nextjs-dashboard/node_modules/
 nextjs-dashboard/.env
 
 nyan_python/study_project/deepseekenv/
-nyan_python/study_project/**/*.pyc
-nyan_python/study_project/**/__pycache__/
-nyan_python/study_project/**/.pytest_cache/
-nyan_python/study_project/.env
+nyan_python/**/*.pyc
+nyan_python/**/__pycache__/
+nyan_python/**/.pytest_cache/
+
+nyan_python/**/.env
+nyan_python/**/data/
+nyan_python/**/models/
+nyan_python/**/vector_store

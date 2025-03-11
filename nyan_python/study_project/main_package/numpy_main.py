@@ -4,7 +4,9 @@ import numpy as np
 import requests
 from dotenv import load_dotenv
 from openai import OpenAI
+from langsmith import traceable
 
+@traceable # Auto-trace this function
 def main():
     
     a = np.array([1, 2, 3, 4, 5,6,7,8,9,10])
@@ -58,9 +60,10 @@ def main():
         "Content-Type": "application/json"
     }
 
-    response = requests.request("POST", url, json=payload, headers=headers)
+    # response = requests.request("POST", url, json=payload, headers=headers)
 
-    print(response.text)
+    # print(response.text)
+    print(os.getenv('ENV_SILICOM_CLOUD_KEY'))
     
 
 if __name__ == "__main__":

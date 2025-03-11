@@ -21,11 +21,11 @@ langchain-core==0.3.39
 langchain-text-splitters==0.3.6
 langsmith==0.3.11
 multidict==6.1.0
-numpy==2.2.3
+numpy==2.2.0
 openai==1.64.0
 orjson==3.10.15
 packaging==24.2
-pandas==2.2.3
+pandas==2.2.0
 propcache==0.3.0
 pydantic==2.10.6
 pydantic_core==2.27.2
