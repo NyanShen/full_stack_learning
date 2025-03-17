@@ -1,5 +1,6 @@
 
 import os
+from langchain_ollama import OllamaLLM
 from langchain_openai import ChatOpenAI 
 from langchain_huggingface import HuggingFaceEmbeddings
 from sentence_transformers import SentenceTransformer # 加载和使用Embedding模型
@@ -9,6 +10,26 @@ class ModelLoader:
     def __init__(self):
         """初始化"""
         load_dotenv()
+
+    @staticmethod
+    def load_ollama_model(model_name):
+        """
+        加载ollama模型
+        bge-m3:567m
+        deepseek-r1:32b
+        deepseek-r1:7b
+        deepseek-r1:1.5b
+        """
+        # 初始化模型
+        print(f"加载ollma llm模型......")
+        llm = OllamaLLM(
+            base_url=os.environ['OLLMA_BASE_URL'],  # 可配置为内部服务器地址
+            model=model_name,
+            temperature=0.8,
+            num_ctx=4096  # 上下文窗口大小
+        )
+        print(f"加载ollma llm模型完成")
+        return llm
     
     @staticmethod
     def load_openai_chat_model():
