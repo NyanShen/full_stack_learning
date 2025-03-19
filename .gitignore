@@ -36,6 +36,7 @@ nyan_python/**/*.pdf
 
 nyan_langchian/**/.env
 nyan_langchian/**/data/
+nyan_langchian/**/files/
 nyan_langchian/**/documents/
 nyan_langchian/**/models/
 nyan_langchian/**/vector_store
