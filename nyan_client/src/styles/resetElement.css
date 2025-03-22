@@ -1,0 +1,24 @@
+
+.el-dropdown {
+    vertical-align: bottom;
+}
+/* 新增编辑弹窗样式设置 */
+.dialog-form-inline .el-input {
+    --el-input-width: 230px;
+}
+
+.dialog-form-inline .el-input {
+    --el-select-width: 230px;
+}
+
+.dialog-form-inline .el-textarea,
+.dialog-form-inline .el-checkbox-group {
+    width: 605px;
+}
+.dialog-form-inline .el-select,
+.dialog-form-inline .el-radio-group {
+    width: 230px;
+}
+.dialog-form-inline .el-radio-group.el-radio-group_whole {
+    width: 605px;
+}

@@ -1,0 +1,93 @@
+$fs-sm: 12px;
+$fs-md: 14px;
+$fs-lg: 16px;
+$fs-lx: 18px;
+
+$app-header-height: 60px;
+
+$primary-light-color: #00a65a;
+$primary-dark-color: #008d4c;
+$primary-active-color: #52c41a;
+$primary-active-bg-color: #f6ffed;
+$bg-color: #f2f2f2;
+$bg-active-color: #eaedf1;
+$white-color: #ffffff;
+
+// base color
+$blue:#324157;
+$light-blue:#3A71A8;
+$red:#C03639;
+$pink: #E65D6E;
+$green: #30B08F;
+$tiffany: #4AB7BD;
+$yellow:#FEC171;
+$panGreen: #30B08F;
+
+$text-active-color: #52c41a;
+$text-base-color: #676a6c;
+$text-desc-color: #999999;
+
+$text-nav-active-color: #23508e;
+
+$border-base-color: #eeeeee;
+
+// Colors
+$background-color: #ffffff !default;
+$border-color: #e5e7eb !default;
+$input-bg: #f9fafb !default;
+$text-primary: #1f2937 !default;
+$text-secondary: #6b7280 !default;
+$primary-color: #3b82f6 !default;
+$disabled-color: #9ca3af !default;
+$hover-bg: #f3f4f6 !default;
+// 消息相关变量
+$user-bubble-bg: #3b82f6 !default;
+$user-bubble-color: white !default;
+$bot-bubble-bg: #f3f4f6 !default;
+$bot-bubble-color: $text-primary !default;
+$scrollbar-track: #f1f1f1 !default;
+$scrollbar-thumb: #c1c1c1 !default;
+$bubble-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !default;
+
+$flex-jc: (
+    start: flex-start,
+    end: flex-end,
+    center: center,
+    between: space-between,
+    around: space-around,
+    evenly: space-evenly
+);
+
+$flex-ai: (
+    start: flex-start,
+    end: flex-end,
+    center: center,
+    baseline: baseline,
+    stretch: stretch
+);
+// mt - margin-top, mx - margin-left, margin-right, m-1
+$spacing-types: (
+    m: margin,
+    p: padding
+);
+$spacing-directions: (
+    t: top,
+    r: right,
+    b: bottom,
+    l: left
+);
+$spacing-base-size: 1px;
+$spacing-sizes: (
+    0: 0,
+    5: 5,
+    8: 8,
+    10: 10,
+    15: 15,
+    20: 20,
+    30: 30,
+    40: 40,
+    50: 50,
+    60: 60,
+    70: 70,
+    80: 80,
+)
