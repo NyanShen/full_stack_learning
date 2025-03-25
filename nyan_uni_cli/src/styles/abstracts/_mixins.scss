@@ -1,0 +1,16 @@
+
+  // 全局文本截断混合
+  @mixin text-ellipsis($lines) {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: $lines;
+    overflow: hidden;
+  }
+  
+  // 弹性布局混合
+  @mixin flex($direction: row, $justify: flex-start) {
+    display: flex;
+    flex-direction: $direction;
+    justify-content: $justify;
+    align-items: center;
+  }

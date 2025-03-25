@@ -45,6 +45,14 @@ const commonRoutes = [
 				meta: {
 					tile: "首页",
 				},
+			},
+			{
+				path: "calls",
+				name: "calls",
+				component: () => import("@views/calls/index.vue"),
+				meta: {
+					tile: "推理与答案分离输出",
+				},
 			}
 		],
 	},

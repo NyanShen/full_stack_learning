@@ -14,6 +14,12 @@ nyan_uni/unpackage/
 nyan_uni/.hbuilderx
 nyan_uni/.vite
 
+nyan_uni_cli/node_modules/
+nyan_uni_cli/dist/
+nyan_uni_cli/unpackage/
+nyan_uni_cli/.hbuilderx
+nyan_uni_cli/.vite
+
 nyan_manage/dist/
 nyan_manage/node_modules/
 nyan_manage/.vscode
