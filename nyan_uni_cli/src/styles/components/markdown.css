@@ -1,0 +1,16 @@
+/* highlight.js 主题 */
+@import 'highlight.js/styles/github-dark.css';
+
+/* Markdown 通用样式 */
+.markdown-body {
+  font-size: 16px;
+  line-height: 1.6;
+  pre {
+    padding: 12px;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  code {
+    font-family: 'Fira Code', monospace;
+  }
+}

@@ -53,6 +53,14 @@ const commonRoutes = [
 				meta: {
 					tile: "推理与答案分离输出",
 				},
+			},
+			{
+				path: "medicalImg",
+				name: "medicalImg",
+				component: () => import("@views/medicalImg/index.vue"),
+				meta: {
+					tile: "医学影像图片分析",
+				},
 			}
 		],
 	},

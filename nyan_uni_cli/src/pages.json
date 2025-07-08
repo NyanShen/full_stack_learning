@@ -23,6 +23,12 @@
 			"style": {
 				"navigationBarTitleText": "ws stream"
 			}
+		},
+		{
+			"path": "pages/markdownRender/index",
+			"style": {
+				"navigationBarTitleText": "markdownRender"
+			}
 		}
 	],
 	"globalStyle": {

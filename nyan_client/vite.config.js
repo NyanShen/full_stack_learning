@@ -3,10 +3,23 @@ import {
 } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
+import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	plugins: [vue()],
+	plugins: [
+		vue(),
+		// for dicom-parser
+    	viteCommonjs(),
+	],
+	// seems like only required in dev mode
+	optimizeDeps: {
+		exclude: ['@cornerstonejs/dicom-image-loader'],
+		include: ['dicom-parser'],
+	},
+	worker: {
+		format: 'es',
+	},
 	resolve: {
 		alias: {
 			'@': path.resolve(__dirname, './src'), // 将'@'设置为项目src目录的别名

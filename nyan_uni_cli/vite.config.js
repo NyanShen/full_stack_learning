@@ -21,5 +21,11 @@ export default defineConfig({
     alias: {
       '@styles': path.resolve(__dirname, 'src/styles')
     }
+  },
+  build: {
+    // 减小 highlight.js 体积
+    rollupOptions: {
+      external: ['highlight.js/lib/core'],
+    }
   }
 })
